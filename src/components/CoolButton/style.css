@@ -1,0 +1,31 @@
+.cool-button {
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0.5em 0.5em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #212121;
+  cursor: pointer;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  transition: color 200ms ease-out, border-color 250ms;
+}
+.cool-button:hover {
+  border-color: #64ffd8;
+}
+.cool-button:disabled:hover {
+  border-color: transparent;
+  cursor: not-allowed;
+}
+.cool-button:focus,
+.cool-button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+.cool-button > * {
+  margin-right: 0.4em;
+}
+.cool-button > :last-child {
+  margin-right: 0;
+}

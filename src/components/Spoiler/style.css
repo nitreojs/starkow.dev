@@ -1,0 +1,27 @@
+.spoilered {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: transparent;
+  user-select: none;
+  cursor: help;
+
+  transition: color 100ms ease-out;
+}
+
+.spoilered::before {
+  z-index: -1;
+  content: "";
+  background-color: #2c2c2c;
+  position: absolute;
+  border-radius: 0.3em;
+}
+
+.spoilered::before {  
+  inset: 0 -0.3em -0.1em;
+}
+
+.spoiler-shown {
+  color: white;
+}
