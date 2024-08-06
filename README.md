@@ -4,6 +4,8 @@ sources of my [starkow.dev](https://starkow.dev) website.
 
 you will need [node.js](https://nodejs.org/en/) installed.
 
+this repository only contains the sources of the website, not the backend, so the spotify and letterbox parts probably won't work. i will probably opensource the backend in the future.
+
 ## installing
 
 ##### npm
