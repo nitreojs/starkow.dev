@@ -14,7 +14,7 @@ export const CoolButton: FC<CoolButtonProps> = ({ text, icon, onClick, disabled 
   const Icon = icon // fancy $$$
 
   return (
-    <button class="cool-button" onClick={onClick} disabled={disabled} {...props}>
+    <button class='cool-button' onClick={onClick} disabled={disabled} {...props}>
       {Icon && <Icon />}
       {text && <span>{text}</span>}
     </button>

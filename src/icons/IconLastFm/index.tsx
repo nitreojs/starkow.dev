@@ -1,8 +1,8 @@
 import { FC } from 'preact/compat'
 
 export const IconLastFm: FC = () => (
-  <svg fill="currentColor" height="1.5rem" width="1.5rem" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
-	 viewBox="-271 324 256 154">
+  <svg fill='currentColor' height='1.5rem' width='1.5rem' version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg'
+	 viewBox='-271 324 256 154'>
     <path d="M-54.3,387.3c-2.2-0.7-4.4-1.4-6.5-2.1c-15.9-5-25.5-8-25.5-20.4c0-10.1,7.8-17.4,18.5-17.4c8.2,0,14.3,3.4,19.8,11.1
       c0.5,0.7,1.5,1,2.3,0.6l15.9-8.3c0.4-0.2,0.8-0.6,0.9-1.1s0.1-1-0.2-1.4c-8.6-15.3-21-22.7-38-22.7c-25.8,0-42.4,15.6-42.4,39.7
       c0,24.7,16.1,34.7,45.8,44.4c17.2,5.7,24.8,8.8,24.8,21c0,13.8-12.4,23.7-29.4,23.1c-17.8-0.6-23.2-10-29.9-25.4

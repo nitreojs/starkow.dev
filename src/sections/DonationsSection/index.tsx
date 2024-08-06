@@ -130,7 +130,7 @@ const DonationUrlElement: FC<DonationUrlElementProps> = ({ title, url, address }
   return (
     <li>
       <b>{title}</b>: {" "}
-      <a class="donation-address donation-clickable" href={url}>
+      <a class='donation-address donation-clickable' href={url}>
         {address}
         <IconExternalLink width='1rem' height='1rem' />
       </a>
@@ -140,20 +140,20 @@ const DonationUrlElement: FC<DonationUrlElementProps> = ({ title, url, address }
 
 export const DonationsSection: FC = () => {
   return (
-    <section id="donations">
+    <section id='donations'>
       <h2>donations</h2>
       <p>
-        <span class="text-half-visible text-small">
+        <span class='text-half-visible text-small'>
           i won't judge you if you skipped this section entirely
         </span>
       </p>
       <p>
-        if you <span class="text-half-visible">for some reason</span> want to support me, {" "}
+        if you <span class='text-half-visible'>for some reason</span> want to support me, {" "}
         i accept anything that is listed below. <b>huge thanks in advance!</b>
       </p>
 
       <h3>crypto</h3>
-      <ul class="donations-list">
+      <ul class='donations-list'>
         {
           cryptoElements.map((e) => (
             e.type === 'text' ? <DonationElement {...e} /> :
@@ -161,12 +161,12 @@ export const DonationsSection: FC = () => {
           ))
         }
       </ul>
-      <span class="text-half-visible text-small">
+      <span class='text-half-visible text-small'>
         when donating crypto please use stablecoins/native coin (e.g. tron for trx)
       </span>
 
       <h3>fiat</h3>
-      <ul class="fiat-list">
+      <ul class='fiat-list'>
         {
           fiatElements.map((e) => (
             e.type === 'text' ? <DonationElement {...e} /> :

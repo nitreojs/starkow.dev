@@ -24,7 +24,7 @@ export const ClickerSection: FC = () => {
   }, [clicked])
 
   return (
-    <section id="clicker">
+    <section id='clicker'>
       <h2>just a clicker</h2>
       <p>{clickerDescription}</p>
 
@@ -37,7 +37,7 @@ export const ClickerSection: FC = () => {
       />
       
       <p>
-        <span class="text-half-visible text-small">this number is persistent across page reloads!</span>
+        <span class='text-half-visible text-small'>this number is persistent across page reloads!</span>
       </p>
     </section>
   )

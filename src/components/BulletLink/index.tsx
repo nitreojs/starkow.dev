@@ -11,7 +11,7 @@ interface BulletLinkProps {
 
 export const BulletLink: FC<BulletLinkProps> = ({ url, text }) => (
   <a href={url}>
-    <span class="bullet-link">
+    <span class='bullet-link'>
       {text}
       <IconExternalLink />
     </span>

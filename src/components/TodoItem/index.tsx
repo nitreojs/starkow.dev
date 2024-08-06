@@ -25,7 +25,7 @@ export const TodoItem: FC<TodoItemProps> = ({ id, text, done, index, onDone, onS
     () => onDelete({ id, text, done })
 
   return (
-    <div class="todo-item-container" key={id}>
+    <div class='todo-item-container' key={id}>
       <IconCircle
         class={clsx('todo-icon', done && 'todo-circle-filled')}
         width='1.2rem'
@@ -35,15 +35,15 @@ export const TodoItem: FC<TodoItemProps> = ({ id, text, done, index, onDone, onS
 
       <input
         class={clsx('todo-input', done && 'todo-done')}
-        type="text"
-        placeholder="buy a melon"
+        type='text'
+        placeholder='buy a melon'
         value={text}
         onKeyPress={e => { if (e.key === 'Enter') { onCreate(index) } }}
         onInput={e => onSave({ id, text: e.currentTarget.value, done })}
       />
 
       <IconBin
-        class="todo-icon"
+        class='todo-icon'
         width='1.2rem'
         height='1.2rem'
         disabled={isFirst}

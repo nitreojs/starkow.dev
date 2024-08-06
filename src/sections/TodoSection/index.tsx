@@ -68,7 +68,7 @@ export const TodoSection: FC = ({}) => {
   }
 
   return (
-    <section id="todo">
+    <section id='todo'>
       <h2>todo list</h2>
       <p>
         this is just quite literally your own todo list on my website

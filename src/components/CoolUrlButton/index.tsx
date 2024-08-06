@@ -11,7 +11,7 @@ export const CoolUrlButton: FC<CoolUrlButtonProps> = ({ text, url, icon, label }
   const Icon = icon // fancy $$$
 
   return (
-    <a class="cool-button" href={url} aria-label={label}>
+    <a class='cool-button' href={url} aria-label={label}>
       <Icon />
       {text && <span>{text}</span>}
     </a>

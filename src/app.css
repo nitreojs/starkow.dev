@@ -145,7 +145,7 @@ footer {
   transition: color 0.2s ease-out;
 }
 
-.todo-icon:not([disabled="true"]):hover {
+.todo-icon:not([disabled='true']):hover {
   color: white;
 }
 

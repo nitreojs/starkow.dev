@@ -7,7 +7,7 @@ interface BulletProps {
 }
 
 export const Bullet: FC<BulletProps> = ({ text }) => (
-  <span class="bullet">
+  <span class='bullet'>
     {text}
   </span>
 )

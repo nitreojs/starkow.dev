@@ -1,4 +1,4 @@
-import { Inputs, useEffect } from "preact/hooks";
+import { Inputs, useEffect } from 'preact/hooks'
 
 export const useInterval = (
   callback: () => void,

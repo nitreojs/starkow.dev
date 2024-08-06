@@ -4,8 +4,8 @@ import { CoolUrlButton } from '../../components'
 import { IconGitHub, IconLastFm, IconSpotify, IconSteam, IconTelegram } from '../../icons'
 
 export const ButtonsBlockSection: FC = () => (
-  <section id="buttons">
-    <div class="buttons-block">
+  <section id='buttons'>
+    <div class='buttons-block'>
       <CoolUrlButton icon={IconGitHub} label='github' url='https://fwd.starkow.dev/github' />
       <CoolUrlButton text='blog' icon={IconTelegram} url='https://fwd.starkow.dev/telegram' />
       <CoolUrlButton icon={IconSteam} label='steam' url='https://fwd.starkow.dev/steam' />

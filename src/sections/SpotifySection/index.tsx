@@ -87,7 +87,7 @@ export const SpotifySection: FC = () => {
   }, [data?.progress, lastUpdatedAt, paused])
 
   return (
-    <section id="spotify">
+    <section id='spotify'>
       <h2>currently playing</h2>
       <p>
         below lies the track that i'm currently listening to on spotify...
@@ -100,42 +100,42 @@ export const SpotifySection: FC = () => {
             <p>{description}</p>
           ) : (
             data === null ? (
-              <div class="no-track-playing">
+              <div class='no-track-playing'>
                 <p>no track is playing...</p>
-                <p class="text-small text-half-visible">perhaps try checking out later?</p>
+                <p class='text-small text-half-visible'>perhaps try checking out later?</p>
               </div>
             ) : (
               <>
-                <img class="track-background" src={data.album.image} alt={data.album.name} />
-                <a class="track-image" href={data.url}>
+                <img class='track-background' src={data.album.image} alt={data.album.name} />
+                <a class='track-image' href={data.url}>
                   <img src={data.album.image} alt={data.album.name} />
-                  <div class="track-image-link">
+                  <div class='track-image-link'>
                     <IconExternalLink />
                   </div>
                 </a>
-                <div class="track-info">
-                  <div class="track-data-container">
-                    <div class="track-text-info">
-                      <p class="track-name">
+                <div class='track-info'>
+                  <div class='track-data-container'>
+                    <div class='track-text-info'>
+                      <p class='track-name'>
                         <b>{data.name}</b>
                       </p>
-                      <p class="track-artists">
-                        <span class="text-half-visible">by</span> {data?.artists.join(', ')}
+                      <p class='track-artists'>
+                        <span class='text-half-visible'>by</span> {data?.artists.join(', ')}
                       </p>
                     </div>
-                    <div class="track-button">
+                    <div class='track-button'>
                       <IconSpotify />
                     </div>
                   </div>
-                  <div class="track-timer">
-                    <div class="track-time">
-                      <div class="track-time-elapsed">{formatTime(progress)}</div>
+                  <div class='track-timer'>
+                    <div class='track-time'>
+                      <div class='track-time-elapsed'>{formatTime(progress)}</div>
                       {paused ? <IconPause width='1rem' height='1rem' /> : <IconPlay width='1rem' height='1rem' />}
-                      <div class="track-time-remaining">{formatTime(data.total)}</div>
+                      <div class='track-time-remaining'>{formatTime(data.total)}</div>
                     </div>
-                    <div class="track-progress">
+                    <div class='track-progress'>
                       <div
-                        class="track-progress-completed"
+                        class='track-progress-completed'
                         style={{
                           width: `${Math.min(progress / data.total * 100, 100)}%`
                         }}
@@ -149,7 +149,7 @@ export const SpotifySection: FC = () => {
         }
       </div>
 
-      <p class="text-small text-half-visible">
+      <p class='text-small text-half-visible'>
         this data is approximate and may be delayed by a few seconds.
       </p>
     </section>

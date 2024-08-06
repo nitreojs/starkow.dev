@@ -40,7 +40,7 @@
   to { opacity: 0; }
 }
 
-.notification[data-active="false"] {
+.notification[data-active='false'] {
   animation: notification-fadeout 1s forwards linear;
 }
 

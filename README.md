@@ -52,7 +52,7 @@ all the necessary files will be generated in the `dist` folder.
 
 ---
 
-<div align="center">
+<div align='center'>
 
 it's that simple!
 

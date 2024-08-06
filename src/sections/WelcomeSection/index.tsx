@@ -24,17 +24,17 @@ export const WelcomeSection: FC = () => {
   // const dws = calculateDaysSince(BIRTHDAY)
 
   return (
-    <section id="welcome">
+    <section id='welcome'>
       <h1>welcome!</h1>
       <p>
-        hello! my name's <b>alex<span class="text-half-visible">ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <b>{age}</b> years old.
+        hello! my name's <b>alex<span class='text-half-visible'>ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <b>{age}</b> years old.
         {/* <Spoiler
           text={`which means i am a virgin for ${dws} days straight`}
           /> */}
       </p>
       <p>
         i do various stuff eventually, but mostly it's programming or something about programming {" "}
-        <span class="text-half-visible"><i>(duh!)</i></span>
+        <span class='text-half-visible'><i>(duh!)</i></span>
       </p>
     </section>
   )
