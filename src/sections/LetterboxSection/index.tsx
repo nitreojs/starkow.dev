@@ -47,6 +47,9 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
     try {
       const response = await fetch(`${API_URL}/api/notify`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ message })
       })
 
