@@ -72,7 +72,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
 
   return (
     <>
-      <section id="letterbox">
+      <section id='letterbox'>
         <h2>anonymous letterbox</h2>
         <p>
           here you can type a message that will be anonymous {" "}
@@ -86,7 +86,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
       </section>
 
       <section>
-        <div className="letterbox-container">
+        <div class='letterbox-container'>
           <textarea
             value={textareaText}
             placeholder={placeholder}

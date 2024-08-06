@@ -36,14 +36,14 @@ export const MainPage: FC = () => {
           brought to you by <b>starkow</b> with ❤️
         </p>
         <p>
-          some design ideas were taken from <a href="https://jsopn.com">jsopn.com</a>, <a href="https://es3n1n.eu">es3n1n.eu</a> & <a href="https://tei.su">tei.su</a>
+          some design ideas were taken from <a href='https://jsopn.com'>jsopn.com</a>, <a href='https://es3n1n.eu'>es3n1n.eu</a> & <a href='https://tei.su'>tei.su</a>
         </p>
         <p>
           i've never written a real website before this one btw
         </p>
       </footer>
 
-      <section class="barcode-container">
+      <section class='barcode-container'>
         <IconQRCode />
       </section>
     </>
