@@ -130,10 +130,10 @@ const DonationUrlElement: FC<DonationUrlElementProps> = ({ title, url, address }
   return (
     <li>
       <b>{title}</b>: {" "}
-      <span class="donation-address donation-clickable">
-        <a href={url}>{address}</a>
+      <a class="donation-address donation-clickable" href={url}>
+        {address}
         <IconExternalLink width='1rem' height='1rem' />
-      </span>
+      </a>
     </li>
   )
 }
