@@ -292,6 +292,9 @@ h2 .bullet {
 .donation-copyable,
 .donation-clickable {
   color: #676767;
+}
+
+.donation-copyable {
   cursor: copy;
 }
 
