@@ -90,7 +90,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
           <textarea
             value={textareaText}
             placeholder={placeholder}
-            onChange={e => setTextareaText(e.currentTarget.value.trim())}
+            onChange={e => setTextareaText(e.currentTarget.value)}
             disabled={isLoading}
           />
           <CoolButton
