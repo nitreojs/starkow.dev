@@ -1,5 +1,5 @@
 import { FC } from 'preact/compat'
-import { ButtonsBlockSection, DonationsSection, LetterboxSection, NotificationsSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
+import { ButtonsBlockSection, DonationsSection, LetterboxSection, NotificationsSection, ShoutboxSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
 import { IconQRCode } from '../../icons'
 
 export const MainPage: FC = () => {
@@ -24,6 +24,7 @@ export const MainPage: FC = () => {
       <SkillsSection />
       <SpotifySection />
       <LetterboxSection />
+      <ShoutboxSection />
       <DonationsSection />
       {/* <ClickerSection /> */}
       {/* <TodoSection /> */}

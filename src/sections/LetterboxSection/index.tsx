@@ -3,7 +3,7 @@ import { useState, type FC } from 'preact/compat'
 
 import { IconLoaderX, IconSend } from '../../icons'
 
-import { CoolButton } from '../../components'
+import { BulletLink, CoolButton } from '../../components'
 import { useNotifications } from '../../hooks'
 import { NotificationType } from '../../types'
 import { API_URL } from '../../shared/constants'
@@ -76,10 +76,14 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
         <h2>anonymous letterbox</h2>
         <p>
           here you can type a message that will be anonymous {" "}
-          <span class="text-half-visible">(i won't get to know who you are)</span> {" "}
+          <span class='text-half-visible'>(i won't get to know who you are)</span> {" "}
           and will be delivered to me in a matter of seconds!
         </p>
-        <p class="text-half-visible text-small">
+        <p>
+          some of them might even get posted on the <BulletLink text='shoutbox' url='#shoutbox' /> below!
+          some of the posted ones might even get an answer from me!!
+        </p>
+        <p class='text-half-visible text-small'>
           please <b>do not</b> send anything inappropriate, spam etc. etc. etc.
           i just wanna hear your thoughts and/or suggestions
         </p>

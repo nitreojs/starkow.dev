@@ -1,0 +1,39 @@
+.shoutbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.shoutbox-message {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #212121;
+  /* flex-grow: 1; */
+}
+
+.shoutbox-message-text {
+  white-space: pre-line;
+}
+
+.shoutbox-message-date {
+  font-size: 0.7em;
+  opacity: 0.3;
+  text-align: right;
+  text-decoration: none;
+}
+
+.shoutbox-pagination {
+  display: flex;
+  gap: 0.4em;
+  justify-content: center;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
