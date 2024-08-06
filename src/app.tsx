@@ -7,7 +7,7 @@ import { HamsterPage, MainPage, NotFoundPage } from './pages'
 import { useRotatingTitle } from './hooks'
 
 export function App() {
-  const [isHamster, setIsHamster] = useState(Math.random() >= 0.5 && !isbot(navigator.userAgent))
+  const [isHamster, setIsHamster] = useState(Math.random() >= 0.98 && !isbot(navigator.userAgent))
 
   useRotatingTitle()
 
