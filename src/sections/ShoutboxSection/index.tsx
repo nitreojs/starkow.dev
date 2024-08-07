@@ -88,7 +88,7 @@ export const ShoutboxSection: FC = () => {
               <div class='shoutbox-pagination'>
                 <CoolButton text='<' disabled={page === 0} onClick={() => fetchShoutbox(page - 1)} />
                 <CoolButton text={String(page + 1)} />
-                <CoolButton text='>' disabled={page === Math.floor(total / 5)} onClick={() => fetchShoutbox(page + 1)} />
+                <CoolButton text='>' disabled={page + 1 >= Math.ceil(total / 5)} onClick={() => fetchShoutbox(page + 1)} />
               </div>
   
               <div class='shoutbox-container'>
