@@ -2,9 +2,10 @@ import { useState } from 'preact/hooks'
 import { Route, Switch } from 'wouter-preact'
 import { isbot } from 'isbot'
 
-import './app.css'
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
 import { useRotatingTitle } from './hooks'
+
+import './app.css'
 
 export function App() {
   const [isHamster, setIsHamster] = useState(Math.random() >= 0.98 && !isbot(navigator.userAgent))
