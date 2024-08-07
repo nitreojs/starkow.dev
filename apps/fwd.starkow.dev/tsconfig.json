@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "@starkow/tsconfigs/tsconfig.preact.json",
+    "@starkow/tsconfigs/tsconfig.node.json"
+  ],
+  "compilerOptions": {
+    "jsxImportSource": "preact"
+  },
+  "include": ["vite.config.ts", "src"]
+}

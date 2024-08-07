@@ -1,0 +1,8 @@
+{
+  "name": "@starkow/tsconfigs",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "@tsconfig/vite-react": "^3.0.2"
+  }
+}
