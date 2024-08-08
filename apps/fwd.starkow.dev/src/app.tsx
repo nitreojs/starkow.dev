@@ -1,7 +1,7 @@
 import { FC, JSX } from 'preact/compat'
 import clsx from 'clsx'
 
-import { Icons } from '@starkow.dev/shared'
+import { Hooks, Icons } from '@starkow.dev/shared'
 
 import './app.css'
 
@@ -34,6 +34,8 @@ const Item: FC<ItemProps> = ({ text, id, url, photoUrl, icon, isIconCentered, de
 }
 
 export function App() {
+  Hooks.useRotatingTitle()
+
   return (
     <div class='container'>
       <div class='grid'>
