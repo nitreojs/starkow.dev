@@ -26,7 +26,7 @@ export const Repository: FC<RepositoryProps> = ({ url }) => {
   }, [])
 
   return (
-    <a class='repository' href={url}>
+    <a class='repository' href={url} target='_blank' rel='noopener noreferrer'>
       <div class='repository-icon'>
         <IconGitHub />
       </div>
