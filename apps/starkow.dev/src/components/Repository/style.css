@@ -1,0 +1,30 @@
+.repository {
+  display: flex;
+  gap: 0.5em;
+
+  border-radius: 10px;
+  padding: 0.6em 0.6em;
+  background-color: #212121;
+  cursor: pointer;
+
+  justify-content: start;
+  align-items: center;
+}
+
+.repository-data {
+  display: flex;
+  flex-direction: column;
+  /* gap: 0.1em; */
+}
+
+.repository-description {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.repository-description svg {
+  width: 1rem;
+  height: 1rem;
+}

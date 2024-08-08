@@ -26,8 +26,6 @@ export const MainPage: FC = () => {
       <LetterboxSection />
       <ShoutboxSection />
       <DonationsSection />
-      {/* <ClickerSection /> */}
-      {/* <TodoSection /> */}
       <ButtonsBlockSection />
 
       <hr />

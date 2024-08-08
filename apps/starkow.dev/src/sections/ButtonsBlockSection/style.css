@@ -1,0 +1,5 @@
+.buttons-block {
+  display: flex;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}

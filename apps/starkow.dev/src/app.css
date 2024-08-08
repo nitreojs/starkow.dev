@@ -49,12 +49,6 @@ textarea {
   line-height: 1em;
 }
 
-.buttons-block {
-  display: flex;
-  gap: 0.4em;
-  flex-wrap: wrap;
-}
-
 ul {
   list-style-type: none;
   padding-left: 0;
