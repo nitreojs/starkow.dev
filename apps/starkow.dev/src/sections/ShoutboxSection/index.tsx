@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from 'preact/compat'
-// import { BulletLink } from '../../components'
+
+import { Hooks } from '@starkow.dev/shared'
 
 import './style.css'
 import { CoolButton } from '../../components'
-import { useInterval } from '../../hooks'
 import { API_URL } from '../../shared'
 import { ShoutboxMessage as ShoutboxMessageType } from './types'
 
@@ -60,7 +60,7 @@ export const ShoutboxSection: FC = () => {
     fetchShoutbox()
   }, [])
 
-  useInterval(() => fetchShoutbox(), 15_000, [])
+  Hooks.useInterval(() => fetchShoutbox(), 15_000, [])
 
   return (
     <>

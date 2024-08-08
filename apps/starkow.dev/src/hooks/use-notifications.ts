@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai'
+
 import { notifications$atom } from '../state'
 import { Notification, NotificationType } from '../types'
 

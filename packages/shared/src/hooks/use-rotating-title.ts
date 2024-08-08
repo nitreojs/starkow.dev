@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'preact/hooks'
+
 import { resolveHostname, rotateTitle } from '../utils'
 
 export const useRotatingTitle = () => {
   const domain = resolveHostname(window.location.hostname)
-  const initialTitle = domain.replace('.', '★')
+  const initialTitle = domain.replace(/\./g, '★')
 
   const titleRef = useRef(`${initialTitle} `)
 

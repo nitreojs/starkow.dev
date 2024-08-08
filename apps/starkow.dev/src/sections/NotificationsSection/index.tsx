@@ -1,13 +1,15 @@
 import { FC } from 'preact/compat'
 
+import { Hooks } from '@starkow.dev/shared'
+
 import { Notification } from '../../components'
 import { Notification as NotificationData } from '../../types'
-import { useInterval, useNotifications } from '../../hooks'
+import { useNotifications } from '../../hooks'
 
 export const NotificationsSection: FC = () => {
   const { notifications, setNotifications, deleteNotification } = useNotifications()
 
-  useInterval(() => {
+  Hooks.useInterval(() => {
     const dead: number[] = []
 
     for (let i = 0; i < notifications.length; i++) {
