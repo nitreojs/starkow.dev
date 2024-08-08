@@ -9,7 +9,7 @@ export const ButtonsBlockSection: FC = () => (
   <section id='buttons'>
     <div class='buttons-block'>
       <Repository url='https://fwd.starkow.dev/github/starkow.dev' />
-      <CoolUrlButton icon={IconChain} text='links' url='https://fwd.starkow.dev/telegram' />
+      <CoolUrlButton icon={IconChain} text='links' url='https://fwd.starkow.dev' />
     </div>
   </section>
 )
