@@ -30,7 +30,7 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(100px, 1fr));
-  grid-template-rows: repeat(5, minmax(100px, 1fr));
+  grid-template-rows: repeat(6, minmax(100px, 1fr));
   grid-gap: 2em;
 
   grid-template-areas:
@@ -39,6 +39,7 @@
     'shitpost   shitpost    github      github'
     'vk         soundcloud  music       music'
     'lastfm     photos      photos      photos'
+    'sources    sources     sources     back'
   ;
 }
 
@@ -82,6 +83,12 @@
 }
 .item-music {
   grid-area: music;
+}
+.item-sources {
+  grid-area: sources;
+}
+.item-back {
+  grid-area: back;
 }
 
 .item:hover .item-image {

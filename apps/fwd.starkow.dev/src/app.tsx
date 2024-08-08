@@ -14,13 +14,14 @@ interface ItemProps {
   icon: JSX.Element
   isIconCentered?: boolean
   description?: string
+  shouldOpenInNewTab?: boolean
 }
 
-const Item: FC<ItemProps> = ({ text, id, url, photoUrl, icon, isIconCentered, description }) => {
+const Item: FC<ItemProps> = ({ text, id, url, photoUrl, icon, isIconCentered, description, shouldOpenInNewTab = true }) => {
   return (
     <a
       href={url}
-      target='_blank'
+      target={clsx(shouldOpenInNewTab && '_blank')}
       rel='noopener noreferrer'
       class={clsx('item', `item-${id}`)}
     >
@@ -49,6 +50,8 @@ export function App() {
         <Item id='music' text='music' description='i write song lyrics' url='https://fwd.starkow.dev/music' photoUrl='https://i.pinimg.com/564x/d7/31/66/d73166e23f776ead27f07fac5a435d70.jpg' icon={<Icons.IconTelegram />} />
         <Item id='lastfm' url='https://fwd.starkow.dev/lastfm' photoUrl='https://i.pinimg.com/736x/d5/06/2e/d5062e95aa790116cefcc026cf1ec99c.jpg' icon={<Icons.IconLastFm />} isIconCentered />
         <Item id='photos' text='photos' description="i take photos" url='https://fwd.starkow.dev/photos' photoUrl='https://i.pinimg.com/564x/ca/79/7a/ca797a0374e8cf7c03af330c136158eb.jpg' icon={<Icons.IconTelegram />} />
+        <Item id='sources' text='sources' description='sources of this site' url='https://fwd.starkow.dev/github/starkow.dev' photoUrl='https://i.pinimg.com/564x/e2/fd/08/e2fd08d03094e9088f5db9906d5ea22a.jpg' icon={<Icons.IconGitHub />} />
+        <Item id='back' url='https://starkow.dev' photoUrl='https://i.pinimg.com/564x/13/15/01/13150186d9738e3abc77ca3006f95f2a.jpg' icon={<Icons.IconHome />} isIconCentered shouldOpenInNewTab={false} />
       </div>
 
       <div class='container-title'>
