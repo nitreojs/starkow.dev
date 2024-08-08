@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks'
 
-import { resolveHostname, rotateTitle } from '../utils'
+import { resolveHostname, rotateTitle } from '@starkow.dev/shared/utils'
 
 export const useRotatingTitle = () => {
   const domain = resolveHostname(window.location.hostname)

@@ -2,7 +2,7 @@ import { FC } from 'preact/compat'
 import clsx from 'clsx'
 
 import type { TodoItem as TodoItemInterface } from '../../sections'
-import * as Icons from '@starkow.dev/shared/icons'
+import * as Icons from '@starkow.dev/icons'
 
 interface TodoItemProps {
   id: string

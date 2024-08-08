@@ -1,5 +1,5 @@
 import { CoolButton } from '../../components'
-import * as Icons from '@starkow.dev/shared/icons'
+import * as Icons from '@starkow.dev/icons'
 import { Link } from 'wouter-preact'
 
 export const NotFoundPage = () => {

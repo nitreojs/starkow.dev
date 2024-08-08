@@ -5,8 +5,6 @@
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./icons": "./src/icons/index.ts",
-    "./utils": "./src/utils/index.ts",
-    "./hooks": "./src/hooks/index.ts"
+    "./utils": "./src/utils/index.ts"
   }
 }

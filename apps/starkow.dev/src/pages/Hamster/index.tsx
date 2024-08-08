@@ -1,6 +1,6 @@
 import { FC } from 'preact/compat'
 
-import * as Icons from '@starkow.dev/shared/icons'
+import * as Icons from '@starkow.dev/icons'
 import { CoolButton } from '../../components'
 
 interface HamsterPageProps {

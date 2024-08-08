@@ -1,6 +1,6 @@
 import { useState, type FC } from 'preact/compat'
 
-import * as Icons from '@starkow.dev/shared/icons'
+import * as Icons from '@starkow.dev/icons'
 
 import { BulletLink, CoolButton } from '../../components'
 import { useNotifications } from '../../hooks'

@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks'
 import { Route, Switch } from 'wouter-preact'
 import { isbot } from 'isbot'
 
-import * as Hooks from '@starkow.dev/shared/hooks'
+import * as Hooks from '@starkow.dev/hooks'
 
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
 
