@@ -1,6 +1,6 @@
 import { FC } from 'preact/compat'
 
-import { Hooks } from '@starkow.dev/shared'
+import * as Hooks from '@starkow.dev/shared/hooks'
 
 import { Notification } from '../../components'
 import { Notification as NotificationData } from '../../types'

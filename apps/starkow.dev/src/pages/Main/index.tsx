@@ -1,6 +1,6 @@
 import { FC } from 'preact/compat'
 import { ButtonsBlockSection, DonationsSection, LetterboxSection, NotificationsSection, ShoutboxSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
-import { Icons } from '@starkow.dev/shared'
+import * as Icons from '@starkow.dev/shared/icons'
 
 export const MainPage: FC = () => {
   return (

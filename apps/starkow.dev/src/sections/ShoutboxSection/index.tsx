@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'preact/compat'
 
-import { Hooks } from '@starkow.dev/shared'
+import * as Hooks from '@starkow.dev/shared/hooks'
 
 import './style.css'
 import { CoolButton } from '../../components'

@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'preact/compat'
 import clsx from 'clsx'
 
-import { Icons } from '@starkow.dev/shared'
+import * as Icons from '@starkow.dev/shared/icons'
 import { API_URL } from '../../shared'
 
 const formatTime = (ms: number) => {

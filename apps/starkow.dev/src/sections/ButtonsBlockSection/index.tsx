@@ -1,7 +1,7 @@
 import { FC } from 'preact/compat'
 
 import { CoolUrlButton } from '../../components'
-import { Icons } from '@starkow.dev/shared'
+import * as Icons from '@starkow.dev/shared/icons'
 
 export const ButtonsBlockSection: FC = () => (
   <section id='buttons'>

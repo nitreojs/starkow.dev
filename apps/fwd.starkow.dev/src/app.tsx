@@ -1,7 +1,8 @@
 import { FC, JSX } from 'preact/compat'
 import clsx from 'clsx'
 
-import { Hooks, Icons } from '@starkow.dev/shared'
+import * as Hooks from '@starkow.dev/shared/hooks'
+import * as Icons from '@starkow.dev/shared/icons'
 
 import './app.css'
 
