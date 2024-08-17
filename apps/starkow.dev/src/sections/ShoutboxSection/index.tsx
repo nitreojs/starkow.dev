@@ -1,11 +1,13 @@
 import { FC, useEffect, useState } from 'preact/compat'
 
-import * as Hooks from '@starkow.dev/hooks'
-
-import './style.css'
 import { CoolButton } from '../../components'
 import { API_URL } from '../../shared'
 import { ShoutboxMessage as ShoutboxMessageType } from './types'
+import { useInterval } from '@starkow.dev/hooks'
+import { useNotifications } from '../../hooks'
+import { NotificationType } from '../../types'
+
+import './style.css'
 
 interface ShoutboxMessageProps {
   text: string
@@ -40,13 +42,15 @@ export const ShoutboxSection: FC = () => {
   const [total, setTotal] = useState(0)
   const [messages, setMessages] = useState<ShoutboxMessageType[]>([])
 
+  const { addNotification } = useNotifications()
+
   const fetchShoutbox = async (page = 0) => {
     const response = await fetch(`${API_URL}/api/shoutbox?page=${page}`)
   
     const json = await response.json() as Record<string, any>
 
     if (!json.ok) {
-      return // TODO
+      return addNotification('failed to fetch shoutbox!', NotificationType.Error)
     }
 
     const data = json.data.items as ShoutboxMessageType[]
@@ -56,11 +60,8 @@ export const ShoutboxSection: FC = () => {
     setMessages(data)
   }
 
-  useEffect(() => {
-    fetchShoutbox()
-  }, [])
-
-  Hooks.useInterval(() => fetchShoutbox(page), 15_000, [])
+  useEffect(() => { fetchShoutbox() }, [])
+  useInterval(() => fetchShoutbox(page), 15_000, [page])
 
   return (
     <>
