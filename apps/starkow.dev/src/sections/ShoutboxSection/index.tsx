@@ -60,7 +60,7 @@ export const ShoutboxSection: FC = () => {
     fetchShoutbox()
   }, [])
 
-  Hooks.useInterval(() => fetchShoutbox(), 15_000, [])
+  Hooks.useInterval(() => fetchShoutbox(page), 15_000, [])
 
   return (
     <>
