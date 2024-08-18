@@ -9,65 +9,9 @@
     <meta property='og:description' content='this is a page about me' />
     <meta property='og:image' content='https://starkow.dev/image.jpg' />
     <title>starkow★dev</title>
-
-    <style>
-      #noise {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        opacity: 0.5;
-        display: none;
-      }
-    </style>
   </head>
   <body>
     <div id='app'></div>
     <script type='module' src='/src/main.tsx'></script>
-
-    <canvas id='noise'></canvas>
-    <script>
-      const generateNoise = (ctx, width, height) => {
-        const imageData = ctx.createImageData(width, height)
-        const buffer32 = new Uint32Array(imageData.data.buffer)
-
-        for (let i = 0; i < buffer32.length; i++) {
-          buffer32[i] = ((Math.random() * 255) | 0) << 24
-        }
-
-        ctx.putImageData(imageData, 0, 0)
-      }
-
-      const resize = (canvas) => {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-      }
-
-      const start = () => {
-        const canvas = document.getElementById('noise')
-        const ctx = canvas.getContext('2d')
-
-        resize(canvas)
-
-        window.addEventListener('resize', () => resize(canvas))
-
-        const loop = () => {
-          generateNoise(ctx, canvas.width, canvas.height)
-
-          window.requestAnimationFrame(loop)
-        }
-
-        loop()
-      }
-
-      window.addEventListener('load', () => {
-        document.getElementById('noise').style.display = 'block'
-
-        start()
-      })
-    </script>
   </body>
 </html>

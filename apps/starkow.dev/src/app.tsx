@@ -2,26 +2,31 @@ import { useState } from 'preact/hooks'
 import { Route, Switch } from 'wouter-preact'
 import { isbot } from 'isbot'
 
-import * as Hooks from '@starkow.dev/hooks'
+import { useRotatingTitle } from '@starkow.dev/hooks'
 
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
+import { NoiseCanvas } from './components'
 
 import './app.css'
 
 export function App() {
   const [isHamster, setIsHamster] = useState(Math.random() >= 0.98 && !isbot(navigator.userAgent))
 
-  Hooks.useRotatingTitle()
+  useRotatingTitle()
 
   return (
-    <Switch>
-      <Route path='/'>
-        {isHamster ? <HamsterPage onButtonClick={() => setIsHamster(false)} /> : <MainPage />}
-      </Route>
+    <>
+      <NoiseCanvas />
 
-      <Route>
-        <NotFoundPage />
-      </Route>
-    </Switch>
+      <Switch>
+        <Route path='/'>
+          {isHamster ? <HamsterPage onButtonClick={() => setIsHamster(false)} /> : <MainPage />}
+        </Route>
+  
+        <Route>
+          <NotFoundPage />
+        </Route>
+      </Switch>
+    </>
   )
 }
