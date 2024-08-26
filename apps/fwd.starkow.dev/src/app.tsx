@@ -5,7 +5,7 @@ import { useRotatingTitle } from '@starkow.dev/hooks'
 import * as Icons from '@starkow.dev/icons'
 
 import './app.css'
-import { NoiseCanvas } from './components'
+// import { NoiseCanvas } from './components'
 
 interface ItemProps {
   id: string
@@ -41,7 +41,7 @@ export function App() {
 
   return (
     <>
-      <NoiseCanvas />
+      {/* <NoiseCanvas /> */}
 
       <div class='container'>
         <div class='grid'>
