@@ -5,7 +5,7 @@ import { isbot } from 'isbot'
 import { useRotatingTitle } from '@starkow.dev/hooks'
 
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
-import { NoiseCanvas } from './components'
+// import { NoiseCanvas } from './components'
 
 import './app.css'
 
@@ -16,7 +16,7 @@ export function App() {
 
   return (
     <>
-      <NoiseCanvas />
+      {/* <NoiseCanvas /> */}
 
       <Switch>
         <Route path='/'>
