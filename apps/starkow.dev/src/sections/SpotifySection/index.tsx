@@ -252,15 +252,19 @@ const SpotifyContent: FC<SpotifyContentProps> = ({  }) => {
 
   if (loading) {
     return (
-      <p>{description}</p>
+      <div class={clsx('spotify-track', loading && 'loading')}>
+        <p>{description}</p>
+      </div>
     )
   }
 
   if (trackData === null) {
     return (
-      <div class='no-track-playing'>
-        <p>no track is playing...</p>
-        <p class='text-small text-half-visible'>perhaps try checking out later?</p>
+      <div class={clsx('spotify-track', loading && 'loading')}>
+        <div class='no-track-playing'>
+          <p>no track is playing...</p>
+          <p class='text-small text-half-visible'>perhaps try checking out later?</p>
+        </div>
       </div>
     )
   }
