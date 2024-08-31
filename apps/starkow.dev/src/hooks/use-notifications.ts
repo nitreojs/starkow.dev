@@ -1,10 +1,10 @@
-import { useAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 
 import { notifications$atom } from '../state'
 import { Notification, NotificationType } from '../types'
 
 export const useNotifications = () => {
-  const [notifications, setNotifications] = useAtom(notifications$atom)
+  const setNotifications = useSetAtom(notifications$atom)
 
   const addNotification = (message: string, type: NotificationType = NotificationType.Info) => (
     setNotifications((current) => (
@@ -19,7 +19,7 @@ export const useNotifications = () => {
   )
 
   return {
-    notifications,
+    // notifications,
     addNotification,
     setNotifications,
     deleteNotification

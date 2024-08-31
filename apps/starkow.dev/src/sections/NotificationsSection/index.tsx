@@ -1,15 +1,19 @@
+import { useAtomValue } from 'jotai'
 import { FC } from 'preact/compat'
 
-import * as Hooks from '@starkow.dev/hooks'
+import { useInterval } from '@starkow.dev/hooks'
 
 import { Notification } from '../../components'
 import { Notification as NotificationData } from '../../types'
 import { useNotifications } from '../../hooks'
+import { notifications$atom } from '../../state'
 
 export const NotificationsSection: FC = () => {
-  const { notifications, setNotifications, deleteNotification } = useNotifications()
+  const { setNotifications, deleteNotification } = useNotifications()
 
-  Hooks.useInterval(() => {
+  const notifications = useAtomValue(notifications$atom)
+
+  useInterval(() => {
     const dead: number[] = []
 
     for (let i = 0; i < notifications.length; i++) {
@@ -23,7 +27,7 @@ export const NotificationsSection: FC = () => {
     setNotifications((current) => (
       current.map((found, i) => ({ ...found, isActive: !dead.includes(i) })) as NotificationData[]
     ))
-  }, 500, [notifications, setNotifications])
+  }, 500, [notifications])
 
   return (
     <div class='notification-container'>

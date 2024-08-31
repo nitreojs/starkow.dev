@@ -54,7 +54,7 @@ interface LyricsProps {
   index: number
 }
 
-const Lyrics: FC<LyricsProps> = ({ lyrics, index }) => {
+const TrackLyrics: FC<LyricsProps> = ({ lyrics, index }) => {
   const parentRef = useRef<HTMLDivElement>(null)
 
   // info: translate offset calculation
@@ -100,7 +100,73 @@ const Lyrics: FC<LyricsProps> = ({ lyrics, index }) => {
   )
 }
 
-export const SpotifySection: FC = () => {
+interface TrackImageProps {
+  data: TrackData
+}
+
+const TrackImage: FC<TrackImageProps> = ({ data }) => {
+  return (
+    <a class='track-image' href={data.url}>
+      <img src={data.album.image} alt={data.album.name} />
+      <div class='track-image-link'>
+        <Icons.IconExternalLink />
+      </div>
+    </a>
+  )
+}
+
+interface TrackInfoProps {
+  data: TrackData
+  progress: number
+}
+
+const TrackInfo: FC<TrackInfoProps> = ({ data, progress }) => {
+  return (
+    <div class='track-info'>
+      <div class='track-data-container'>
+        <div class='track-text-info'>
+          <p class='track-name'>
+            <b>{data.name}</b>
+          </p>
+          <p class='track-artists'>
+            <span class='text-half-visible'>by</span> {data.artists.join(', ')}
+          </p>
+        </div>
+        <div class='track-button'>
+          <Icons.IconSpotify />
+        </div>
+      </div>
+
+      <div class='track-timer'>
+        <div class='track-time'>
+          <div class='track-time-elapsed'>
+            {formatTime(progress * 1000)}
+          </div>
+          {
+            !data.playing ? <Icons.IconPause width='1rem' height='1rem' /> :
+            <Icons.IconPlay width='1rem' height='1rem' />
+          }
+          <div class='track-time-remaining'>{formatTime(data.total)}</div>
+        </div>
+
+        <div class='track-progress'>
+          <div
+            class='track-progress-completed'
+            style={{
+              width: `${progress === Math.floor(data.total / 1000) ? 100 : Math.min(progress * 1000 / data.total * 100, 100)}%`
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface SpotifyContentProps {
+
+}
+
+const SpotifyContent: FC<SpotifyContentProps> = ({  }) => {
   const [loading, setLoading] = useState(true)
 
   const [description] = useState('loading track data...')
@@ -108,7 +174,7 @@ export const SpotifySection: FC = () => {
   const [trackData, setTrackData] = useState<TrackData | null>(null)
 
   const progressRef = useRef<number>(0)
-
+  
   const [progressSeconds, setProgressSeconds] = useState(0)
   const [lyricIndex, setLyricIndex] = useState(0)
 
@@ -184,72 +250,33 @@ export const SpotifySection: FC = () => {
     }
   }, [trackData])
 
-  let content = <p>{description}</p>
-
-  if (!loading) {
-    if (trackData === null) {
-      content = (
-        <div class='no-track-playing'>
-          <p>no track is playing...</p>
-          <p class='text-small text-half-visible'>perhaps try checking out later?</p>
-        </div>
-      )
-    } else {
-      content = (
-        <>
-          <Lyrics lyrics={trackData.lyrics} index={lyricIndex} />
-
-          <img class='track-background' src={trackData.album.image} alt={trackData.album.name} />
-
-          <a class='track-image' href={trackData.url}>
-            <img src={trackData.album.image} alt={trackData.album.name} />
-            <div class='track-image-link'>
-              <Icons.IconExternalLink />
-            </div>
-          </a>
-
-          <div class='track-info'>
-            <div class='track-data-container'>
-              <div class='track-text-info'>
-                <p class='track-name'>
-                  <b>{trackData.name}</b>
-                </p>
-                <p class='track-artists'>
-                  <span class='text-half-visible'>by</span> {trackData.artists.join(', ')}
-                </p>
-              </div>
-              <div class='track-button'>
-                <Icons.IconSpotify />
-              </div>
-            </div>
-
-            <div class='track-timer'>
-              <div class='track-time'>
-                <div class='track-time-elapsed'>
-                  {formatTime(progressSeconds * 1000)}
-                </div>
-                {
-                  !trackData.playing ? <Icons.IconPause width='1rem' height='1rem' /> :
-                  <Icons.IconPlay width='1rem' height='1rem' />
-                }
-                <div class='track-time-remaining'>{formatTime(trackData.total)}</div>
-              </div>
-
-              <div class='track-progress'>
-                <div
-                  class='track-progress-completed'
-                  style={{
-                    width: `${progressSeconds === Math.floor(trackData.total / 1000) ? 100 : Math.min(progressSeconds * 1000 / trackData.total * 100, 100)}%`
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </>
-      )
-    }
+  if (loading) {
+    return (
+      <p>{description}</p>
+    )
   }
 
+  if (trackData === null) {
+    return (
+      <div class='no-track-playing'>
+        <p>no track is playing...</p>
+        <p class='text-small text-half-visible'>perhaps try checking out later?</p>
+      </div>
+    )
+  }
+
+  return (
+    <div class={clsx('spotify-track', loading && 'loading')}>
+      <img class='track-background' src={trackData.album.image} alt={trackData.album.name} />
+
+      <TrackLyrics lyrics={trackData.lyrics} index={lyricIndex} />
+      <TrackImage data={trackData} />
+      <TrackInfo data={trackData} progress={progressSeconds} />
+    </div>
+  )
+}
+
+export const SpotifySection: FC = () => {
   return (
     <section id='spotify'>
       <h2>currently playing</h2>
@@ -258,9 +285,7 @@ export const SpotifySection: FC = () => {
         or, well, simply nothing if i'm not listening to anything atm :P
       </p>
 
-      <div class={clsx('spotify-track', loading && 'loading')}>
-        {content}
-      </div>
+      <SpotifyContent />
 
       <p class='text-small text-half-visible'>
         this data is approximate and may be delayed by a few seconds.
