@@ -1,5 +1,14 @@
+/* @media (max-width: 640px) {
+  * {
+    content: 'penise';
+    transition: transform 0.2s ease-in-out;
+    transform: rotate(2deg);
+  }
+} */
+/* только попробуй включить то что сверху */
+
 #app {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
   gap: 1.5em;
@@ -215,6 +224,8 @@ h2 .bullet {
   height: 4px;
   border-radius: 100px;
   background-color: white;
+
+  transition: width 0.5s ease-in-out;
 }
 
 .no-track-playing {
