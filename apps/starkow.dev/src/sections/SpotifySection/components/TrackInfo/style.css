@@ -1,0 +1,47 @@
+.track-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2px;
+}
+
+.track-data-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.spotify-track .track-name {
+  font-size: 120%;
+}
+
+.track-artists {
+  font-size: 80%;
+}
+
+.track-timer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.track-time {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 80%;
+}
+
+.track-progress {
+  border-radius: 100px;
+  background-color: #323232;
+}
+
+.track-progress .track-progress-completed {
+  height: 4px;
+  border-radius: 100px;
+  background-color: white;
+
+  transition: width 0.5s ease-in-out;
+}

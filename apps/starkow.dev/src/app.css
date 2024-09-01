@@ -199,35 +199,6 @@ h2 .bullet {
   user-select: none;
 }
 
-.spotify-track .track-name {
-  font-size: 120%;
-}
-
-.track-artists {
-  font-size: 80%;
-}
-
-.track-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  padding: 2px;
-}
-
-.track-progress {
-  border-radius: 100px;
-  background-color: #323232;
-}
-
-.track-progress .track-progress-completed {
-  height: 4px;
-  border-radius: 100px;
-  background-color: white;
-
-  transition: width 0.5s ease-in-out;
-}
-
 .no-track-playing {
   display: flex;
   flex-direction: column;
@@ -256,36 +227,6 @@ h2 .bullet {
   to { transform: scale(1.1) translateY(-50%) rotate(360deg); }
 }
 
-.track-timer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2em;
-}
-
-.track-time {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 80%;
-}
-
-.track-data-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-/* firefox & safari fix */
-.track-image {
-  height: 100px;
-  width: 100px;
-  position: relative;
-}
-
-.track-image img {
-  height: 100%;
-}
-
 .donation-address {
   display: inline-flex;
   flex-direction: row;
@@ -305,25 +246,6 @@ h2 .bullet {
 
 .donation-address:hover {
   color: white;
-}
-
-.track-image-link {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 8px;
-  transition: opacity 0.1s linear;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.track-image:hover > .track-image-link {
-  opacity: 1;
 }
 
 .notification-container {
