@@ -203,8 +203,8 @@
     display: none;
   }
 
-  .item {
-    border-radius: 12px;
+  .item, .item-image {
+    border-radius: 16px;
   }
 
   .item-icon svg,
