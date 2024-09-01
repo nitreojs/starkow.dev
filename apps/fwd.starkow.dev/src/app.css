@@ -29,6 +29,7 @@
 
 .grid {
   display: grid;
+
   grid-template-columns: repeat(4, minmax(100px, 1fr));
   grid-template-rows: repeat(6, minmax(100px, 1fr));
   grid-gap: 2em;
@@ -114,6 +115,7 @@
   z-index: 1;
 
   transition: filter 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition-delay: 0.1s;
 }
 
 .item-icon {
@@ -155,6 +157,7 @@
 
 .item-icon, .item-text {
   transition: transform 0.3s ease;
+  transition-delay: 0.1s;
 }
 
 .item:hover .item-icon {
@@ -179,4 +182,34 @@
   pointer-events: none;
   opacity: 0.5;
   display: none;
+}
+
+@media (max-width: 640px) {
+  #app {
+    padding: 1rem;
+  }
+
+  .container {
+    gap: 1em;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(60px, 1fr));
+    grid-template-rows: repeat(6, minmax(60px, 1fr));
+    grid-gap: 1em;
+  }
+
+  .item-text-description {
+    display: none;
+  }
+
+  .item {
+    border-radius: 12px;
+  }
+
+  .item-icon svg,
+  .item-icon-centered svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
