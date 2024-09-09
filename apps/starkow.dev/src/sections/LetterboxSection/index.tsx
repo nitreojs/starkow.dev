@@ -34,7 +34,8 @@ const placeholders = [
 const getRandomElement = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
 
 export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
-  const [placeholder] = useState(getRandomElement(placeholders))
+  const placeholder = getRandomElement(placeholders)
+
   const [textareaText, setTextareaText] = useState('')
   const [isLoading, setLoading] = useState(false)
 
@@ -49,7 +50,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message, placeholder })
       })
 
       const json = await response.json()
