@@ -55,6 +55,7 @@ export function App() {
           <Item id='lastfm' url='https://fwd.starkow.dev/lastfm' photoUrl='https://i.pinimg.com/736x/d5/06/2e/d5062e95aa790116cefcc026cf1ec99c.jpg' icon={<Icons.IconLastFm />} isIconCentered />
           <Item id='photos' text='photos' description="i take photos" url='https://fwd.starkow.dev/photos' photoUrl='https://i.pinimg.com/564x/ca/79/7a/ca797a0374e8cf7c03af330c136158eb.jpg' icon={<Icons.IconTelegram />} />
           <Item id='sources' text='sources' description='sources of this site' url='https://fwd.starkow.dev/github/starkow.dev' photoUrl='https://i.pinimg.com/564x/e2/fd/08/e2fd08d03094e9088f5db9906d5ea22a.jpg' icon={<Icons.IconGitHub />} />
+          <Item id='pinterested' url='https://fwd.starkow.dev/pinterested' photoUrl='https://i.pinimg.com/564x/13/b2/17/13b21765f93fbdda132c3f056826e203.jpg' icon={<Icons.IconTelegram />} isIconCentered />
           <Item id='back' url='https://starkow.dev' photoUrl='https://i.pinimg.com/564x/13/15/01/13150186d9738e3abc77ca3006f95f2a.jpg' icon={<Icons.IconHome />} isIconCentered shouldOpenInNewTab={false} />
         </div>
   
