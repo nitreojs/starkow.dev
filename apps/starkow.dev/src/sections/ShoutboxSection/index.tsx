@@ -26,7 +26,7 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ text, date, answer }) => {
       {
         hasAnswer && (
           <div class='shoutbox-message-answer'>
-            <b>answer</b>: <i>{answer}</i>
+            <b class='pill'>answer</b> <i>{answer}</i>
           </div>
         )
       }

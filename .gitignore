@@ -24,3 +24,4 @@ lerna-debug.log*
 *.sw?
 
 **/deploy.sh
+**/.env
