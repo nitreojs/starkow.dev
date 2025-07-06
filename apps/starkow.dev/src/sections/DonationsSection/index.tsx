@@ -23,7 +23,7 @@ const cryptoElements: DonationElement[] = [
   {
     type: 'text',
     title: 'ton',
-    address: 'winterfall.ton'
+    address: 'sunset.ton'
   },
   {
     type: 'text',
