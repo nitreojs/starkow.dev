@@ -10,9 +10,14 @@ export const MainPage: FC = () => {
       <WhatDoIDoSection
         projects={[
           {
+            name: 'gift changes',
+            url: 'https://t.me/GiftChanges',
+            description: 'a telegram channel that notifies people when new gifts or upgrades for gifts release. it is my main-priority project!'
+          },
+          {
             name: 'puregram',
             url: 'https://github.starkow.dev/puregram',
-            description: 'a telegram bot api wrapper that is written in typescript. it is my main-priority project!'
+            description: 'a telegram bot api wrapper that is written in typescript. it is no longer my main-priority project... for now.'
           },
           {
             name: 'anime ai bot',
