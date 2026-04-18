@@ -1,4 +1,8 @@
 import type { FC } from 'preact/compat'
+
+import { CyclingGreeting } from './CyclingGreeting'
+
+import './style.css'
 // import { Spoiler } from '../../components'
 
 function calculateAgeSince (birthday: Date) {
@@ -27,7 +31,7 @@ export const WelcomeSection: FC = () => {
     <section id='welcome'>
       <h1>welcome!</h1>
       <p>
-        hello! my name's <b>alex<span class='text-half-visible'>ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <span class='with-note' data-note={`born ${BIRTHDAY.toISOString().slice(0, 10)}`}><b>{age}</b> years old</span>.
+        <b><CyclingGreeting />!</b> my name's <b>alex<span class='text-half-visible'>ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <span class='with-note' data-note={`born ${BIRTHDAY.toISOString().slice(0, 10)}`}><b>{age}</b> years old</span>.
         {/* <Spoiler
           text={`which means i am a virgin for ${dws} days straight`}
           /> */}
