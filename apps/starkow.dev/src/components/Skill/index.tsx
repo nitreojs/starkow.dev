@@ -70,5 +70,5 @@ export const Skill: FC<SkillProps> = ({ name, Icon, href, note, since, disliked 
     )
   }
 
-  return <span {...commonProps}>{content}</span>
+  return <span {...commonProps} tabindex={tooltip ? 0 : undefined}>{content}</span>
 }

@@ -312,15 +312,21 @@ svg {
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
-.with-note[data-note]:hover::after {
+.with-note[data-note]:hover::after,
+.with-note[data-note]:focus::after,
+.with-note[data-note]:focus-within::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
-@media (hover: none) {
-  .with-note[data-note]::after {
-    display: none;
-  }
+.with-note[tabindex] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.with-note[tabindex]:focus,
+.with-note[tabindex]:focus-visible {
+  outline: none;
 }
 
 

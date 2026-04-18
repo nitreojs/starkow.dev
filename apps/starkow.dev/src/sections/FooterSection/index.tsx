@@ -87,11 +87,11 @@ export const FooterSection: FC = () => {
     </p>
 
     <p class='site-footer-stamp text-small'>
-      built <span class='with-note' data-note={__BUILD_DATE__}>{formatBuildDate(__BUILD_DATE__)}</span>
+      built <span class='with-note' data-note={__BUILD_DATE__} tabindex={0}>{formatBuildDate(__BUILD_DATE__)}</span>
       {views !== null && (
         <>
           {' · '}
-          <span class='with-note' data-note='what tooltip did you expect here'>
+          <span class='with-note' data-note='what tooltip did you expect here' tabindex={0}>
             {views.toLocaleString()} views
           </span>
         </>
