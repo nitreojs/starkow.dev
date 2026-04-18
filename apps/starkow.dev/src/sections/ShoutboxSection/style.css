@@ -32,6 +32,14 @@
   overflow-wrap: anywhere;
 }
 
+.shoutbox-message-text::before {
+  content: '';
+  float: right;
+
+  width: 4.5em;
+  height: 1.4em;
+}
+
 .shoutbox-message-quote {
   display: block;
   margin-bottom: 0.5em;
