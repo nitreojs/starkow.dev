@@ -59,7 +59,7 @@ export const MainPage: FC = () => {
               'a telegram bot api wrapper. ',
               { type: 'highlight', children: [ 'yeah that\'s it what more did you expect here' ] }
             ],
-            tags: ['telegram', 'stale'],
+            tags: ['telegram', 'stale', 'bro', 'i', 'love', 'these', 'tags', 'they\'re', 'fun', 'af'],
             accentFrom: '#1d84bb',
             accentTo: '#229ed9',
             language: 'typescript'
