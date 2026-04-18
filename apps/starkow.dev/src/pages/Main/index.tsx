@@ -27,19 +27,37 @@ export const MainPage: FC = () => {
             name: 'gift changes',
             url: 'https://t.me/GiftChanges',
             description: [
-              'a telegram channel that notifies people when new gifts or upgrades for gifts release'
+              'a telegram channel that notifies people when new gifts or upgrades for gifts release. ',
+              { type: 'highlight', children: [ 'first of its kind!' ] }
             ],
-            tags: ['telegram', 'gifts', 'current'],
+            tags: ['telegram', 'current'],
             accentFrom: '#ff2a2a',
             accentTo: '#250808',
+            language: 'typescript'
+          },
+          {
+            name: 'calcmulabot',
+            url: 'https://t.me/calcmulabot',
+            description: [
+              'a telegram bot for various calculations ',
+              { type: 'muted', children: [ '(e.g. currencies or measures)' ] },
+              ' with its own ',
+              { type: 'highlight', children: [ 'programming language' ] },
+              '. what\'s ',
+              { type: 'code', children: [ '100 + 10%' ] },
+              ', btw?'
+            ],
+            tags: ['telegram', 'bot', 'current'],
+            accentFrom: '#ffffff',
+            accentTo: '#2aaf99',
             language: 'typescript'
           },
           {
             name: 'puregram',
             url: 'https://github.starkow.dev/puregram',
             description: [
-              'a telegram bot api wrapper that is written in ',
-              { type: 'bold', children: ['typescript'] }
+              'a telegram bot api wrapper. ',
+              { type: 'highlight', children: [ 'yeah that\'s it what more did you expect here' ] }
             ],
             tags: ['telegram', 'stale'],
             accentFrom: '#1d84bb',
@@ -57,7 +75,7 @@ export const MainPage: FC = () => {
             language: 'python',
             accentFrom: '#fc4ab8',
             accentTo: '#8b3896',
-            tags: ['archived', 'deprecated']
+            tags: ['bot', 'archived', 'deprecated']
           }
         ]}
       />
