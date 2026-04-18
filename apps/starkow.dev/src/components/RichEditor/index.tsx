@@ -8,6 +8,7 @@ import './style.css'
 
 interface RichEditorProps {
   initialHtml?: string
+  resetSignal?: number
   placeholder?: string
   disabled?: boolean
   onChange: (payload: { content: Content[], plain: string, html: string }) => void
@@ -73,9 +74,10 @@ const applyLink = () => {
   document.execCommand('createLink', false, href)
 }
 
-export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', placeholder, disabled, onChange, onSubmit }) => {
+export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', resetSignal, placeholder, disabled, onChange, onSubmit }) => {
   const editorRef = useRef<HTMLDivElement | null>(null)
   const hydrated = useRef(false)
+  const lastReset = useRef(resetSignal)
 
   const emit = useCallback(() => {
     const node = editorRef.current
@@ -102,6 +104,19 @@ export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', placeholder,
 
     emit()
   }, [initialHtml, emit])
+
+  useEffect(() => {
+    if (resetSignal === lastReset.current) return
+
+    lastReset.current = resetSignal
+
+    const node = editorRef.current
+
+    if (node === null) return
+
+    node.innerHTML = ''
+    emit()
+  }, [resetSignal, emit])
 
   const handleCommand = (command: FormatCommand) => (event: Event) => {
     event.preventDefault()

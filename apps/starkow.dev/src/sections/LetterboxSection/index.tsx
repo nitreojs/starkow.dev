@@ -88,6 +88,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
   const [html, setHtml] = useState(initialDraft.html)
   const [content, setContent] = useState<Content[]>([])
   const [isLoading, setLoading] = useState(false)
+  const [resetSignal, setResetSignal] = useState(0)
   const [replyTarget, setReplyTarget] = useAtom(replyTarget$atom)
 
   const draftTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -147,6 +148,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
         setPlainText('')
         setHtml('')
         setContent([])
+        setResetSignal(prev => prev + 1)
         saveDraft({ html: '', plain: '' })
         setReplyTarget(null)
         addNotification('message has been successfully sent!', NotificationType.Success)
@@ -175,6 +177,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
       <div class='letterbox-container'>
         <RichEditor
           initialHtml={initialDraft.html}
+          resetSignal={resetSignal}
           placeholder={placeholder}
           disabled={isLoading}
           onChange={({ content: nextContent, plain, html: nextHtml }) => {
