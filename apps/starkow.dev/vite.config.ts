@@ -9,5 +9,13 @@ export default defineConfig({
     preact(),
     tsconfigPaths(),
     viteCompression()
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:6135',
+        changeOrigin: true,
+      },
+    },
+  },
 })

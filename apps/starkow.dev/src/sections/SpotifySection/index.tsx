@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { API_URL } from '../../shared'
 
 import type { Lyric, TrackData } from './types'
-import { TrackImage, TrackInfo, TrackLyrics, RecentlyPlayed } from './components'
+import { TrackImage, TrackInfo, TrackLyrics, TrackNoise, RecentlyPlayed } from './components'
 import { RichContent } from '../../components'
 import { getOfflineMessage } from './offline'
 
@@ -134,6 +134,7 @@ const SpotifyContent: FC = () => {
     return (
       <>
         <img class='track-background' src={trackData.album.image} alt={trackData.album.name} />
+        <TrackNoise />
 
         <TrackLyrics lyrics={trackData.lyrics} index={lyricIndex} />
         <TrackImage data={trackData} />

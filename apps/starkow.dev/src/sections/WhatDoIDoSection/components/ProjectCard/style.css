@@ -213,17 +213,13 @@
 }
 
 .project-body code {
-  position: relative;
-  font-family: inherit;
-}
-
-.project-body code::before {
-  content: '';
-  position: absolute;
-  inset: 0 -0.3em -0.1em;
+  padding: 0 0.3em;
   background: rgb(255 255 255 / 0.08);
   border-radius: 0.3em;
-  z-index: -1;
+  font-family: inherit;
+
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 .project-body mark {

@@ -1,0 +1,80 @@
+.letterbox-counter {
+  margin-top: 0.3em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 0.4);
+  transition: color 150ms ease;
+}
+
+.letterbox-counter[data-state='warn'] {
+  color: #ffd67a;
+}
+
+.letterbox-counter[data-state='over'] {
+  color: #ff8a8a;
+}
+
+.letterbox-reply {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6em;
+
+  margin-bottom: 0.6em;
+  padding: 0.6em 0.8em;
+  border-radius: 8px;
+  border-left: 2px solid rgb(255 200 120 / 0.5);
+  background: rgb(255 255 255 / 0.03);
+}
+
+.letterbox-reply-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.letterbox-reply-label {
+  font-size: 0.7em;
+  opacity: 0.5;
+  margin-bottom: 0.2em;
+}
+
+.letterbox-reply-preview {
+  font-size: 0.9em;
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.letterbox-reply-cancel {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.1em;
+  line-height: 1;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.letterbox-reply-cancel:hover {
+  opacity: 1;
+}
+
+.letterbox-reply-cancel:focus {
+  outline: none;
+}
+
+.letterbox-reply-cancel:focus-visible {
+  opacity: 1;
+  outline: none;
+}

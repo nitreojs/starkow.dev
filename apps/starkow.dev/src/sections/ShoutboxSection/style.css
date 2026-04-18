@@ -5,6 +5,8 @@
 }
 
 .shoutbox-message {
+  position: relative;
+
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -15,25 +17,132 @@
   /* flex-grow: 1; */
 }
 
+.shoutbox-message-pinned {
+  border-left: 3px solid rgb(255 200 120 / 0.5);
+}
+
+.shoutbox-message-pin {
+  font-size: 0.7em;
+  opacity: 0.5;
+  margin-bottom: 0.4em;
+}
+
 .shoutbox-message-text {
   white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.shoutbox-message-quote {
+  display: block;
+  margin-bottom: 0.5em;
+  padding: 0.2em 0 0.2em 0.6em;
+  border-left: 2px solid rgb(255 200 120 / 0.4);
+  font-size: 0.85em;
+  opacity: 0.6;
+  text-decoration: none;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.shoutbox-message-quote:hover {
+  opacity: 0.9;
+}
+
+.shoutbox-message-quote-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shoutbox-message-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+  flex-wrap: wrap;
+  margin-top: 0.6em;
+}
+
+.shoutbox-message-reply {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.8em;
+  color: inherit;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.shoutbox-message-reply:hover {
+  opacity: 0.9;
+}
+
+.shoutbox-message-reply:focus {
+  outline: none;
+}
+
+.shoutbox-message-reply:focus-visible {
+  opacity: 0.9;
+  outline: none;
 }
 
 .shoutbox-message-date {
   font-size: 0.7em;
   opacity: 0.3;
-  text-align: right;
   text-decoration: none;
+  white-space: nowrap;
 }
 
-.shoutbox-message-answer {
-  padding-top: 0.5em
+.shoutbox-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+
+  margin-top: 0.6em;
+  padding: 0.1em 0 0.1em 0.8em;
+
+  border-left: 2px solid rgb(255 255 255 / 0.2);
+
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.shoutbox-answer .shoutbox-answer {
+  margin-top: 0.4em;
+}
+
+.shoutbox-answer-flat,
+.shoutbox-answer-flat .shoutbox-answer {
+  padding-left: 0;
+  border-left: none;
+  margin-top: 0.4em;
+}
+
+.shoutbox-answer-date {
+  font-size: 0.7em;
+  opacity: 0.3;
+  text-decoration: none;
 }
 
 .shoutbox-pagination {
   display: flex;
   gap: 0.4em;
   justify-content: center;
+  align-items: center;
+}
+
+.shoutbox-pagination-status {
+  font-size: 0.9em;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+  padding: 0 0.4em;
 }
 
 .centered {
@@ -52,4 +161,75 @@
   display: inline-block;
   padding: 0px 6px;
   background-color: #123456;
+}
+
+.shoutbox-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+}
+
+.shoutbox-reaction {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+
+  padding: 2px 8px;
+  border-radius: 999px;
+
+  font-size: 0.85em;
+  font-family: inherit;
+
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  color: inherit;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, transform 120ms ease;
+}
+
+.shoutbox-reaction:hover {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.2);
+}
+
+.shoutbox-reaction:focus {
+  outline: none;
+}
+
+.shoutbox-reaction:focus-visible {
+  outline: 1px solid rgb(255 200 120 / 0.5);
+  outline-offset: 1px;
+}
+
+.shoutbox-reaction:active {
+  transform: scale(0.95);
+}
+
+.shoutbox-reaction-empty {
+  opacity: 0.5;
+}
+
+.shoutbox-reaction-empty:hover {
+  opacity: 1;
+}
+
+.shoutbox-reaction-mine {
+  background: rgb(255 200 120 / 0.12);
+  border-color: rgb(255 200 120 / 0.35);
+  opacity: 1;
+}
+
+.shoutbox-reaction-mine:hover {
+  background: rgb(255 200 120 / 0.2);
+}
+
+.shoutbox-reaction-emoji {
+  font-size: 1em;
+  line-height: 1;
+}
+
+.shoutbox-reaction-count {
+  font-variant-numeric: tabular-nums;
+  color: rgb(255 255 255 / 0.7);
 }
