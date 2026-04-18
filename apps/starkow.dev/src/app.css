@@ -27,8 +27,16 @@
 }
 
 hr {
-  margin: 0.5em 0;
-  opacity: 0.1;
+  height: 1px;
+  margin: 1em 0;
+  border: none;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(255 255 255 / 0.18) 20%,
+    rgb(255 255 255 / 0.18) 80%,
+    transparent 100%
+  );
 }
 
 .letterbox-container {

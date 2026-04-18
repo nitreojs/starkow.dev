@@ -1,5 +1,5 @@
 import { FC } from 'preact/compat'
-import { ButtonsBlockSection, DonationsSection, LetterboxSection, NotificationsSection, ShoutboxSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
+import { ButtonsBlockSection, DonationsSection, FooterSection, LetterboxSection, NotificationsSection, ShoutboxSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
 import * as Icons from '@starkow.dev/icons'
 
 export const MainPage: FC = () => {
@@ -88,17 +88,7 @@ export const MainPage: FC = () => {
 
       <hr />
 
-      <footer>
-        <p>
-          brought to you by <b>starkow</b> with ❤️
-        </p>
-        <p>
-          some design ideas were taken from <a href='https://jsopn.com'>jsopn.com</a>, <a href='https://es3n1n.eu'>es3n1n.eu</a> & <a href='https://tei.su'>tei.su</a>
-        </p>
-        <p>
-          i've never written a real website before this one btw
-        </p>
-      </footer>
+      <FooterSection />
 
       <section class='barcode-container'>
         <Icons.IconQRCode />

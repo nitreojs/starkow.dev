@@ -2,4 +2,38 @@
   display: flex;
   gap: 0.4em;
   flex-wrap: wrap;
+
+  padding: 0.2em 0;
+}
+
+.buttons-block > * {
+  background: rgb(255 255 255 / 0.04);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  border: none;
+
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 250ms ease,
+    color 150ms ease;
+}
+
+.buttons-block > *:nth-child(odd) {
+  transform: rotate(-0.6deg) translateY(0);
+}
+
+.buttons-block > *:nth-child(even) {
+  transform: rotate(0.8deg) translateY(-2px);
+}
+
+.buttons-block > *:hover {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+  transform: rotate(0deg) translateY(0);
+}
+
+.buttons-block > *:focus,
+.buttons-block > *:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgb(255 200 120 / 0.5);
 }

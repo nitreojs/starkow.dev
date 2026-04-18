@@ -1,0 +1,65 @@
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.4em;
+
+  font-size: 0.8em;
+  font-weight: 300;
+  color: rgb(255 255 255 / 0.5);
+  text-align: center;
+  width: 100%;
+}
+
+.site-footer-socials {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.site-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25em;
+
+  margin-bottom: 0.5em;
+  font-size: 1.35em;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.site-footer-socials .skill {
+  padding: 5px 0.55em;
+  gap: 0.55em;
+}
+
+.site-footer-socials .skill svg {
+  width: 1em;
+  height: 1em;
+}
+
+.site-footer-credits {
+  line-height: 1.9;
+}
+
+.site-footer-stamp {
+  margin-top: 0.6em;
+  color: rgb(255 255 255 / 0.45);
+  font-family: 'Cascadia Code', monospace;
+}
+
+.site-footer-stamp code {
+  padding: 0 0.3em;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.06);
+}
+
+.site-footer-stamp a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.site-footer-stamp a:hover code {
+  background: rgb(255 255 255 / 0.12);
+}
