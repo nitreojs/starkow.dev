@@ -82,7 +82,9 @@ export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', resetSignal,
   const emit = useCallback(() => {
     const node = editorRef.current
 
-    if (node === null) return
+    if (node === null) {
+      return
+    }
 
     const content = serializeEditor(node)
     const plain = flattenToText(content)
@@ -94,7 +96,9 @@ export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', resetSignal,
   useEffect(() => {
     const node = editorRef.current
 
-    if (node === null || hydrated.current) return
+    if (node === null || hydrated.current) {
+      return
+    }
 
     hydrated.current = true
 
@@ -106,13 +110,17 @@ export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', resetSignal,
   }, [initialHtml, emit])
 
   useEffect(() => {
-    if (resetSignal === lastReset.current) return
+    if (resetSignal === lastReset.current) {
+      return
+    }
 
     lastReset.current = resetSignal
 
     const node = editorRef.current
 
-    if (node === null) return
+    if (node === null) {
+      return
+    }
 
     node.innerHTML = ''
     emit()
