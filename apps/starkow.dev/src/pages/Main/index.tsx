@@ -12,22 +12,52 @@ export const MainPage: FC = () => {
           {
             name: 'j++gram',
             url: 'https://jppgr.am',
-            description: 'a custom mtproto telegram server made from scratch with my friend @evaqum'
+            description: [
+              'a custom ',
+              { type: 'code', children: ['mtproto'] },
+              ' telegram server made from scratch with my friend ',
+              { type: 'link', href: 'https://t.me/evaqum', children: ['@evaqum'] }
+            ],
+            tags: ['wip', 'telegram', 'mtproto', 'current'],
+            accentFrom: '#ffeb00',
+            accentTo: '#252901',
+            language: 'typescript'
           },
           {
             name: 'gift changes',
             url: 'https://t.me/GiftChanges',
-            description: 'a telegram channel that notifies people when new gifts or upgrades for gifts release'
+            description: [
+              'a telegram channel that notifies people when new gifts or upgrades for gifts release'
+            ],
+            tags: ['telegram', 'gifts', 'current'],
+            accentFrom: '#ff2a2a',
+            accentTo: '#250808',
+            language: 'typescript'
           },
           {
             name: 'puregram',
             url: 'https://github.starkow.dev/puregram',
-            description: 'a telegram bot api wrapper that is written in typescript'
+            description: [
+              'a telegram bot api wrapper that is written in ',
+              { type: 'bold', children: ['typescript'] }
+            ],
+            tags: ['telegram', 'stale'],
+            accentFrom: '#1d84bb',
+            accentTo: '#229ed9',
+            language: 'typescript'
           },
           {
             name: 'anime ai bot',
             url: 'https://t.me/qq_2d_ai_bot',
-            description: 'a telegram bot that transforms an image into an anime-style image. at its peak it had more than 3.5 million users!'
+            description: [
+              'a telegram bot that transforms an image into an anime-style image. at its peak it had ',
+              { type: 'highlight', children: ['more than 3.5 million users'] },
+              '!'
+            ],
+            language: 'python',
+            accentFrom: '#fc4ab8',
+            accentTo: '#8b3896',
+            tags: ['archived', 'deprecated']
           }
         ]}
       />
