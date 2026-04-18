@@ -189,9 +189,11 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
   return (
     <div class={clsx('shoutbox-message', pinned && 'shoutbox-message-pinned', admin !== null && 'shoutbox-message-admin')} id={`shoutbox-${id}`}>
       <div class='shoutbox-message-actions'>
-        <button type='button' class='shoutbox-message-reply' onClick={() => onReply(id, text)}>
-          [reply]
-        </button>
+        {!pinned && (
+          <button type='button' class='shoutbox-message-reply' onClick={() => onReply(id, text)}>
+            [reply]
+          </button>
+        )}
         {admin !== null && (
           <>
             <button
