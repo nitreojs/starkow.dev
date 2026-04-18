@@ -264,6 +264,64 @@ svg {
   display: block;
 }
 
+.info-line {
+  font-size: 0.9em;
+  color: rgb(255 255 255 / 0.85);
+  line-height: 1.7;
+}
+
+.info-label {
+  color: rgb(255 255 255 / 0.5);
+  margin-right: 0.2em;
+}
+
+.with-note {
+  position: relative;
+}
+
+.with-note[data-note]::after {
+  content: attr(data-note);
+
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+
+  transform: translateX(-50%) translateY(4px);
+
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  font-size: 0.7rem;
+  line-height: 1.3;
+
+  max-width: min(280px, 90vw);
+  width: max-content;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  text-align: center;
+
+  background: #1a1a1a;
+  color: rgb(255 255 255 / 0.9);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+
+  pointer-events: none;
+  opacity: 0;
+
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.with-note[data-note]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: none) {
+  .with-note[data-note]::after {
+    display: none;
+  }
+}
+
 
 #noise {
   position: fixed;

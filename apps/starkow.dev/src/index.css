@@ -50,6 +50,7 @@ body {
   justify-content: flex-start;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 section > h1 {

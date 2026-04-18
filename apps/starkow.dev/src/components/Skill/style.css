@@ -1,0 +1,49 @@
+.skill {
+  position: relative;
+
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+  gap: 0.45em;
+  line-height: 1;
+
+  padding: 3px 0.35em;
+  border-radius: 0.35em;
+
+  color: inherit;
+  text-decoration: none;
+
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+a.skill:hover {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+.skill svg {
+  width: 0.75em;
+  height: 0.75em;
+  opacity: 0.8;
+  transform: translateY(0.5px);
+}
+
+.skill-disliked {
+  color: rgb(255 255 255 / 0.55);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.skill-disliked:hover {
+  color: rgb(255 255 255 / 0.75);
+}
+
+.skill-sep {
+  display: inline-block;
+  margin: 0 0.1em;
+  color: rgb(255 255 255 / 0.3);
+  user-select: none;
+}
