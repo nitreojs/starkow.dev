@@ -15,3 +15,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+.projects-fallback {
+  margin-bottom: 1rem;
+  font-size: 0.9em;
+}
