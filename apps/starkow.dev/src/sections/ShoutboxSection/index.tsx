@@ -2,9 +2,9 @@ import { FC, useCallback, useEffect, useState } from 'preact/compat'
 import { useAtomValue, useSetAtom } from 'jotai'
 import clsx from 'clsx'
 
-import { CoolButton, RichContent } from '../../components'
-import { flattenToText } from '../../components/RichEditor/serialize'
-import { API_URL, autoLinkify, formatRelativeTime, getFingerprint } from '../../shared'
+import { CoolButton, RichContent, RichEditor } from '../../components'
+import type { Content } from '../../components/RichContent/types'
+import { API_URL, autoLinkify, contentToHtml, formatRelativeTime, getFingerprint } from '../../shared'
 import { adminKey$atom, replyTarget$atom } from '../../state'
 import { ShoutboxAnswer, ShoutboxMessage as ShoutboxMessageType } from './types'
 import { Reactions } from './Reactions'
@@ -22,8 +22,8 @@ const buildQuote = (text: string): string =>
 interface AdminHandlers {
   onDeleteMessage: (id: string) => void
   onSetPinned: (id: string, pinned: boolean) => void
-  onAddAnswer: (id: string, text: string) => Promise<boolean>
-  onEditAnswer: (id: string, index: number, text: string) => Promise<boolean>
+  onAddAnswer: (id: string, content: Content[]) => Promise<boolean>
+  onEditAnswer: (id: string, index: number, content: Content[]) => Promise<boolean>
   onDeleteAnswer: (id: string, index: number) => void
 }
 
@@ -37,45 +37,53 @@ interface ShoutboxMessageProps extends ShoutboxMessageType {
 const ANSWER_INDENT_CAP = 4
 
 interface AnswerEditorProps {
-  initialText: string
-  onSave: (text: string) => Promise<boolean>
+  initialContent: Content[]
+  onSave: (content: Content[]) => Promise<boolean>
   onCancel: () => void
   submitLabel?: string
 }
 
-const AnswerEditor: FC<AnswerEditorProps> = ({ initialText, onSave, onCancel, submitLabel = 'save' }) => {
-  const [text, setText] = useState(initialText)
+const AnswerEditor: FC<AnswerEditorProps> = ({ initialContent, onSave, onCancel, submitLabel = 'save' }) => {
+  const [content, setContent] = useState<Content[]>(initialContent)
+  const [plain, setPlain] = useState('')
   const [busy, setBusy] = useState(false)
+  const [resetSignal, setResetSignal] = useState(0)
+
+  const initialHtml = useState(() => contentToHtml(initialContent))[0]
 
   const submit = async () => {
-    const trimmed = text.trim()
-
-    if (trimmed === '' || busy) {
+    if (plain.trim() === '' || busy) {
       return
     }
 
     setBusy(true)
 
-    const ok = await onSave(trimmed)
+    const ok = await onSave(content)
 
     setBusy(false)
 
     if (ok) {
-      setText('')
+      setContent([])
+      setPlain('')
+      setResetSignal(prev => prev + 1)
     }
   }
 
   return (
     <div class='shoutbox-admin-editor'>
-      <textarea
-        class='shoutbox-admin-textarea'
-        value={text}
+      <RichEditor
+        initialHtml={initialHtml}
+        resetSignal={resetSignal}
+        placeholder='answer...'
         disabled={busy}
-        onInput={e => setText((e.currentTarget as HTMLTextAreaElement).value)}
-        placeholder='answer text...'
+        onChange={({ content: next, plain: nextPlain }) => {
+          setContent(next)
+          setPlain(nextPlain)
+        }}
+        onSubmit={submit}
       />
       <div class='shoutbox-admin-editor-actions'>
-        <button type='button' class='shoutbox-admin-action' onClick={submit} disabled={busy || text.trim() === ''}>
+        <button type='button' class='shoutbox-admin-action' onClick={submit} disabled={busy || plain.trim() === ''}>
           [{busy ? '...' : submitLabel}]
         </button>
         <button type='button' class='shoutbox-admin-action' onClick={onCancel} disabled={busy}>
@@ -105,12 +113,12 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
   const flatten = index >= ANSWER_INDENT_CAP
   const isEditing = editingIndex === index
 
-  const handleSave = async (text: string): Promise<boolean> => {
+  const handleSave = async (next: Content[]): Promise<boolean> => {
     if (admin === null) {
       return false
     }
 
-    const ok = await admin.onEditAnswer(messageId, index, text)
+    const ok = await admin.onEditAnswer(messageId, index, next)
 
     if (ok) {
       onEndEdit()
@@ -123,7 +131,7 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
     <div class={clsx('shoutbox-answer', flatten && 'shoutbox-answer-flat')}>
       {isEditing ? (
         <AnswerEditor
-          initialText={flattenToText(content)}
+          initialContent={content}
           onSave={handleSave}
           onCancel={onEndEdit}
         />
@@ -170,12 +178,12 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
   const [editingAnswerIndex, setEditingAnswerIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 
-  const handleAddAnswer = async (text: string): Promise<boolean> => {
+  const handleAddAnswer = async (next: Content[]): Promise<boolean> => {
     if (admin === null) {
       return false
     }
 
-    const ok = await admin.onAddAnswer(id, text)
+    const ok = await admin.onAddAnswer(id, next)
 
     if (ok) {
       setIsAdding(false)
@@ -238,7 +246,7 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
         <div class='shoutbox-admin-add-answer'>
           {isAdding ? (
             <AnswerEditor
-              initialText=''
+              initialContent={[]}
               onSave={handleAddAnswer}
               onCancel={() => setIsAdding(false)}
               submitLabel='add answer'
@@ -426,10 +434,10 @@ export const ShoutboxSection: FC = () => {
         fetchShoutbox(page)
       }
     },
-    onAddAnswer: async (id, text) => {
+    onAddAnswer: async (id, content) => {
       const ok = await adminRequest(`/api/shoutbox/${id}/answers`, {
         method: 'POST',
-        body: JSON.stringify({ content: autoLinkify(text) })
+        body: JSON.stringify({ content })
       })
 
       if (ok) {
@@ -438,10 +446,10 @@ export const ShoutboxSection: FC = () => {
 
       return ok
     },
-    onEditAnswer: async (id, index, text) => {
+    onEditAnswer: async (id, index, content) => {
       const ok = await adminRequest(`/api/shoutbox/${id}/answers/${index}`, {
         method: 'PATCH',
-        body: JSON.stringify({ content: autoLinkify(text) })
+        body: JSON.stringify({ content })
       })
 
       if (ok) {

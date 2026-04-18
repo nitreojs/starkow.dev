@@ -1,6 +1,7 @@
 export * from './admin'
 export * from './auto-link'
 export * from './constants'
+export * from './content-to-html'
 export * from './fingerprint'
 export * from './relative-time'
 export * from './time-of-day'

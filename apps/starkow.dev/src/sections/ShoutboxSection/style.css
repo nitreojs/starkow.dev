@@ -210,6 +210,15 @@
   margin: 0.2em 0;
 }
 
+.shoutbox-admin-editor .rich-editor {
+  border-radius: 6px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.shoutbox-admin-editor .rich-editor-surface {
+  min-height: 3em;
+}
+
 .shoutbox-admin-textarea {
   min-height: 3em;
   padding: 0.5em 0.7em;
