@@ -11,7 +11,9 @@ export const MainPage: FC = () => {
   useEffect(() => {
     fetch(`${API_URL}/api/projects`)
       .then(r => {
-        if (!r.ok) throw new Error(`status ${r.status}`)
+        if (!r.ok) {
+          throw new Error(`status ${r.status}`)
+        }
 
         return r.json()
       })

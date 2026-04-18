@@ -9,11 +9,15 @@ export const TrackNoise: FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current
 
-    if (canvas === null) return
+    if (canvas === null) {
+      return
+    }
 
     const ctx = canvas.getContext('2d')
 
-    if (ctx === null) return
+    if (ctx === null) {
+      return
+    }
 
     let running = true
 
@@ -31,7 +35,9 @@ export const TrackNoise: FC = () => {
     const resize = () => {
       const parent = canvas.parentElement
 
-      if (parent === null) return
+      if (parent === null) {
+        return
+      }
 
       const rect = parent.getBoundingClientRect()
 
@@ -44,7 +50,9 @@ export const TrackNoise: FC = () => {
     let last = 0
 
     const tick = (now: number) => {
-      if (!running) return
+      if (!running) {
+        return
+      }
 
       if (now - last >= frameInterval) {
         last = now

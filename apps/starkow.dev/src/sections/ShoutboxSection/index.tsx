@@ -49,7 +49,9 @@ const AnswerEditor: FC<AnswerEditorProps> = ({ initialText, onSave, onCancel, su
   const submit = async () => {
     const trimmed = text.trim()
 
-    if (trimmed === '' || busy) return
+    if (trimmed === '' || busy) {
+      return
+    }
 
     setBusy(true)
 
@@ -57,7 +59,9 @@ const AnswerEditor: FC<AnswerEditorProps> = ({ initialText, onSave, onCancel, su
 
     setBusy(false)
 
-    if (ok) setText('')
+    if (ok) {
+      setText('')
+    }
   }
 
   return (
@@ -101,11 +105,15 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
   const isEditing = editingIndex === index
 
   const handleSave = async (text: string): Promise<boolean> => {
-    if (admin === null) return false
+    if (admin === null) {
+      return false
+    }
 
     const ok = await admin.onEditAnswer(messageId, index, text)
 
-    if (ok) onEndEdit()
+    if (ok) {
+      onEndEdit()
+    }
 
     return ok
   }
@@ -162,11 +170,15 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
   const [isAdding, setIsAdding] = useState(false)
 
   const handleAddAnswer = async (text: string): Promise<boolean> => {
-    if (admin === null) return false
+    if (admin === null) {
+      return false
+    }
 
     const ok = await admin.onAddAnswer(id, text)
 
-    if (ok) setIsAdding(false)
+    if (ok) {
+      setIsAdding(false)
+    }
 
     return ok
   }
@@ -286,7 +298,9 @@ export const ShoutboxSection: FC = () => {
     let snapshot: ShoutboxMessageType | undefined
 
     setMessages(prev => prev.map(m => {
-      if (m.id !== id) return m
+      if (m.id !== id) {
+        return m
+      }
 
       snapshot = m
 
@@ -348,7 +362,9 @@ export const ShoutboxSection: FC = () => {
   }, [addNotification])
 
   const adminRequest = useCallback(async (path: string, init: RequestInit): Promise<boolean> => {
-    if (adminKey === null) return false
+    if (adminKey === null) {
+      return false
+    }
 
     try {
       const response = await fetch(`${API_URL}${path}`, {
@@ -378,11 +394,15 @@ export const ShoutboxSection: FC = () => {
 
   const adminHandlers: AdminHandlers | null = adminKey === null ? null : {
     onDeleteMessage: async (id) => {
-      if (!window.confirm('delete this message?')) return
+      if (!window.confirm('delete this message?')) {
+        return
+      }
 
       const ok = await adminRequest(`/api/shoutbox/${id}`, { method: 'DELETE' })
 
-      if (ok) fetchShoutbox(page)
+      if (ok) {
+        fetchShoutbox(page)
+      }
     },
     onAddAnswer: async (id, text) => {
       const ok = await adminRequest(`/api/shoutbox/${id}/answers`, {
@@ -390,7 +410,9 @@ export const ShoutboxSection: FC = () => {
         body: JSON.stringify({ content: autoLinkify(text) })
       })
 
-      if (ok) fetchShoutbox(page)
+      if (ok) {
+        fetchShoutbox(page)
+      }
 
       return ok
     },
@@ -400,20 +422,28 @@ export const ShoutboxSection: FC = () => {
         body: JSON.stringify({ content: autoLinkify(text) })
       })
 
-      if (ok) fetchShoutbox(page)
+      if (ok) {
+        fetchShoutbox(page)
+      }
 
       return ok
     },
     onDeleteAnswer: async (id, index) => {
-      if (!window.confirm('delete this answer?')) return
+      if (!window.confirm('delete this answer?')) {
+        return
+      }
 
       const ok = await adminRequest(`/api/shoutbox/${id}/answers/${index}`, { method: 'DELETE' })
 
-      if (ok) fetchShoutbox(page)
+      if (ok) {
+        fetchShoutbox(page)
+      }
     }
   }
 
-  useEffect(() => { fetchShoutbox() }, [])
+  useEffect(() => {
+    fetchShoutbox()
+  }, [])
   useInterval(() => fetchShoutbox(page), 15_000, [page])
 
   return (

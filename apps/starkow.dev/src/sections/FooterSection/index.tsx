@@ -55,48 +55,50 @@ export const FooterSection: FC = () => {
 
     fetchViews()
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   return (
-  <footer class='site-footer'>
-    <p class='info-line site-footer-socials'>
-      {socials.map((s, i) => (
-        <>
-          {i > 0 && <span class='skill-sep'>•</span>}
-          <Skill key={s.name} name={s.name} Icon={s.Icon} href={s.url} note={s.note} />
-        </>
-      ))}
-    </p>
+    <footer class='site-footer'>
+      <p class='info-line site-footer-socials'>
+        {socials.map((s, i) => (
+          <>
+            {i > 0 && <span class='skill-sep'>•</span>}
+            <Skill key={s.name} name={s.name} Icon={s.Icon} href={s.url} note={s.note} />
+          </>
+        ))}
+      </p>
 
-    <p>
+      <p>
       brought to you by <b>starkow</b> with ❤️
-    </p>
+      </p>
 
-    <p class='site-footer-credits'>
+      <p class='site-footer-credits'>
       some design ideas were taken from {' '}
-      <Skill name='jsopn.com' href='https://jsopn.com' note='idealistic as fuck' />
-      {' '}
-      <Skill name='es3n1n.eu' href='https://es3n1n.eu' note='esenin hiiiii :3' />
-      {' '}
-      <Skill name='tei.su' href='https://tei.su' note='ummmmmmmmmm idk alina is cool tho' />
-    </p>
+        <Skill name='jsopn.com' href='https://jsopn.com' note='idealistic as fuck' />
+        {' '}
+        <Skill name='es3n1n.eu' href='https://es3n1n.eu' note='esenin hiiiii :3' />
+        {' '}
+        <Skill name='tei.su' href='https://tei.su' note='ummmmmmmmmm idk alina is cool tho' />
+      </p>
 
-    <p>
+      <p>
       i've never written a real website before this one btw
-    </p>
+      </p>
 
-    <p class='site-footer-stamp text-small'>
+      <p class='site-footer-stamp text-small'>
       built <span class='with-note' data-note={__BUILD_DATE__} tabindex={0}>{formatBuildDate(__BUILD_DATE__)}</span>
-      {views !== null && (
-        <>
-          {' · '}
-          <span class='with-note' data-note='what tooltip did you expect here' tabindex={0}>
-            {views.toLocaleString()} views
-          </span>
-        </>
-      )}
-    </p>
-  </footer>
+        {views !== null && (
+          <>
+            {' · '}
+            <span class='with-note' data-note='what tooltip did you expect here' tabindex={0}>
+              {views.toLocaleString()} views
+            </span>
+          </>
+        )}
+      </p>
+    </footer>
   )
 }

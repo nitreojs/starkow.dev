@@ -36,7 +36,7 @@ export function App() {
         <Route path='/'>
           {isHamster ? <HamsterPage onButtonClick={() => setIsHamster(false)} /> : <MainPage />}
         </Route>
-  
+
         <Route>
           <NotFoundPage />
         </Route>

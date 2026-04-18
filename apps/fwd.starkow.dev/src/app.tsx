@@ -58,7 +58,7 @@ export function App() {
           <Item id='pinterested' url='https://fwd.starkow.dev/pinterested' photoUrl='https://i.pinimg.com/564x/13/b2/17/13b21765f93fbdda132c3f056826e203.jpg' icon={<Icons.IconTelegram />} isIconCentered />
           <Item id='back' url='https://starkow.dev' photoUrl='https://i.pinimg.com/564x/13/15/01/13150186d9738e3abc77ca3006f95f2a.jpg' icon={<Icons.IconHome />} isIconCentered shouldOpenInNewTab={false} />
         </div>
-  
+
         <div class='container-title'>
           <h2>fwd.starkow.dev</h2>
           <p class='text-small'>

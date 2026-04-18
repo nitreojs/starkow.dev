@@ -35,7 +35,7 @@ export const ClickerSection: FC = () => {
           setClicked((v: number) => v + 1)
         }}
       />
-      
+
       <p>
         <span class='text-half-visible text-small'>this number is persistent across page reloads!</span>
       </p>

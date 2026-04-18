@@ -40,7 +40,7 @@ export const TrackLyrics: FC<LyricsProps> = ({ lyrics, index }) => {
         lyrics?.map(({ time, lyric }, i) => {
           const isPlaying = i === index
           const isAround = i === index + 1
-      
+
           return (
             <div
               key={time}

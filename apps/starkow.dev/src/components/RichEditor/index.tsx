@@ -164,9 +164,29 @@ export const RichEditor: FC<RichEditorProps> = ({ initialHtml = '', resetSignal,
     if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey) {
       const key = event.key.toLowerCase()
 
-      if (key === 'b') { event.preventDefault(); document.execCommand('bold'); emit(); return }
-      if (key === 'i') { event.preventDefault(); document.execCommand('italic'); emit(); return }
-      if (key === 'u') { event.preventDefault(); document.execCommand('underline'); emit(); return }
+      if (key === 'b') {
+        event.preventDefault()
+        document.execCommand('bold')
+        emit()
+
+        return
+      }
+
+      if (key === 'i') {
+        event.preventDefault()
+        document.execCommand('italic')
+        emit()
+
+        return
+      }
+
+      if (key === 'u') {
+        event.preventDefault()
+        document.execCommand('underline')
+        emit()
+
+        return
+      }
     }
   }
 

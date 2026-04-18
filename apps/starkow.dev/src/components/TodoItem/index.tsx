@@ -22,7 +22,7 @@ export const TodoItem: FC<TodoItemProps> = ({ id, text, done, index, onDone, onS
 
   const onBinClick =
     isFirst ? () => {} :
-    () => onDelete({ id, text, done })
+      () => onDelete({ id, text, done })
 
   return (
     <div class='todo-item-container' key={id}>
@@ -38,7 +38,11 @@ export const TodoItem: FC<TodoItemProps> = ({ id, text, done, index, onDone, onS
         type='text'
         placeholder='buy a melon'
         value={text}
-        onKeyPress={e => { if (e.key === 'Enter') { onCreate(index) } }}
+        onKeyPress={e => {
+          if (e.key === 'Enter') {
+            onCreate(index)
+          }
+        }}
         onInput={e => onSave({ id, text: e.currentTarget.value, done })}
       />
 

@@ -39,7 +39,9 @@ export const DonationChip: FC<DonationChipProps> = (props) => {
   const qrAnchorRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (!copied) return
+    if (!copied) {
+      return
+    }
 
     const timer = setTimeout(() => setCopied(false), 1800)
 
@@ -47,7 +49,9 @@ export const DonationChip: FC<DonationChipProps> = (props) => {
   }, [copied])
 
   useEffect(() => {
-    if (!qrOpen) return
+    if (!qrOpen) {
+      return
+    }
 
     const onClickOutside = (event: MouseEvent) => {
       if (qrAnchorRef.current !== null && !qrAnchorRef.current.contains(event.target as Node)) {
@@ -56,7 +60,9 @@ export const DonationChip: FC<DonationChipProps> = (props) => {
     }
 
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setQrOpen(false)
+      if (event.key === 'Escape') {
+        setQrOpen(false)
+      }
     }
 
     document.addEventListener('mousedown', onClickOutside)
@@ -71,7 +77,9 @@ export const DonationChip: FC<DonationChipProps> = (props) => {
   const Icon = props.Icon
 
   const onCopy = async () => {
-    if (props.kind !== 'copy') return
+    if (props.kind !== 'copy') {
+      return
+    }
 
     try {
       await navigator.clipboard.writeText(props.address)

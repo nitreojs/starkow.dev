@@ -53,7 +53,9 @@ const loadDraft = (): Draft => {
   try {
     const raw = localStorage.getItem(DRAFT_KEY)
 
-    if (raw === null) return { html: '', plain: '' }
+    if (raw === null) {
+      return { html: '', plain: '' }
+    }
 
     const parsed = JSON.parse(raw) as Partial<Draft>
 
@@ -64,7 +66,9 @@ const loadDraft = (): Draft => {
 }
 
 const saveDraft = (draft: Draft) => {
-  if (typeof window === 'undefined') return
+  if (typeof window === 'undefined') {
+    return
+  }
 
   try {
     if (draft.plain === '') {
@@ -114,7 +118,9 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
   const isDisabled = currentLength === 0 || currentLength > MAX_LENGTH
 
   const notify = async () => {
-    if (isDisabled || isLoading) return
+    if (isDisabled || isLoading) {
+      return
+    }
 
     setLoading(true)
 
