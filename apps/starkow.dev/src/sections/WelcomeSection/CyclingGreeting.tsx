@@ -8,6 +8,7 @@ const greetings = [
   'привiт',
   'olá',
   'こんにちは',
+  'cześć',
   '你好',
   'hallo',
   'ciao',
