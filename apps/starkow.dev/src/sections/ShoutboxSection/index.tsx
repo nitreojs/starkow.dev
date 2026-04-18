@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'preact/compat'
 import { useSetAtom } from 'jotai'
 import clsx from 'clsx'
 
-import { CoolButton, RichContent, Skill } from '../../components'
+import { CoolButton, RichContent } from '../../components'
 import { API_URL, autoLinkify, formatRelativeTime, getFingerprint } from '../../shared'
 import { replyTarget$atom } from '../../state'
 import { ShoutboxAnswer, ShoutboxMessage as ShoutboxMessageType } from './types'
@@ -194,49 +194,35 @@ export const ShoutboxSection: FC = () => {
   useInterval(() => fetchShoutbox(page), 15_000, [page])
 
   return (
-    <>
-      <section id='shoutbox'>
-        <h2>shoutbox</h2>
-        <p>
-          a place where {' '}
-          <Skill name='people' note='verified human beings, probably' /> {' '}
-          from around the world leave a message for those who visit this site.
-        </p>
-      </section>
+    <section id='shoutbox'>
+      {messages.length === 0 ? (
+        <div class='centered'>
+          <p>no messages here, unfortunately</p>
+          <p>maybe your message will be the first one here?</p>
+        </div>
+      ) : (
+        <>
+          <div class='shoutbox-container'>
+            {messages.map(message => (
+              <ShoutboxMessage
+                key={message.id}
+                {...message}
+                availableReactions={availableReactions}
+                onToggleReaction={toggleReaction}
+                onReply={handleReply}
+              />
+            ))}
+          </div>
 
-      <section>
-        {
-          messages.length === 0 ? (
-            <div class='centered'>
-              <p>no messages here, unfortunately</p>
-              <p>maybe your message will be the first one here?</p>
+          {totalPages > 1 && (
+            <div class='shoutbox-pagination'>
+              <CoolButton text='<' disabled={page === 0} onClick={() => fetchShoutbox(page - 1)} />
+              <span class='shoutbox-pagination-status'>{page + 1} / {totalPages}</span>
+              <CoolButton text='>' disabled={page + 1 >= totalPages} onClick={() => fetchShoutbox(page + 1)} />
             </div>
-          ) : (
-            <>
-              {totalPages > 1 && (
-                <div class='shoutbox-pagination'>
-                  <CoolButton text='<' disabled={page === 0} onClick={() => fetchShoutbox(page - 1)} />
-                  <span class='shoutbox-pagination-status'>{page + 1} / {totalPages}</span>
-                  <CoolButton text='>' disabled={page + 1 >= totalPages} onClick={() => fetchShoutbox(page + 1)} />
-                </div>
-              )}
-
-              <div class='shoutbox-container'>
-                {messages.map(message => (
-                  <ShoutboxMessage
-                    key={message.id}
-                    {...message}
-                    availableReactions={availableReactions}
-                    onToggleReaction={toggleReaction}
-                    onReply={handleReply}
-                  />
-                ))}
-              </div>
-            </>
-          )
-        }
-
-      </section>
-    </>
+          )}
+        </>
+      )}
+    </section>
   )
 }

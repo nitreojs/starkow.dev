@@ -1,0 +1,17 @@
+.wall-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+
+  padding: 1.2em 1em;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.02);
+}
+
+.wall-card > section {
+  gap: 0.4em;
+}
+
+.wall-divider {
+  margin: 0.2em 0;
+}

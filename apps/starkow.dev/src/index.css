@@ -20,12 +20,19 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #161616;
+  transition: background-color 2s ease;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+:root[data-tod='dawn']    { background-color: #171514; }
+:root[data-tod='day']     { background-color: #141618; }
+:root[data-tod='dusk']    { background-color: #1a1612; }
+:root[data-tod='evening'] { background-color: #161414; }
+:root[data-tod='night']   { background-color: #131418; }
 
 input, button {
   font-size: inherit;

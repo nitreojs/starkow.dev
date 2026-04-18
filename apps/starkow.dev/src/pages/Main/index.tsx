@@ -1,5 +1,5 @@
 import { FC } from 'preact/compat'
-import { ButtonsBlockSection, DonationsSection, FooterSection, LetterboxSection, NotificationsSection, ShoutboxSection, SkillsSection, SpotifySection, WelcomeSection, WhatDoIDoSection } from '../../sections'
+import { ButtonsBlockSection, DonationsSection, FooterSection, NotificationsSection, SkillsSection, SpotifySection, WallSection, WelcomeSection, WhatDoIDoSection } from '../../sections'
 import * as Icons from '@starkow.dev/icons'
 
 export const MainPage: FC = () => {
@@ -81,8 +81,7 @@ export const MainPage: FC = () => {
       />
       <SkillsSection />
       <SpotifySection />
-      <LetterboxSection />
-      <ShoutboxSection />
+      <WallSection />
       <DonationsSection />
       <ButtonsBlockSection />
 

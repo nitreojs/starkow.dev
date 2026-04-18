@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 
 import * as Icons from '@starkow.dev/icons'
 
-import { BulletLink, CoolButton, RichEditor, Skill } from '../../components'
+import { CoolButton, RichEditor } from '../../components'
 import type { Content } from '../../components/RichContent/types'
 import { useNotifications } from '../../hooks'
 import { NotificationType } from '../../types'
@@ -157,69 +157,46 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
   }
 
   return (
-    <>
-      <section id='letterbox'>
-        <h2>anonymous letterbox</h2>
-        <p>
-          here you can type a message, it will be {' '}
-          <Skill name='anonymous' note="i won't get to know who you are" /> {' '}
-          and delivered to me in seconds.
-        </p>
-        <p>
-          some of them might get posted on the <BulletLink text='shoutbox' url='#shoutbox' /> below, {' '}
-          and some of the posted ones might even get an answer from me.
-        </p>
-        <p class='info-line'>
-          <span class='info-label'>please avoid:</span> {' '}
-          <Skill name='spam' note='one message is enough' disliked />
-          <span class='skill-sep'>•</span>
-          <Skill name='threats' note="not funny + don't care" disliked />
-          <span class='skill-sep'>•</span>
-          <Skill name='larp' note='imagine larping on this page LOL' disliked />
-        </p>
-      </section>
-
-      <section>
-        {replyTarget !== null && (
-          <div class='letterbox-reply'>
-            <div class='letterbox-reply-body'>
-              <div class='letterbox-reply-label'>replying to</div>
-              <div class='letterbox-reply-preview'>{replyTarget.preview}</div>
-            </div>
-            <button
-              type='button'
-              class='letterbox-reply-cancel'
-              onClick={() => setReplyTarget(null)}
-              aria-label='cancel reply'
-            >×</button>
+    <section id='letterbox'>
+      {replyTarget !== null && (
+        <div class='letterbox-reply'>
+          <div class='letterbox-reply-body'>
+            <div class='letterbox-reply-label'>replying to</div>
+            <div class='letterbox-reply-preview'>{replyTarget.preview}</div>
           </div>
-        )}
-        <div class='letterbox-container'>
-          <RichEditor
-            initialHtml={initialDraft.html}
-            placeholder={placeholder}
-            disabled={isLoading}
-            onChange={({ content: nextContent, plain, html: nextHtml }) => {
-              setPlainText(plain)
-              setHtml(nextHtml)
-              setContent(nextContent)
-            }}
-            onSubmit={notify}
-          />
-          <CoolButton
-            icon={isLoading ? Icons.IconLoaderX : Icons.IconSend}
-            onClick={notify}
-            disabled={isLoading || isDisabled}
-          />
+          <button
+            type='button'
+            class='letterbox-reply-cancel'
+            onClick={() => setReplyTarget(null)}
+            aria-label='cancel reply'
+          >×</button>
         </div>
+      )}
+      <div class='letterbox-container'>
+        <RichEditor
+          initialHtml={initialDraft.html}
+          placeholder={placeholder}
+          disabled={isLoading}
+          onChange={({ content: nextContent, plain, html: nextHtml }) => {
+            setPlainText(plain)
+            setHtml(nextHtml)
+            setContent(nextContent)
+          }}
+          onSubmit={notify}
+        />
+        <CoolButton
+          icon={isLoading ? Icons.IconLoaderX : Icons.IconSend}
+          onClick={notify}
+          disabled={isLoading || isDisabled}
+        />
+      </div>
 
-        <div
-          class='letterbox-counter text-small'
-          data-state={remaining < 0 ? 'over' : remaining < 100 ? 'warn' : 'ok'}
-        >
-          {currentLength} / {MAX_LENGTH}
-        </div>
-      </section>
-    </>
+      <div
+        class='letterbox-counter text-small'
+        data-state={remaining < 0 ? 'over' : remaining < 100 ? 'warn' : 'ok'}
+      >
+        {currentLength} / {MAX_LENGTH}
+      </div>
+    </section>
   )
 }
