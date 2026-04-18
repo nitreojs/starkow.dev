@@ -22,6 +22,8 @@
   --accent-to: #000000;
   --i: 0;
 
+  -webkit-tap-highlight-color: transparent;
+
   position: relative;
   isolation: isolate;
 
