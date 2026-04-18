@@ -25,6 +25,7 @@ interface AdminHandlers {
   onAddAnswer: (id: string, content: Content[]) => Promise<boolean>
   onEditAnswer: (id: string, index: number, content: Content[]) => Promise<boolean>
   onDeleteAnswer: (id: string, index: number) => void
+  onSetReplyTo: (id: string, replyTo: { id: string, quote: string } | null) => void
 }
 
 interface ShoutboxMessageProps extends ShoutboxMessageType {
@@ -32,6 +33,10 @@ interface ShoutboxMessageProps extends ShoutboxMessageType {
   onToggleReaction: (id: string, emoji: string) => void
   onReply: (id: string, text: string) => void
   admin: AdminHandlers | null
+  attachingTargetId: string | null
+  onBeginAttach: (id: string) => void
+  onCancelAttach: () => void
+  onPickAsQuoteSource: (sourceId: string, sourceText: string) => void
 }
 
 const ANSWER_INDENT_CAP = 4
@@ -174,7 +179,7 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
   )
 }
 
-const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, availableReactions, onToggleReaction, onReply, admin }) => {
+const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, availableReactions, onToggleReaction, onReply, admin, attachingTargetId, onBeginAttach, onCancelAttach, onPickAsQuoteSource }) => {
   const [editingAnswerIndex, setEditingAnswerIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 
@@ -211,6 +216,42 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
             >
               [{pinned ? 'unpin' : 'pin'}]
             </button>
+            {!replyTo && attachingTargetId === null && (
+              <button
+                type='button'
+                class='shoutbox-message-reply'
+                onClick={() => onBeginAttach(id)}
+              >
+                [attach quote]
+              </button>
+            )}
+            {attachingTargetId === id && (
+              <button
+                type='button'
+                class='shoutbox-message-reply shoutbox-admin-action-danger'
+                onClick={onCancelAttach}
+              >
+                [cancel attach]
+              </button>
+            )}
+            {attachingTargetId !== null && attachingTargetId !== id && (
+              <button
+                type='button'
+                class='shoutbox-message-reply shoutbox-message-reply-highlight'
+                onClick={() => onPickAsQuoteSource(id, text)}
+              >
+                [select]
+              </button>
+            )}
+            {replyTo && (
+              <button
+                type='button'
+                class='shoutbox-message-reply shoutbox-admin-action-danger'
+                onClick={() => admin.onSetReplyTo(id, null)}
+              >
+                [remove quote]
+              </button>
+            )}
             <button
               type='button'
               class='shoutbox-message-reply shoutbox-admin-action-danger'
@@ -282,6 +323,8 @@ export const ShoutboxSection: FC = () => {
   const setReplyTarget = useSetAtom(replyTarget$atom)
   const adminKey = useAtomValue(adminKey$atom)
 
+  const [attachingTargetId, setAttachingTargetId] = useState<string | null>(null)
+
   const { addNotification } = useNotifications()
 
   const handleReply = useCallback((id: string, text: string) => {
@@ -294,6 +337,17 @@ export const ShoutboxSection: FC = () => {
       document.getElementById('letterbox')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [setReplyTarget])
+
+  const handlePickAsQuoteSource = (sourceId: string, sourceText: string) => {
+    if (attachingTargetId === null) {
+      return
+    }
+
+    const quote = buildQuote(sourceText)
+
+    adminHandlers?.onSetReplyTo(attachingTargetId, { id: sourceId, quote })
+    setAttachingTargetId(null)
+  }
 
   const fetchShoutbox = async (page = 0) => {
     const response = await fetch(`${API_URL}/api/shoutbox?page=${page}`, {
@@ -468,6 +522,20 @@ export const ShoutboxSection: FC = () => {
       if (ok) {
         fetchShoutbox(page)
       }
+    },
+    onSetReplyTo: async (id, replyTo) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/reply`, {
+        method: 'PATCH',
+        body: JSON.stringify({ replyTo })
+      })
+
+      if (ok) {
+        if (replyTo !== null) {
+          setReplyTarget(null)
+        }
+
+        fetchShoutbox(page)
+      }
     }
   }
 
@@ -497,6 +565,10 @@ export const ShoutboxSection: FC = () => {
                 onToggleReaction={toggleReaction}
                 onReply={handleReply}
                 admin={adminHandlers}
+                attachingTargetId={attachingTargetId}
+                onBeginAttach={setAttachingTargetId}
+                onCancelAttach={() => setAttachingTargetId(null)}
+                onPickAsQuoteSource={handlePickAsQuoteSource}
               />
             ))}
           </div>

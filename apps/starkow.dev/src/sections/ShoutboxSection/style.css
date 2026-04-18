@@ -66,6 +66,19 @@
   opacity: 0.9;
 }
 
+.shoutbox-message-reply-highlight {
+  color: #ffd67a;
+  opacity: 0.85;
+}
+
+.shoutbox-message-quote-attach {
+  align-self: flex-start;
+  margin-bottom: 0.5em;
+  text-align: left;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .shoutbox-message-quote-text {
   display: -webkit-box;
   -webkit-line-clamp: 2;
