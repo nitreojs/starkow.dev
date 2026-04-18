@@ -175,7 +175,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
           <span class='skill-sep'>•</span>
           <Skill name='threats' note="not funny + don't care" disliked />
           <span class='skill-sep'>•</span>
-          <Skill name='threats' note="not funny + don't care" disliked />
+          <Skill name='larp' note='imagine larping on this page LOL' disliked />
         </p>
       </section>
 
