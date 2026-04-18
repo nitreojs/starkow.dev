@@ -2,6 +2,8 @@ import { FC } from 'preact/compat'
 
 import { BulletLink } from '../../components'
 
+import './style.css'
+
 interface Project {
   name: string
   url: string
@@ -15,10 +17,10 @@ interface WhatDoIDoSectionProps {
 export const WhatDoIDoSection: FC<WhatDoIDoSectionProps> = ({ projects = [] }) => (
   <section id='what-do-i-do'>
     <h2>what do i do?</h2>
-    <ul>
+    <ul class='projects-list'>
       {
         projects.map(p => (
-          <li>
+          <li class='project-entry'>
             <BulletLink text={p.name} url={p.url} /> {" "}
             <span class='text-half-visible'>is</span> {" "}
             {p.description}
