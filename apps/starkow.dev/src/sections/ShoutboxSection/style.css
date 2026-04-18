@@ -41,11 +41,11 @@
 }
 
 .shoutbox-message-admin .shoutbox-message-text::before {
-  width: 8em;
+  width: 12em;
 }
 
 .shoutbox-message-admin .shoutbox-message-quote {
-  margin-right: 8em;
+  margin-right: 12em;
 }
 
 .shoutbox-message-quote {

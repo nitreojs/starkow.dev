@@ -21,6 +21,7 @@ const buildQuote = (text: string): string =>
 
 interface AdminHandlers {
   onDeleteMessage: (id: string) => void
+  onSetPinned: (id: string, pinned: boolean) => void
   onAddAnswer: (id: string, text: string) => Promise<boolean>
   onEditAnswer: (id: string, index: number, text: string) => Promise<boolean>
   onDeleteAnswer: (id: string, index: number) => void
@@ -192,13 +193,22 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
           [reply]
         </button>
         {admin !== null && (
-          <button
-            type='button'
-            class='shoutbox-message-reply shoutbox-admin-action-danger'
-            onClick={() => admin.onDeleteMessage(id)}
-          >
-            [delete]
-          </button>
+          <>
+            <button
+              type='button'
+              class='shoutbox-message-reply'
+              onClick={() => admin.onSetPinned(id, !pinned)}
+            >
+              [{pinned ? 'unpin' : 'pin'}]
+            </button>
+            <button
+              type='button'
+              class='shoutbox-message-reply shoutbox-admin-action-danger'
+              onClick={() => admin.onDeleteMessage(id)}
+            >
+              [delete]
+            </button>
+          </>
         )}
       </div>
       {pinned && (
@@ -399,6 +409,16 @@ export const ShoutboxSection: FC = () => {
       }
 
       const ok = await adminRequest(`/api/shoutbox/${id}`, { method: 'DELETE' })
+
+      if (ok) {
+        fetchShoutbox(page)
+      }
+    },
+    onSetPinned: async (id, pinned) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/pin`, {
+        method: 'POST',
+        body: JSON.stringify({ pinned })
+      })
 
       if (ok) {
         fetchShoutbox(page)
