@@ -40,6 +40,14 @@
   height: 1.4em;
 }
 
+.shoutbox-message-admin .shoutbox-message-text::before {
+  width: 8em;
+}
+
+.shoutbox-message-admin .shoutbox-message-quote {
+  margin-right: 8em;
+}
+
 .shoutbox-message-quote {
   display: block;
   margin-bottom: 0.5em;
@@ -73,11 +81,16 @@
   margin-top: 0.6em;
 }
 
-.shoutbox-message-reply {
+.shoutbox-message-actions {
   position: absolute;
   top: 20px;
   right: 20px;
 
+  display: flex;
+  gap: 0.6em;
+}
+
+.shoutbox-message-reply {
   background: transparent;
   border: none;
   padding: 0;
@@ -138,6 +151,85 @@
   font-size: 0.7em;
   opacity: 0.3;
   text-decoration: none;
+}
+
+.shoutbox-answer-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  flex-wrap: wrap;
+}
+
+.shoutbox-admin-inline {
+  display: flex;
+  gap: 0.4em;
+}
+
+.shoutbox-admin-action {
+  background: transparent;
+  border: none;
+  padding: 0;
+
+  font-family: inherit;
+  font-size: 0.75em;
+  color: inherit;
+  opacity: 0.35;
+
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.shoutbox-admin-action:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.shoutbox-admin-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.2;
+}
+
+.shoutbox-admin-action:focus {
+  outline: none;
+}
+
+.shoutbox-admin-action-danger {
+  color: #ff8a8a;
+}
+
+.shoutbox-admin-add-answer {
+  margin-top: 0.4em;
+}
+
+.shoutbox-admin-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+
+  margin: 0.2em 0;
+}
+
+.shoutbox-admin-textarea {
+  min-height: 3em;
+  padding: 0.5em 0.7em;
+  border-radius: 6px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+
+  font-family: inherit;
+  font-size: 0.9em;
+
+  background: rgb(0 0 0 / 0.3);
+  color: inherit;
+  resize: vertical;
+}
+
+.shoutbox-admin-textarea:focus {
+  outline: none;
+  border-color: rgb(255 200 120 / 0.5);
+}
+
+.shoutbox-admin-editor-actions {
+  display: flex;
+  gap: 0.6em;
 }
 
 .shoutbox-pagination {

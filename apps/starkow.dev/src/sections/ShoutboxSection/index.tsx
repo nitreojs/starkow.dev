@@ -1,10 +1,11 @@
 import { FC, useCallback, useEffect, useState } from 'preact/compat'
-import { useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import clsx from 'clsx'
 
 import { CoolButton, RichContent } from '../../components'
+import { flattenToText } from '../../components/RichEditor/serialize'
 import { API_URL, autoLinkify, formatRelativeTime, getFingerprint } from '../../shared'
-import { replyTarget$atom } from '../../state'
+import { adminKey$atom, replyTarget$atom } from '../../state'
 import { ShoutboxAnswer, ShoutboxMessage as ShoutboxMessageType } from './types'
 import { Reactions } from './Reactions'
 import { useInterval } from '@starkow.dev/hooks'
@@ -18,72 +19,227 @@ const QUOTE_LIMIT = 120
 const buildQuote = (text: string): string =>
   text.length > QUOTE_LIMIT ? text.slice(0, QUOTE_LIMIT) : text
 
+interface AdminHandlers {
+  onDeleteMessage: (id: string) => void
+  onAddAnswer: (id: string, text: string) => Promise<boolean>
+  onEditAnswer: (id: string, index: number, text: string) => Promise<boolean>
+  onDeleteAnswer: (id: string, index: number) => void
+}
+
 interface ShoutboxMessageProps extends ShoutboxMessageType {
   availableReactions: string[]
   onToggleReaction: (id: string, emoji: string) => void
   onReply: (id: string, text: string) => void
+  admin: AdminHandlers | null
 }
 
 const ANSWER_INDENT_CAP = 4
 
+interface AnswerEditorProps {
+  initialText: string
+  onSave: (text: string) => Promise<boolean>
+  onCancel: () => void
+  submitLabel?: string
+}
+
+const AnswerEditor: FC<AnswerEditorProps> = ({ initialText, onSave, onCancel, submitLabel = 'save' }) => {
+  const [text, setText] = useState(initialText)
+  const [busy, setBusy] = useState(false)
+
+  const submit = async () => {
+    const trimmed = text.trim()
+
+    if (trimmed === '' || busy) return
+
+    setBusy(true)
+
+    const ok = await onSave(trimmed)
+
+    setBusy(false)
+
+    if (ok) setText('')
+  }
+
+  return (
+    <div class='shoutbox-admin-editor'>
+      <textarea
+        class='shoutbox-admin-textarea'
+        value={text}
+        disabled={busy}
+        onInput={e => setText((e.currentTarget as HTMLTextAreaElement).value)}
+        placeholder='answer text...'
+      />
+      <div class='shoutbox-admin-editor-actions'>
+        <button type='button' class='shoutbox-admin-action' onClick={submit} disabled={busy || text.trim() === ''}>
+          [{busy ? '...' : submitLabel}]
+        </button>
+        <button type='button' class='shoutbox-admin-action' onClick={onCancel} disabled={busy}>
+          [cancel]
+        </button>
+      </div>
+    </div>
+  )
+}
+
 interface AnswerTreeProps {
   answers: ShoutboxAnswer[]
+  messageId: string
+  admin: AdminHandlers | null
+  editingIndex: number | null
+  onBeginEdit: (index: number) => void
+  onEndEdit: () => void
   index?: number
 }
 
-const AnswerTree: FC<AnswerTreeProps> = ({ answers, index = 0 }) => {
+const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingIndex, onBeginEdit, onEndEdit, index = 0 }) => {
   if (index >= answers.length) {
     return null
   }
 
   const { content, date } = answers[index]
   const flatten = index >= ANSWER_INDENT_CAP
+  const isEditing = editingIndex === index
+
+  const handleSave = async (text: string): Promise<boolean> => {
+    if (admin === null) return false
+
+    const ok = await admin.onEditAnswer(messageId, index, text)
+
+    if (ok) onEndEdit()
+
+    return ok
+  }
 
   return (
     <div class={clsx('shoutbox-answer', flatten && 'shoutbox-answer-flat')}>
-      <div class='shoutbox-answer-content'>
-        <RichContent content={content} />
-      </div>
-      <div class='shoutbox-answer-date' title={new Date(date).toLocaleString()}>
-        {formatRelativeTime(date)}
-      </div>
-      <AnswerTree answers={answers} index={index + 1} />
+      {isEditing ? (
+        <AnswerEditor
+          initialText={flattenToText(content)}
+          onSave={handleSave}
+          onCancel={onEndEdit}
+        />
+      ) : (
+        <>
+          <div class='shoutbox-answer-content'>
+            <RichContent content={content} />
+          </div>
+          <div class='shoutbox-answer-meta'>
+            <div class='shoutbox-answer-date' title={new Date(date).toLocaleString()}>
+              {formatRelativeTime(date)}
+            </div>
+            {admin !== null && (
+              <div class='shoutbox-admin-inline'>
+                <button type='button' class='shoutbox-admin-action' onClick={() => onBeginEdit(index)}>
+                  [edit]
+                </button>
+                <button
+                  type='button'
+                  class='shoutbox-admin-action shoutbox-admin-action-danger'
+                  onClick={() => admin.onDeleteAnswer(messageId, index)}
+                >
+                  [delete]
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+      <AnswerTree
+        answers={answers}
+        messageId={messageId}
+        admin={admin}
+        editingIndex={editingIndex}
+        onBeginEdit={onBeginEdit}
+        onEndEdit={onEndEdit}
+        index={index + 1}
+      />
     </div>
   )
 }
 
-const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, availableReactions, onToggleReaction, onReply }) => (
-  <div class={clsx('shoutbox-message', pinned && 'shoutbox-message-pinned')} id={`shoutbox-${id}`}>
-    <button type='button' class='shoutbox-message-reply' onClick={() => onReply(id, text)}>
-      [reply]
-    </button>
-    {pinned && (
-      <div class='shoutbox-message-pin'>📌 pinned</div>
-    )}
-    {replyTo && (
-      <a class='shoutbox-message-quote' href={`#shoutbox-${replyTo.id}`}>
-        <span class='shoutbox-message-quote-text'>{replyTo.quote}</span>
-      </a>
-    )}
-    <div class='shoutbox-message-text'>
-      <RichContent content={content !== undefined && content.length > 0 ? content : autoLinkify(text)} />
-    </div>
-    {answers !== undefined && answers.length > 0 && (
-      <AnswerTree answers={answers} />
-    )}
-    <div class='shoutbox-message-meta'>
-      <Reactions
-        available={availableReactions}
-        reactions={reactions}
-        yourReactions={yourReactions}
-        onToggle={emoji => onToggleReaction(id, emoji)}
-      />
-      <div class='shoutbox-message-date' title={new Date(date).toLocaleString()}>
-        {formatRelativeTime(date)}
+const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, availableReactions, onToggleReaction, onReply, admin }) => {
+  const [editingAnswerIndex, setEditingAnswerIndex] = useState<number | null>(null)
+  const [isAdding, setIsAdding] = useState(false)
+
+  const handleAddAnswer = async (text: string): Promise<boolean> => {
+    if (admin === null) return false
+
+    const ok = await admin.onAddAnswer(id, text)
+
+    if (ok) setIsAdding(false)
+
+    return ok
+  }
+
+  const answerCount = answers?.length ?? 0
+
+  return (
+    <div class={clsx('shoutbox-message', pinned && 'shoutbox-message-pinned', admin !== null && 'shoutbox-message-admin')} id={`shoutbox-${id}`}>
+      <div class='shoutbox-message-actions'>
+        <button type='button' class='shoutbox-message-reply' onClick={() => onReply(id, text)}>
+          [reply]
+        </button>
+        {admin !== null && (
+          <button
+            type='button'
+            class='shoutbox-message-reply shoutbox-admin-action-danger'
+            onClick={() => admin.onDeleteMessage(id)}
+          >
+            [delete]
+          </button>
+        )}
+      </div>
+      {pinned && (
+        <div class='shoutbox-message-pin'>📌 pinned</div>
+      )}
+      {replyTo && (
+        <a class='shoutbox-message-quote' href={`#shoutbox-${replyTo.id}`}>
+          <span class='shoutbox-message-quote-text'>{replyTo.quote}</span>
+        </a>
+      )}
+      <div class='shoutbox-message-text'>
+        <RichContent content={content !== undefined && content.length > 0 ? content : autoLinkify(text)} />
+      </div>
+      {answerCount > 0 && (
+        <AnswerTree
+          answers={answers!}
+          messageId={id}
+          admin={admin}
+          editingIndex={editingAnswerIndex}
+          onBeginEdit={setEditingAnswerIndex}
+          onEndEdit={() => setEditingAnswerIndex(null)}
+        />
+      )}
+      {admin !== null && (
+        <div class='shoutbox-admin-add-answer'>
+          {isAdding ? (
+            <AnswerEditor
+              initialText=''
+              onSave={handleAddAnswer}
+              onCancel={() => setIsAdding(false)}
+              submitLabel='add answer'
+            />
+          ) : (
+            <button type='button' class='shoutbox-admin-action' onClick={() => setIsAdding(true)}>
+              [+ add answer]
+            </button>
+          )}
+        </div>
+      )}
+      <div class='shoutbox-message-meta'>
+        <Reactions
+          available={availableReactions}
+          reactions={reactions}
+          yourReactions={yourReactions}
+          onToggle={emoji => onToggleReaction(id, emoji)}
+        />
+        <div class='shoutbox-message-date' title={new Date(date).toLocaleString()}>
+          {formatRelativeTime(date)}
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 export const ShoutboxSection: FC = () => {
   const [page, setPage] = useState(0)
@@ -92,6 +248,7 @@ export const ShoutboxSection: FC = () => {
   const [availableReactions, setAvailableReactions] = useState<string[]>([])
 
   const setReplyTarget = useSetAtom(replyTarget$atom)
+  const adminKey = useAtomValue(adminKey$atom)
 
   const { addNotification } = useNotifications()
 
@@ -190,6 +347,72 @@ export const ShoutboxSection: FC = () => {
     }
   }, [addNotification])
 
+  const adminRequest = useCallback(async (path: string, init: RequestInit): Promise<boolean> => {
+    if (adminKey === null) return false
+
+    try {
+      const response = await fetch(`${API_URL}${path}`, {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Key': adminKey,
+          ...(init.headers ?? {})
+        }
+      })
+
+      const json = await response.json() as Record<string, any>
+
+      if (!json.ok) {
+        addNotification(`admin: ${json.error ?? 'failed'}`, NotificationType.Error)
+
+        return false
+      }
+
+      return true
+    } catch {
+      addNotification('admin: request failed', NotificationType.Error)
+
+      return false
+    }
+  }, [adminKey, addNotification])
+
+  const adminHandlers: AdminHandlers | null = adminKey === null ? null : {
+    onDeleteMessage: async (id) => {
+      if (!window.confirm('delete this message?')) return
+
+      const ok = await adminRequest(`/api/shoutbox/${id}`, { method: 'DELETE' })
+
+      if (ok) fetchShoutbox(page)
+    },
+    onAddAnswer: async (id, text) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/answers`, {
+        method: 'POST',
+        body: JSON.stringify({ content: autoLinkify(text) })
+      })
+
+      if (ok) fetchShoutbox(page)
+
+      return ok
+    },
+    onEditAnswer: async (id, index, text) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/answers/${index}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ content: autoLinkify(text) })
+      })
+
+      if (ok) fetchShoutbox(page)
+
+      return ok
+    },
+    onDeleteAnswer: async (id, index) => {
+      if (!window.confirm('delete this answer?')) return
+
+      const ok = await adminRequest(`/api/shoutbox/${id}/answers/${index}`, { method: 'DELETE' })
+
+      if (ok) fetchShoutbox(page)
+    }
+  }
+
   useEffect(() => { fetchShoutbox() }, [])
   useInterval(() => fetchShoutbox(page), 15_000, [page])
 
@@ -213,6 +436,7 @@ export const ShoutboxSection: FC = () => {
                 availableReactions={availableReactions}
                 onToggleReaction={toggleReaction}
                 onReply={handleReply}
+                admin={adminHandlers}
               />
             ))}
           </div>

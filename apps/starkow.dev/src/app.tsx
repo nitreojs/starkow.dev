@@ -5,10 +5,12 @@ import { isbot } from 'isbot'
 import { useRotatingTitle } from '@starkow.dev/hooks'
 
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
-import { getTimeBucket } from './shared'
+import { getTimeBucket, hydrateAdminKeyFromUrl } from './shared'
 // import { NoiseCanvas } from './components'
 
 import './app.css'
+
+hydrateAdminKeyFromUrl()
 
 export function App() {
   const [isHamster, setIsHamster] = useState(Math.random() >= 0.98 && !isbot(navigator.userAgent))
