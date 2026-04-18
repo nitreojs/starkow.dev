@@ -2,6 +2,8 @@ import { FC, Fragment } from 'preact/compat'
 
 import type { Content } from './types'
 
+export type { Content } from './types'
+
 interface RichContentProps {
   content: Content[]
 }

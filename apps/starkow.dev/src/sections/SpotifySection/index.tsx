@@ -3,10 +3,12 @@ import clsx from 'clsx'
 
 import { API_URL } from '../../shared'
 
-import './style.css'
-
 import type { Lyric, TrackData } from './types'
-import { TrackImage, TrackInfo, TrackLyrics } from './components'
+import { TrackImage, TrackInfo, TrackLyrics, RecentlyPlayed } from './components'
+import { RichContent } from '../../components'
+import { getOfflineMessage } from './offline'
+
+import './style.css'
 
 const getLyricByTime = (lyrics: Lyric[], time: number) => {
   for (let i = lyrics.length - 1; i >= 0; i--) {
@@ -22,24 +24,27 @@ const SpotifyContent: FC = () => {
   const [loading, setLoading] = useState(true)
 
   const [trackData, setTrackData] = useState<TrackData | null>(null)
+  const [recentTracks, setRecentTracks] = useState<TrackData[]>([])
 
   const progressRef = useRef<number>(0)
-  
+
   const [progressSeconds, setProgressSeconds] = useState(0)
   const [lyricIndex, setLyricIndex] = useState(0)
 
-  const handleSSEMessage = (event: MessageEvent<string>) => {
-    const parsed = JSON.parse(event.data) as TrackData
-
+  const handleTrackMessage = (data: TrackData) => {
     setLoading(false)
-    setTrackData(JSON.parse(event.data))
+    setTrackData(data)
 
-    progressRef.current = parsed.progress
+    progressRef.current = data.progress
 
-    setProgressSeconds(Math.floor(parsed.progress / 1000))
+    setProgressSeconds(Math.floor(data.progress / 1000))
   }
 
-  // info: SSE
+  const handleSSEMessage = (event: MessageEvent<string>) => {
+    handleTrackMessage(JSON.parse(event.data) as TrackData)
+  }
+
+  // sse
   useEffect(() => {
     const sse = new EventSource(`${API_URL}/api/spotify`)
 
@@ -53,7 +58,19 @@ const SpotifyContent: FC = () => {
     }
   }, [])
 
-  // info: RAF
+  // recently played
+  useEffect(() => {
+    const controller = new AbortController()
+
+    fetch(`${API_URL}/api/spotify/recent`, { signal: controller.signal })
+      .then(r => (r.ok ? r.json() as Promise<TrackData[]> : []))
+      .then(setRecentTracks)
+      .catch(() => setRecentTracks([]))
+
+    return () => controller.abort()
+  }, [])
+
+  // raf
   useEffect(() => {
     let lastSecond = 0
     let lastLyricIndex = 0
@@ -78,7 +95,7 @@ const SpotifyContent: FC = () => {
       if (trackData?.lyrics) {
         const found = getLyricByTime(trackData.lyrics, progressRef.current / 1000)
 
-          if (found === null) {
+        if (found === null) {
           lastLyricIndex = -1
           setLyricIndex(-1)
         } else if (lastLyricIndex !== found.index) {
@@ -102,21 +119,15 @@ const SpotifyContent: FC = () => {
 
   const renderInnerContent = () => {
     if (loading) {
-      return (
-        <>
-          <p>loading track data...</p>
-        </>
-      )
+      return <p>loading track data...</p>
     }
 
     if (trackData === null) {
       return (
-        <>
-          <div class='no-track-playing'>
-            <p>no track is playing...</p>
-            <p class='text-small text-half-visible'>perhaps try checking out later?</p>
-          </div>
-        </>
+        <div class='no-track-playing'>
+          <p><RichContent content={getOfflineMessage()} /></p>
+          <p class='text-small text-half-visible'>nothing is playing right now. perhaps try checking out later?</p>
+        </div>
       )
     }
 
@@ -132,26 +143,30 @@ const SpotifyContent: FC = () => {
   }
 
   return (
-    <div class={clsx('spotify-track', loading && 'loading')}>
-      {renderInnerContent()}
-    </div>
-  )
-}
-
-export const SpotifySection: FC = () => {
-  return (
-    <section id='spotify'>
-      <h2>currently playing</h2>
-      <p>
-        below lies the track that i'm currently listening to on spotify...
-        or, well, simply nothing if i'm not listening to anything atm :P
-      </p>
-
-      <SpotifyContent />
+    <>
+      <div class={clsx('spotify-track', loading && 'loading')}>
+        {renderInnerContent()}
+      </div>
 
       <p class='text-small text-half-visible'>
         this data is approximate and may be delayed by a few seconds.
       </p>
-    </section>
+
+      {!loading && trackData === null && recentTracks.length > 0 && (
+        <RecentlyPlayed tracks={recentTracks} />
+      )}
+    </>
   )
 }
+
+export const SpotifySection: FC = () => (
+  <section id='spotify'>
+    <h2>currently playing</h2>
+    <p>
+      below lies the track that i'm currently listening to on spotify...
+      or, well, simply nothing if i'm not listening to anything atm :P
+    </p>
+
+    <SpotifyContent />
+  </section>
+)

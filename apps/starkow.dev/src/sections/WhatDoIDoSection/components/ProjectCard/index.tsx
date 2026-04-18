@@ -2,7 +2,7 @@ import { FC } from 'preact/compat'
 
 import { IconExternalLink, IconTypeScript, IconJavaScript, IconPython } from '@starkow.dev/icons'
 
-import { RichContent } from '../../RichContent'
+import { RichContent } from '../../../../components'
 import type { Project } from '../../types'
 
 import './style.css'

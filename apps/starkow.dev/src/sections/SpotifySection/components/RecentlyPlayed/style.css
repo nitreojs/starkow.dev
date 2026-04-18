@@ -1,0 +1,69 @@
+.recently-played {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin-top: 0.75em;
+}
+
+.recently-played-heading {
+  margin: 0;
+}
+
+.recently-played-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.recently-played-list li::before {
+  content: none;
+}
+
+.recently-played-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 6px 8px;
+  border-radius: 6px;
+
+  color: inherit;
+  text-decoration: none;
+
+  background: rgb(255 255 255 / 0.03);
+  transition: background 150ms ease;
+}
+
+.recently-played-item:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.recently-played-cover {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.recently-played-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.recently-played-name,
+.recently-played-artists {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recently-played-name {
+  font-size: 0.9em;
+}
+
+.recently-played-artists {
+  font-size: 0.75em;
+}
