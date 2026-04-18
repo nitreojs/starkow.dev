@@ -203,7 +203,10 @@ export const ShoutboxSection: FC = () => {
       ) : (
         <>
           <div class='shoutbox-container'>
-            {messages.map(message => (
+            {[
+              ...messages.filter(m => m.pinned),
+              ...messages.filter(m => !m.pinned).reverse()
+            ].map(message => (
               <ShoutboxMessage
                 key={message.id}
                 {...message}
