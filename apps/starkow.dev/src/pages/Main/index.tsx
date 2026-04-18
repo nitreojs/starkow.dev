@@ -57,7 +57,7 @@ export const MainPage: FC = () => {
             url: 'https://github.starkow.dev/puregram',
             description: [
               'a telegram bot api wrapper. ',
-              { type: 'highlight', children: [ 'yeah that\'s it what more did you expect here' ] }
+              { type: 'highlight', children: [ 'yeah that\'s it what else did you expect here' ] }
             ],
             tags: ['telegram', 'stale', 'bro', 'i', 'love', 'these', 'tags', 'they\'re', 'fun', 'af'],
             accentFrom: '#1d84bb',
