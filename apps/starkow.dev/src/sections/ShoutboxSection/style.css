@@ -25,6 +25,7 @@
   font-size: 0.7em;
   opacity: 0.5;
   margin-bottom: 0.4em;
+  pointer-events: none;
 }
 
 .shoutbox-message-text {
@@ -85,6 +86,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
+  z-index: 1;
 
   display: flex;
   gap: 0.6em;
