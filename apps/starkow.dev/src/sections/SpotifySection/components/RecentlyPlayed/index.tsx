@@ -25,7 +25,7 @@ export const RecentlyPlayed: FC<RecentlyPlayedProps> = ({ tracks }) => {
 
               <div class='recently-played-text'>
                 <span class='recently-played-name'>{t.name}</span>
-                <span class='recently-played-artists text-half-visible'>{t.artists.join(', ')}</span>
+                <span class='recently-played-artists text-half-visible'>{t.artists.map(a => a.name).join(', ')}</span>
               </div>
             </a>
           </li>

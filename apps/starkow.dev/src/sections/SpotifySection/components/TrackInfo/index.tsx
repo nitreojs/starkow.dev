@@ -33,15 +33,15 @@ export const TrackInfo: FC<TrackInfoProps> = ({ data, progress }) => {
           <p class='track-artists'>
             <span class='text-half-visible'>by</span>{' '}
             {data.artists.map((artist, i) => (
-              <Fragment key={artist}>
+              <Fragment key={artist.url}>
                 {i > 0 && <span class='text-half-visible'>, </span>}
                 <a
                   class='track-artist'
-                  href={`https://open.spotify.com/search/${encodeURIComponent(artist)}`}
+                  href={artist.url}
                   target='_blank'
                   rel='noopener noreferrer'
                 >
-                  {artist}
+                  {artist.name}
                 </a>
               </Fragment>
             ))}

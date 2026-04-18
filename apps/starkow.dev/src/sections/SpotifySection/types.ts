@@ -8,10 +8,15 @@ export interface TrackDataAlbum {
   image: string
 }
 
+export interface TrackArtist {
+  name: string
+  url: string
+}
+
 export interface TrackData {
   id: string
   album: TrackDataAlbum
-  artists: string[]
+  artists: TrackArtist[]
   name: string
   url: string
   playing: boolean
