@@ -25,3 +25,4 @@ lerna-debug.log*
 
 **/deploy.sh
 **/.env
+**/sessions
