@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'preact/compat'
 
 const greetings = [
-  'hello',
   'hi',
   'привет',
   'hola',
   'bonjour',
+  'привiт',
   'olá',
   'こんにちは',
   '你好',
