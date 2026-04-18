@@ -241,27 +241,6 @@ h2 .bullet {
   to { transform: scale(1.1) translateY(-50%) rotate(360deg); }
 }
 
-.donation-address {
-  display: inline-flex;
-  flex-direction: row;
-  transition: color 0.1s linear;
-  gap: 4px;
-  align-items: center;
-}
-
-.donation-copyable,
-.donation-clickable {
-  color: #676767;
-}
-
-.donation-copyable {
-  cursor: copy;
-}
-
-.donation-address:hover {
-  color: white;
-}
-
 .notification-container {
   position: fixed;
   top: 0; right: 0;

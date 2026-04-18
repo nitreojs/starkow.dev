@@ -1,0 +1,177 @@
+.donation-chip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.donation-chip {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  gap: 0.35em;
+  line-height: 1;
+
+  padding: 3px 0.45em;
+  border-radius: 0.35em;
+
+  border: none;
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-decoration: none;
+
+  transition: background 150ms ease, box-shadow 150ms ease, color 150ms ease;
+}
+
+.donation-chip > svg {
+  width: 0.75em;
+  height: 0.75em;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.donation-chip-name {
+  flex-shrink: 0;
+}
+
+.donation-chip-value {
+  max-width: 8ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  opacity: 0.55;
+  font-size: 0.85em;
+  font-family: 'Cascadia Code', monospace;
+}
+
+.donation-chip-highlight {
+  font-family: 'Cascadia Code', monospace;
+  font-size: 0.85em;
+  color: rgb(255 200 120 / 0.95);
+  opacity: 0.95;
+}
+
+
+.donation-chip-copy {
+  cursor: pointer;
+}
+
+.donation-chip-copy:hover,
+a.donation-chip:hover {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+.donation-chip-copy:focus,
+a.donation-chip:focus,
+.donation-chip-qr-toggle:focus {
+  outline: none;
+}
+
+.donation-chip-copy:focus-visible,
+a.donation-chip:focus-visible,
+.donation-chip-qr-toggle:focus-visible {
+  box-shadow: inset 0 0 0 1px rgb(255 200 120 / 0.5);
+}
+
+@keyframes donation-copy-flash {
+  0%   { background: rgb(120 255 180 / 0.22); box-shadow: inset 0 0 0 1px rgb(120 255 180 / 0.5); }
+  100% { background: rgb(255 255 255 / 0.05); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06); }
+}
+
+.donation-chip-copied {
+  animation: donation-copy-flash 1200ms ease;
+}
+
+.donation-chip-copied .donation-chip-value {
+  opacity: 0.9;
+}
+
+.donation-chip-plain {
+  cursor: help;
+}
+
+.donation-chip-qr-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 0.35em;
+  border: none;
+  border-radius: 0.35em;
+
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  color: inherit;
+  cursor: pointer;
+
+  transition: background 150ms ease, box-shadow 150ms ease;
+}
+
+.donation-chip-qr-toggle svg {
+  width: 0.85em;
+  height: 0.85em;
+  opacity: 0.6;
+}
+
+.donation-chip-qr-toggle:hover {
+  background: rgb(255 255 255 / 0.1);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+.donation-chip-qr-toggle:hover svg {
+  opacity: 0.9;
+}
+
+.donation-chip-qr-toggle-open {
+  background: rgb(255 200 120 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(255 200 120 / 0.4);
+}
+
+.donation-chip-qr-toggle-open svg {
+  opacity: 1;
+}
+
+.donation-qr-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+
+  padding: 0.7em;
+  border-radius: 10px;
+  background: #1a1a1a;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 10px 24px rgb(0 0 0 / 0.5);
+}
+
+.donation-qr {
+  display: block;
+  width: 160px;
+  height: 160px;
+  border-radius: 6px;
+  background: #161616;
+}
+
+.donation-qr-label {
+  font-family: 'Cascadia Code', monospace;
+  font-size: 0.75em;
+  opacity: 0.55;
+}
+
+/* when stacked in info-line, override the skill-style from being baseline-mis-aligned */
+.info-line .donation-chip-wrap,
+.info-line .donation-chip {
+  vertical-align: baseline;
+}
