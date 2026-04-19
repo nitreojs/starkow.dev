@@ -98,6 +98,20 @@
   outline-offset: 2px;
 }
 
+.bb-tray-slot-selected {
+  background: rgb(79 138 124 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(79 138 124 / 0.55);
+  border-radius: 6px;
+}
+
+.bb-piece-selected {
+  filter: drop-shadow(0 0 6px rgb(79 138 124 / 0.55));
+}
+
+.bb-board-armed {
+  cursor: crosshair;
+}
+
 .bb-meta {
   display: flex;
   gap: 1.5em;

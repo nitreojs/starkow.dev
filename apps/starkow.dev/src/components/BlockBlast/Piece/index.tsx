@@ -8,14 +8,15 @@ interface BlockBlastPieceProps {
   piece: Piece
   cellSize: number
   dim?: boolean
+  selected?: boolean
 }
 
-export const BlockBlastPiece: FC<BlockBlastPieceProps> = ({ piece, cellSize, dim = false }) => {
+export const BlockBlastPiece: FC<BlockBlastPieceProps> = ({ piece, cellSize, dim = false, selected = false }) => {
   const color = colorForPiece(piece.id)
 
   return (
     <div
-      class='bb-piece'
+      class={`bb-piece${selected ? ' bb-piece-selected' : ''}`}
       role='img'
       aria-label={`${piece.width}×${piece.height} piece`}
       style={{

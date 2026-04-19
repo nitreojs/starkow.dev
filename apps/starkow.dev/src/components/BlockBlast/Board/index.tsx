@@ -17,6 +17,11 @@ interface BlockBlastBoardProps {
   clearing?: { rows: readonly number[], cols: readonly number[] } | null
   // cells that should play the placement animation; empty otherwise
   lastPlacedCells?: readonly number[]
+  // tap-to-place handlers; used only when a tray piece is selected
+  onPointerDown?: (e: PointerEvent) => void
+  onPointerMove?: (e: PointerEvent) => void
+  onPointerLeave?: () => void
+  selected?: boolean
 }
 
 const pendingClearsFor = (
@@ -50,7 +55,7 @@ const pendingClearsFor = (
   return result
 }
 
-export const BlockBlastBoard: FC<BlockBlastBoardProps> = memo(({ board, cellSize, ghost, ghostPiece, cellPieceIds, clearing, lastPlacedCells }) => {
+export const BlockBlastBoard: FC<BlockBlastBoardProps> = memo(({ board, cellSize, ghost, ghostPiece, cellPieceIds, clearing, lastPlacedCells, onPointerDown, onPointerMove, onPointerLeave, selected = false }) => {
   const size = board.size
   const totalPx = size * cellSize
   const pending = pendingClearsFor(board, ghost, ghostPiece)
@@ -121,10 +126,13 @@ export const BlockBlastBoard: FC<BlockBlastBoardProps> = memo(({ board, cellSize
 
   return (
     <div
-      class='bb-board'
+      class={`bb-board${selected ? ' bb-board-armed' : ''}`}
       role='grid'
       aria-label={`blockblast ${size}×${size} board`}
       style={{ position: 'relative', width: totalPx, height: totalPx }}
+      onPointerDown={onPointerDown !== undefined ? (e) => onPointerDown(e as unknown as PointerEvent) : undefined}
+      onPointerMove={onPointerMove !== undefined ? (e) => onPointerMove(e as unknown as PointerEvent) : undefined}
+      onPointerLeave={onPointerLeave !== undefined ? () => onPointerLeave() : undefined}
     >
       {cells}
       {ghostOverlay}

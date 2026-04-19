@@ -129,7 +129,18 @@ export const BlockBlastPage: FC = () => {
     place(i, r, c)
   }, [place])
 
-  const { draggingIndex, pointerPos, ghost, start, pointerType } = useBlockBlastDrag(state.board, cellSize, getBoardRect, onDrop)
+  const {
+    draggingIndex,
+    selectedIndex,
+    pointerPos,
+    ghost,
+    start,
+    pointerType,
+    boardHover,
+    boardLeave,
+    boardTap,
+    clearSelection
+  } = useBlockBlastDrag(state.board, cellSize, getBoardRect, onDrop, state.tray)
   const { unlocks, tryUnlock } = useBlockBlastAchievements()
 
   // hesitation rescue: if the player hasn't placed in a while, ask the engine to swap
@@ -184,9 +195,10 @@ export const BlockBlastPage: FC = () => {
 
   const onRetry = useCallback(() => {
     if (canResumeMode(mode)) clearSave(mode)
+    clearSelection()
     setSeed(randomSeed())
     setGameKey(k => k + 1)
-  }, [mode])
+  }, [mode, clearSelection])
 
   const onModeChange = useCallback((m: ModeId) => {
     if (m === mode) return
@@ -202,9 +214,10 @@ export const BlockBlastPage: FC = () => {
         clearSave(mode)
       }
     }
+    clearSelection()
     setMode(m)
     setSeed(randomSeed())
-  }, [mode, state.movesMade, state.status])
+  }, [mode, state.movesMade, state.status, clearSelection])
 
   const onToggleHaptics = useCallback(() => {
     setHapticsState(prev => {
@@ -241,7 +254,7 @@ export const BlockBlastPage: FC = () => {
       <h1>blockblast <span class='bb-beta-pill'>beta</span></h1>
 
       <p id='bb-keyboard-hint' class='bb-live'>
-        pieces are placed by dragging. keyboard placement is not supported in this version.
+        pieces are placed by dragging or by tapping a piece then tapping a grid cell. keyboard placement is not supported in this version.
       </p>
 
       <div class='bb-live' aria-live='polite' aria-atomic='true'>
@@ -280,6 +293,10 @@ export const BlockBlastPage: FC = () => {
                 cellPieceIds={state.cellPieceIds}
                 clearing={state.lastCleared}
                 lastPlacedCells={state.lastPlacedCells}
+                selected={selectedIndex !== null}
+                onPointerDown={selectedIndex !== null ? boardTap : undefined}
+                onPointerMove={selectedIndex !== null ? boardHover : undefined}
+                onPointerLeave={selectedIndex !== null ? boardLeave : undefined}
               />
               {state.status === 'game-over' && (
                 <BlockBlastGameOver score={state.score} onRetry={onRetry} />
@@ -287,7 +304,7 @@ export const BlockBlastPage: FC = () => {
             </div>
           </div>
 
-          <BlockBlastTray tray={state.tray} trayCellSize={trayCellSize} draggingIndex={draggingIndex} onPointerDown={onPieceDown} />
+          <BlockBlastTray tray={state.tray} trayCellSize={trayCellSize} draggingIndex={draggingIndex} selectedIndex={selectedIndex} onPointerDown={onPieceDown} />
         </>
       )}
 
