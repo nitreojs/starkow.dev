@@ -1,6 +1,8 @@
 import { FC } from 'preact/compat'
 import clsx from 'clsx'
 
+import { EmojiImage } from './EmojiImage'
+
 interface ReactionsProps {
   available: string[]
   reactions?: Record<string, number>
@@ -35,7 +37,7 @@ export const Reactions: FC<ReactionsProps> = ({ available, reactions = {}, yourR
             class={clsx('shoutbox-reaction', mine && 'shoutbox-reaction-mine', count === 0 && 'shoutbox-reaction-empty')}
             onClick={() => onToggle(emoji)}
           >
-            <span class='shoutbox-reaction-emoji'>{emoji}</span>
+            <EmojiImage emoji={emoji} class='shoutbox-reaction-emoji' />
             {count > 0 && <span class='shoutbox-reaction-count'>{count}</span>}
           </button>
         )
