@@ -242,9 +242,11 @@ export const BlockBlastPage: FC = () => {
   }, [resumePrompt])
 
   const draggingPiece = draggingIndex !== null ? (state.tray[draggingIndex] ?? null) : null
+  const selectedPiece = selectedIndex !== null ? (state.tray[selectedIndex] ?? null) : null
+  const activePiece = draggingPiece ?? selectedPiece
   const ghostPiece = useMemo(
-    () => (ghost !== null && draggingPiece !== null ? { cells: draggingPiece.cells, id: draggingPiece.id } : null),
-    [ghost !== null, draggingPiece]
+    () => (ghost !== null && activePiece !== null ? { cells: activePiece.cells, id: activePiece.id } : null),
+    [ghost !== null, activePiece]
   )
 
   const cfg = MODES[mode]
