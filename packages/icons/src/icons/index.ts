@@ -1,6 +1,7 @@
 export * from './IconTelegram'
 export * from './IconLoaderX'
 export * from './IconHamster'
+export * from './IconGame'
 export * from './IconSteam'
 export * from './IconSpotify'
 export * from './IconGitHub'
