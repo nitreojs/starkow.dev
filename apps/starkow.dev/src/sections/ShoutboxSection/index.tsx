@@ -205,8 +205,12 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
             <RichContent content={content} />
           </div>
           <div class='shoutbox-answer-meta'>
-            <div class='shoutbox-answer-date' title={new Date(date).toLocaleString()}>
-              {formatRelativeTime(date)}
+            <div class='shoutbox-message-meta-right'>
+              <span class='shoutbox-message-admin-badge'>admin</span>
+              <span class='shoutbox-message-meta-sep'>•</span>
+              <div class='shoutbox-answer-date' title={new Date(date).toLocaleString()}>
+                {formatRelativeTime(date)}
+              </div>
             </div>
             {admin !== null && (
               <div class='shoutbox-admin-inline'>
