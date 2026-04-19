@@ -238,7 +238,7 @@ export const BlockBlastPage: FC = () => {
 
   return (
     <section id='block-blast' class='block-blast-page'>
-      <h1>blockblast</h1>
+      <h1>blockblast <span class='bb-beta-pill'>beta</span></h1>
 
       <p id='bb-keyboard-hint' class='bb-live'>
         pieces are placed by dragging. keyboard placement is not supported in this version.
