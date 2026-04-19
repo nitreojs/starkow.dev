@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FC } from 'preact/compat'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 
 import * as Icons from '@starkow.dev/icons'
 
@@ -8,7 +8,7 @@ import type { Content } from '../../components/RichContent/types'
 import { useNotifications } from '../../hooks'
 import { NotificationType } from '../../types'
 import { API_URL, getFingerprint } from '../../shared'
-import { replyTarget$atom } from '../../state'
+import { adminKey$atom, replyTarget$atom } from '../../state'
 
 import './style.css'
 
@@ -94,6 +94,7 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
   const [isLoading, setLoading] = useState(false)
   const [resetSignal, setResetSignal] = useState(0)
   const [replyTarget, setReplyTarget] = useAtom(replyTarget$atom)
+  const adminKey = useAtomValue(adminKey$atom)
 
   const draftTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -135,12 +136,18 @@ export const LetterboxSection: FC<LetterboxSectionProps> = ({}) => {
         body.replyTo = { id: replyTarget.id, quote: replyTarget.quote }
       }
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'X-Fingerprint': getFingerprint()
+      }
+
+      if (adminKey !== null) {
+        headers['X-Admin-Key'] = adminKey
+      }
+
       const response = await fetch(`${API_URL}/api/notify`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Fingerprint': getFingerprint()
-        },
+        headers,
         body: JSON.stringify(body)
       })
 

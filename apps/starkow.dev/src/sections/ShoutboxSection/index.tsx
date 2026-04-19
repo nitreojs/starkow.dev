@@ -7,6 +7,7 @@ import type { Content } from '../../components/RichContent/types'
 import { API_URL, autoLinkify, contentToHtml, formatRelativeTime, getFingerprint } from '../../shared'
 import { adminKey$atom, replyTarget$atom } from '../../state'
 import { ShoutboxAnswer, ShoutboxMessage as ShoutboxMessageType } from './types'
+import { AdminMenu, AdminMenuItem } from './AdminMenu'
 import { Reactions } from './Reactions'
 import { useInterval } from '@starkow.dev/hooks'
 import { useNotifications } from '../../hooks'
@@ -26,6 +27,8 @@ interface AdminHandlers {
   onEditAnswer: (id: string, index: number, content: Content[]) => Promise<boolean>
   onDeleteAnswer: (id: string, index: number) => void
   onSetReplyTo: (id: string, replyTo: { id: string, quote: string } | null) => void
+  onEditMessage: (id: string, text: string, content: Content[]) => Promise<boolean>
+  onSetAdminPosted: (id: string, adminPosted: boolean) => void
 }
 
 interface ShoutboxMessageProps extends ShoutboxMessageType {
@@ -37,6 +40,7 @@ interface ShoutboxMessageProps extends ShoutboxMessageType {
   onBeginAttach: (id: string) => void
   onCancelAttach: () => void
   onPickAsQuoteSource: (sourceId: string, sourceText: string) => void
+  onQuoteClick: (targetId: string) => void
 }
 
 const ANSWER_INDENT_CAP = 4
@@ -90,6 +94,61 @@ const AnswerEditor: FC<AnswerEditorProps> = ({ initialContent, onSave, onCancel,
       <div class='shoutbox-admin-editor-actions'>
         <button type='button' class='shoutbox-admin-action' onClick={submit} disabled={busy || plain.trim() === ''}>
           [{busy ? '...' : submitLabel}]
+        </button>
+        <button type='button' class='shoutbox-admin-action' onClick={onCancel} disabled={busy}>
+          [cancel]
+        </button>
+      </div>
+    </div>
+  )
+}
+
+interface MessageTextEditorProps {
+  initialText: string
+  initialContent: Content[] | undefined
+  onSave: (text: string, content: Content[]) => Promise<boolean>
+  onCancel: () => void
+}
+
+const MessageTextEditor: FC<MessageTextEditorProps> = ({ initialText, initialContent, onSave, onCancel }) => {
+  const seed = initialContent !== undefined && initialContent.length > 0 ? initialContent : autoLinkify(initialText)
+  const [content, setContent] = useState<Content[]>(seed)
+  const [plain, setPlain] = useState(initialText)
+  const [busy, setBusy] = useState(false)
+
+  const initialHtml = useState(() => contentToHtml(seed))[0]
+
+  const submit = async () => {
+    if (plain.trim() === '' || busy) {
+      return
+    }
+
+    setBusy(true)
+
+    const ok = await onSave(plain, content)
+
+    setBusy(false)
+
+    if (ok) {
+      onCancel()
+    }
+  }
+
+  return (
+    <div class='shoutbox-admin-editor'>
+      <RichEditor
+        initialHtml={initialHtml}
+        placeholder='edit message...'
+        disabled={busy}
+        onChange={({ content: next, plain: nextPlain }) => {
+          setContent(next)
+          setPlain(nextPlain)
+        }}
+        onSubmit={submit}
+      />
+      <div class='shoutbox-admin-editor-actions'>
+        <button type='button' class='shoutbox-admin-action' onClick={submit} disabled={busy || plain.trim() === ''}>
+          [{busy ? '...' : 'save'}]
         </button>
         <button type='button' class='shoutbox-admin-action' onClick={onCancel} disabled={busy}>
           [cancel]
@@ -179,9 +238,10 @@ const AnswerTree: FC<AnswerTreeProps> = ({ answers, messageId, admin, editingInd
   )
 }
 
-const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, availableReactions, onToggleReaction, onReply, admin, attachingTargetId, onBeginAttach, onCancelAttach, onPickAsQuoteSource }) => {
+const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pinned, replyTo, answers, reactions, yourReactions, adminPosted, availableReactions, onToggleReaction, onReply, admin, attachingTargetId, onBeginAttach, onCancelAttach, onPickAsQuoteSource, onQuoteClick }) => {
   const [editingAnswerIndex, setEditingAnswerIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
+  const [isEditingText, setIsEditingText] = useState(false)
 
   const handleAddAnswer = async (next: Content[]): Promise<boolean> => {
     if (admin === null) {
@@ -199,6 +259,62 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
 
   const answerCount = answers?.length ?? 0
 
+  const adminMenuItems: AdminMenuItem[] = []
+
+  if (admin !== null) {
+    adminMenuItems.push({
+      label: '[edit text]',
+      onClick: () => setIsEditingText(true)
+    })
+
+    adminMenuItems.push({
+      label: pinned ? '[unpin]' : '[pin]',
+      onClick: () => admin.onSetPinned(id, !pinned)
+    })
+
+    adminMenuItems.push({
+      label: adminPosted ? '[unmark as admin]' : '[mark as admin]',
+      onClick: () => admin.onSetAdminPosted(id, !adminPosted)
+    })
+
+    if (!replyTo && attachingTargetId === null) {
+      adminMenuItems.push({
+        label: '[attach quote]',
+        onClick: () => onBeginAttach(id)
+      })
+    }
+
+    if (attachingTargetId === id) {
+      adminMenuItems.push({
+        label: '[cancel attach]',
+        onClick: onCancelAttach,
+        danger: true
+      })
+    }
+
+    if (attachingTargetId !== null && attachingTargetId !== id) {
+      adminMenuItems.push({
+        label: '[select]',
+        onClick: () => onPickAsQuoteSource(id, text),
+        highlight: true
+      })
+    }
+
+    if (replyTo) {
+      adminMenuItems.push({
+        label: '[remove quote]',
+        onClick: () => admin.onSetReplyTo(id, null),
+        danger: true
+      })
+    }
+
+    adminMenuItems.push({
+      label: '[delete]',
+      onClick: () => admin.onDeleteMessage(id),
+      danger: true
+    })
+  }
+
   return (
     <div class={clsx('shoutbox-message', pinned && 'shoutbox-message-pinned', admin !== null && 'shoutbox-message-admin')} id={`shoutbox-${id}`}>
       <div class='shoutbox-message-actions'>
@@ -207,72 +323,35 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
             [reply]
           </button>
         )}
-        {admin !== null && (
-          <>
-            <button
-              type='button'
-              class='shoutbox-message-reply'
-              onClick={() => admin.onSetPinned(id, !pinned)}
-            >
-              [{pinned ? 'unpin' : 'pin'}]
-            </button>
-            {!replyTo && attachingTargetId === null && (
-              <button
-                type='button'
-                class='shoutbox-message-reply'
-                onClick={() => onBeginAttach(id)}
-              >
-                [attach quote]
-              </button>
-            )}
-            {attachingTargetId === id && (
-              <button
-                type='button'
-                class='shoutbox-message-reply shoutbox-admin-action-danger'
-                onClick={onCancelAttach}
-              >
-                [cancel attach]
-              </button>
-            )}
-            {attachingTargetId !== null && attachingTargetId !== id && (
-              <button
-                type='button'
-                class='shoutbox-message-reply shoutbox-message-reply-highlight'
-                onClick={() => onPickAsQuoteSource(id, text)}
-              >
-                [select]
-              </button>
-            )}
-            {replyTo && (
-              <button
-                type='button'
-                class='shoutbox-message-reply shoutbox-admin-action-danger'
-                onClick={() => admin.onSetReplyTo(id, null)}
-              >
-                [remove quote]
-              </button>
-            )}
-            <button
-              type='button'
-              class='shoutbox-message-reply shoutbox-admin-action-danger'
-              onClick={() => admin.onDeleteMessage(id)}
-            >
-              [delete]
-            </button>
-          </>
-        )}
+        <AdminMenu items={adminMenuItems} />
       </div>
       {pinned && (
         <div class='shoutbox-message-pin'>📌 pinned</div>
       )}
       {replyTo && (
-        <a class='shoutbox-message-quote' href={`#shoutbox-${replyTo.id}`}>
+        <a
+          class='shoutbox-message-quote'
+          href={`#shoutbox-${replyTo.id}`}
+          onClick={event => {
+            event.preventDefault()
+            onQuoteClick(replyTo.id)
+          }}
+        >
           <span class='shoutbox-message-quote-text'>{replyTo.quote}</span>
         </a>
       )}
-      <div class='shoutbox-message-text'>
-        <RichContent content={content !== undefined && content.length > 0 ? content : autoLinkify(text)} />
-      </div>
+      {isEditingText && admin !== null ? (
+        <MessageTextEditor
+          initialText={text}
+          initialContent={content}
+          onSave={async (nextText, nextContent) => admin.onEditMessage(id, nextText, nextContent)}
+          onCancel={() => setIsEditingText(false)}
+        />
+      ) : (
+        <div class='shoutbox-message-text'>
+          <RichContent content={content !== undefined && content.length > 0 ? content : autoLinkify(text)} />
+        </div>
+      )}
       {answerCount > 0 && (
         <AnswerTree
           answers={answers!}
@@ -306,8 +385,16 @@ const ShoutboxMessage: FC<ShoutboxMessageProps> = ({ id, text, content, date, pi
           yourReactions={yourReactions}
           onToggle={emoji => onToggleReaction(id, emoji)}
         />
-        <div class='shoutbox-message-date' title={new Date(date).toLocaleString()}>
-          {formatRelativeTime(date)}
+        <div class='shoutbox-message-meta-right'>
+          {adminPosted && (
+            <>
+              <span class='shoutbox-message-admin-badge'>admin</span>
+              <span class='shoutbox-message-meta-sep'>•</span>
+            </>
+          )}
+          <div class='shoutbox-message-date' title={new Date(date).toLocaleString()}>
+            {formatRelativeTime(date)}
+          </div>
         </div>
       </div>
     </div>
@@ -337,6 +424,48 @@ export const ShoutboxSection: FC = () => {
       document.getElementById('letterbox')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }, [setReplyTarget])
+
+  const highlightMessage = (targetId: string) => {
+    const el = document.getElementById(`shoutbox-${targetId}`)
+
+    if (el === null) {
+      return false
+    }
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    el.classList.remove('shoutbox-message-flash')
+    void el.offsetWidth
+    el.classList.add('shoutbox-message-flash')
+    window.setTimeout(() => el.classList.remove('shoutbox-message-flash'), 1600)
+
+    return true
+  }
+
+  const handleQuoteClick = async (targetId: string) => {
+    if (highlightMessage(targetId)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/api/shoutbox/locate/${targetId}`, {
+        headers: { 'X-Fingerprint': getFingerprint() }
+      })
+
+      const json = await response.json() as Record<string, any>
+
+      if (!json.ok) {
+        addNotification('quoted message not found', NotificationType.Error)
+
+        return
+      }
+
+      await fetchShoutbox(json.data.page)
+
+      requestAnimationFrame(() => requestAnimationFrame(() => highlightMessage(targetId)))
+    } catch {
+      addNotification('failed to locate quoted message', NotificationType.Error)
+    }
+  }
 
   const handlePickAsQuoteSource = (sourceId: string, sourceText: string) => {
     if (attachingTargetId === null) {
@@ -536,6 +665,28 @@ export const ShoutboxSection: FC = () => {
 
         fetchShoutbox(page)
       }
+    },
+    onEditMessage: async (id, text, content) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/text`, {
+        method: 'PATCH',
+        body: JSON.stringify({ text, content })
+      })
+
+      if (ok) {
+        fetchShoutbox(page)
+      }
+
+      return ok
+    },
+    onSetAdminPosted: async (id, adminPosted) => {
+      const ok = await adminRequest(`/api/shoutbox/${id}/admin-posted`, {
+        method: 'POST',
+        body: JSON.stringify({ adminPosted })
+      })
+
+      if (ok) {
+        fetchShoutbox(page)
+      }
     }
   }
 
@@ -569,6 +720,7 @@ export const ShoutboxSection: FC = () => {
                 onBeginAttach={setAttachingTargetId}
                 onCancelAttach={() => setAttachingTargetId(null)}
                 onPickAsQuoteSource={handlePickAsQuoteSource}
+                onQuoteClick={handleQuoteClick}
               />
             ))}
           </div>

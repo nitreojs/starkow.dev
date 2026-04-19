@@ -17,8 +17,21 @@
   /* flex-grow: 1; */
 }
 
+.shoutbox-message:has(.shoutbox-admin-menu-popover) {
+  z-index: 10;
+}
+
 .shoutbox-message-pinned {
   border-left: 3px solid rgb(255 200 120 / 0.5);
+}
+
+@keyframes shoutbox-message-flash {
+  0% { background-color: rgb(255 200 120 / 0.25); }
+  100% { background-color: #212121; }
+}
+
+.shoutbox-message-flash {
+  animation: shoutbox-message-flash 1.5s ease-out;
 }
 
 .shoutbox-message-pin {
@@ -42,11 +55,11 @@
 }
 
 .shoutbox-message-admin .shoutbox-message-text::before {
-  width: 12em;
+  width: 7em;
 }
 
 .shoutbox-message-admin .shoutbox-message-quote {
-  margin-right: 12em;
+  margin-right: 7em;
 }
 
 .shoutbox-message-quote {
@@ -135,6 +148,76 @@
   opacity: 0.3;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.shoutbox-message-meta-right {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+}
+
+.shoutbox-message-meta-sep {
+  font-size: 0.7em;
+  opacity: 0.3;
+}
+
+.shoutbox-message-admin-badge {
+  font-size: 0.7em;
+  color: #ffd67a;
+  opacity: 0.85;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.shoutbox-admin-menu {
+  position: relative;
+}
+
+.shoutbox-admin-menu-toggle-open {
+  opacity: 0.9;
+}
+
+.shoutbox-admin-menu-popover {
+  position: absolute;
+  top: calc(100% + 0.3em);
+  right: 0;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 11em;
+
+  padding: 0.3em 0;
+  border-radius: 8px;
+  background: #2a2a2a;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.4);
+}
+
+.shoutbox-admin-menu-item {
+  background: transparent;
+  border: none;
+  padding: 0.35em 0.8em;
+  font-family: inherit;
+  font-size: 0.8em;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: background 120ms ease, opacity 120ms ease;
+}
+
+.shoutbox-admin-menu-item:hover {
+  background: rgb(255 255 255 / 0.06);
+  opacity: 1;
+}
+
+.shoutbox-admin-menu-item-danger {
+  color: #ff8a8a;
+}
+
+.shoutbox-admin-menu-item-highlight {
+  color: #ffd67a;
 }
 
 .shoutbox-answer {

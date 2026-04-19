@@ -21,5 +21,6 @@ export interface ShoutboxMessage {
   yourReactions?: string[]
   pinned?: boolean
   replyTo?: ShoutboxReplyRef
+  adminPosted?: boolean
 }
 
