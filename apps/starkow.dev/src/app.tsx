@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks'
+import { FC, lazy, Suspense, useEffect, useState } from 'preact/compat'
 import { Route, Switch } from 'wouter-preact'
 import { isbot } from 'isbot'
 
@@ -9,6 +9,8 @@ import { getTimeBucket, hydrateAdminKeyFromUrl } from './shared'
 // import { NoiseCanvas } from './components'
 
 import './app.css'
+
+const BlockBlastPage = lazy(() => import('./pages/BlockBlast').then(m => ({ default: m.BlockBlastPage }))) as unknown as FC
 
 hydrateAdminKeyFromUrl()
 
@@ -35,6 +37,12 @@ export function App() {
       <Switch>
         <Route path='/'>
           {isHamster ? <HamsterPage onButtonClick={() => setIsHamster(false)} /> : <MainPage />}
+        </Route>
+
+        <Route path='/blockblast'>
+          <Suspense fallback={<p class='text-half-visible'>loading…</p>}>
+            <BlockBlastPage />
+          </Suspense>
         </Route>
 
         <Route>

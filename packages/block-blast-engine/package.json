@@ -1,0 +1,18 @@
+{
+  "name": "@starkow.dev/block-blast-engine",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vitest": "^1.6.0"
+  }
+}
