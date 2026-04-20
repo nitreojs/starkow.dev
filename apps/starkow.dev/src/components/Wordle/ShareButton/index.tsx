@@ -9,15 +9,22 @@ interface Props {
   rows: Row[]
   won: boolean
   date: string
+  dailyIndex: number | null
+  replay: boolean
 }
 
 const CELL: Record<Cell, string> = { green: '🟩', yellow: '🟨', gray: '⬛' }
 
-const buildText = ({ mode, lang, length, rows, won, date }: Props): string => {
-  const header = mode === 'daily'
-    ? `starkow wordle · ${lang}-${length} · ${date} · ${won ? rows.length : 'x'}/6`
-    : `starkow wordle · ${lang}-${length} · infinite · ${won ? rows.length : 'x'}/6`
+const buildText = ({ mode, lang, length, rows, won, date, dailyIndex, replay }: Props): string => {
+  const scope = mode === 'daily'
+    ? dailyIndex !== null
+      ? `daily #${dailyIndex}${date === '' ? '' : ` · ${date}`}`
+      : `daily · ${date}`
+    : 'infinite'
 
+  const replayTag = replay ? ' · replay' : ''
+  const score = `${won ? rows.length : 'x'}/6`
+  const header = `starkow wordle · ${lang}-${length} · ${scope}${replayTag} · ${score}`
   const grid = rows.map(r => r.mask.map(c => CELL[c]).join('')).join('\n')
 
   return `${header}\n\n${grid}\n\nplay at https://starkow.dev/wordle`

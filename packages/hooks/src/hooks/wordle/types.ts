@@ -12,6 +12,9 @@ export interface GameView {
   status: GameStatus
   answer: string | null
   nextResetAt: string | null
+  dailyIndex: number | null
+  dailyDate: string | null
+  replay: boolean
 }
 
 export interface GuessResponse {

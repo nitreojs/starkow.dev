@@ -69,6 +69,12 @@ export function App() {
           </Suspense>
         </Route>
 
+        <Route path='/wordle/daily/:index'>
+          <Suspense fallback={<p class='text-half-visible'>loading…</p>}>
+            <WordlePage />
+          </Suspense>
+        </Route>
+
         <Route>
           <NotFoundPage />
         </Route>

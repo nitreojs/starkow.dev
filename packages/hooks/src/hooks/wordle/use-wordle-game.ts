@@ -31,6 +31,11 @@ const foldKeyState = (rows: Row[]): Record<string, Cell> => {
   return map
 }
 
+export interface UseWordleGameOptions {
+  dailyIndex?: number
+  replay?: boolean
+}
+
 export interface UseWordleGame {
   gameId: string | null
   rows: Row[]
@@ -38,6 +43,9 @@ export interface UseWordleGame {
   status: UiStatus
   answer: string | null
   nextResetAt: string | null
+  dailyIndex: number | null
+  dailyDate: string | null
+  replay: boolean
   keyState: Record<string, Cell>
   error: GameError | null
   length: Length
@@ -50,12 +58,19 @@ export interface UseWordleGame {
   startNew: () => Promise<void>
 }
 
-export const useWordleGame = (mode: Mode, lang: Lang, length: Length): UseWordleGame => {
+export const useWordleGame = (
+  mode: Mode,
+  lang: Lang,
+  length: Length,
+  options: UseWordleGameOptions = {}
+): UseWordleGame => {
   const [game, setGame] = useState<GameView | null>(null)
   const [draft, setDraft] = useState<string>('')
   const [error, setError] = useState<GameError | null>(null)
   const [status, setStatus] = useState<UiStatus>('loading')
   const pending = useRef<boolean>(false)
+
+  const { dailyIndex, replay } = options
 
   const reset = useCallback(async () => {
     setStatus('loading')
@@ -76,13 +91,13 @@ export const useWordleGame = (mode: Mode, lang: Lang, length: Length): UseWordle
       }
     }
 
-    const fresh = await createGame(mode, lang, length)
+    const fresh = await createGame(mode, lang, length, { dailyIndex, replay })
 
     if (mode === 'infinite') setInfiniteGameId(fresh.gameId)
 
     setGame(fresh)
     setStatus(fresh.status)
-  }, [mode, lang, length])
+  }, [mode, lang, length, dailyIndex, replay])
 
   useEffect(() => {
     void reset()
@@ -153,6 +168,9 @@ export const useWordleGame = (mode: Mode, lang: Lang, length: Length): UseWordle
     status,
     answer: game?.answer ?? null,
     nextResetAt: game?.nextResetAt ?? null,
+    dailyIndex: game?.dailyIndex ?? null,
+    dailyDate: game?.dailyDate ?? null,
+    replay: game?.replay ?? false,
     keyState: foldKeyState(game?.rows ?? []),
     error,
     length,

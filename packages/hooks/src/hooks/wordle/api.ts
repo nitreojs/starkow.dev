@@ -2,9 +2,23 @@ import type { GameStatus, Lang, Length, Mode } from '@starkow.dev/wordle-engine'
 
 import type { GameView, GuessRejection, GuessResponse } from './types'
 
-export interface DailyStatus {
+export interface DailyPlayedEntry {
+  index: number
   date: string
-  played: { lang: Lang, length: Length, status: GameStatus }[]
+  lang: Lang
+  length: Length
+  status: GameStatus
+}
+
+export interface DailyStatus {
+  epoch: string
+  latestIndex: number
+  played: DailyPlayedEntry[]
+}
+
+export interface CreateGameOptions {
+  dailyIndex?: number
+  replay?: boolean
 }
 
 const API_BASE = typeof window !== 'undefined' && window.location.hostname === 'localhost'
@@ -43,11 +57,21 @@ const getFingerprintHeader = (): Record<string, string> => {
   return fp !== null ? { 'x-fingerprint': fp } : {}
 }
 
-export const createGame = async (mode: Mode, lang: Lang, length: Length): Promise<GameView> => {
+export const createGame = async (
+  mode: Mode,
+  lang: Lang,
+  length: Length,
+  options: CreateGameOptions = {}
+): Promise<GameView> => {
+  const body: Record<string, unknown> = { mode, lang, length }
+
+  if (options.dailyIndex !== undefined) body.dailyIndex = options.dailyIndex
+  if (options.replay === true) body.replay = true
+
   const res = await fetch(`${API_BASE}/api/wordle/games`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...getFingerprintHeader() },
-    body: JSON.stringify({ mode, lang, length })
+    body: JSON.stringify(body)
   })
 
   if (!res.ok) throw new Error(`create-game ${res.status}`)

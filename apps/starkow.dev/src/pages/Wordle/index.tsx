@@ -1,4 +1,5 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'preact/compat'
+import { useLocation, useRoute } from 'wouter-preact'
 
 import {
   DEFAULT_LANG,
@@ -21,6 +22,7 @@ import {
 
 import {
   Board,
+  DailyPicker,
   Dropdown,
   GameOver,
   Keyboard,
@@ -30,20 +32,35 @@ import {
 
 import './style.css'
 
-const today = (): string => new Date().toISOString().slice(0, 10)
-
 const MODE_LABELS: Record<Mode, string> = { daily: 'daily', infinite: 'infinite' }
 const LANG_LABELS: Record<Lang, string> = { en: 'english', ru: 'russian' }
+
+const parseIndex = (raw: string | undefined): number | null => {
+  if (raw === undefined) return null
+
+  const n = Number(raw)
+
+  if (!Number.isInteger(n) || n < 1) return null
+
+  return n
+}
 
 export const WordlePage: FC = () => {
   document.title = 'starkow★dev • wordle'
 
+  const [, navigate] = useLocation()
+  const [, dailyRouteParams] = useRoute<{ index?: string }>('/wordle/daily/:index')
+  const urlIndex = parseIndex(dailyRouteParams?.index)
+
   const initial = useMemo(() => getLastConfig(), [])
-  const [mode, setMode] = useState<Mode>(initial?.mode ?? 'daily')
+  // when a /daily/:n route is active we force mode=daily; otherwise use last
+  const [mode, setMode] = useState<Mode>(urlIndex !== null ? 'daily' : initial?.mode ?? 'daily')
   const [lang, setLang] = useState<Lang>(initial?.lang ?? DEFAULT_LANG)
   const [length, setLength] = useState<Length>(initial?.length ?? DEFAULT_LENGTH)
+  const [replay, setReplay] = useState<boolean>(false)
   const [statsOpen, setStatsOpen] = useState<boolean>(false)
   const [optionsOpen, setOptionsOpen] = useState<boolean>(false)
+  const [pickerOpen, setPickerOpen] = useState<boolean>(false)
   const [overlayClosed, setOverlayClosed] = useState<boolean>(true)
   const [hideLetters, setHideLetters] = useState<boolean>(false)
   const [dailyStatus, setDailyStatus] = useState<DailyStatus | null>(null)
@@ -57,22 +74,38 @@ export const WordlePage: FC = () => {
     } catch { return false }
   })
 
+  // if the user lands on /wordle/daily/:n, force daily mode and clear any replay
+  useEffect(() => {
+    if (urlIndex === null) return
+    if (mode !== 'daily') setMode('daily')
+    if (replay) setReplay(false)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlIndex])
+
+  // redirect away from out-of-range /wordle/daily/:n once we know the latest index
+  useEffect(() => {
+    if (urlIndex === null || dailyStatus === null) return
+    if (urlIndex > dailyStatus.latestIndex) navigate('/wordle')
+  }, [urlIndex, dailyStatus, navigate])
+
   useEffect(() => { setLastConfig({ mode, lang, length }) }, [mode, lang, length])
 
   useEffect(() => {
     try { localStorage.setItem('wordle:options', JSON.stringify({ colorblindHints })) } catch { /* ignore */ }
   }, [colorblindHints])
 
-  const game = useWordleGame(mode, lang, length)
+  // changing lang/length on a past daily is fine — the hook will swap
+  // to that daily's answer for the new lang/length combo.
+  const dailyIndex = mode === 'daily' && urlIndex !== null ? urlIndex : undefined
+
+  const game = useWordleGame(mode, lang, length, { dailyIndex, replay })
   const { stats, recordGame } = useWordleStats(lang, length)
 
-  // reset per-game ui state when switching to a different game
   useEffect(() => {
     setOverlayClosed(true)
     setHideLetters(false)
   }, [game.gameId])
 
-  // open the game-over overlay only on a fresh playing→terminal transition
   const prevStatusRef = useRef<string>('loading')
   useEffect(() => {
     if (prevStatusRef.current === 'playing' && (game.status === 'won' || game.status === 'lost')) {
@@ -81,7 +114,6 @@ export const WordlePage: FC = () => {
     prevStatusRef.current = game.status
   }, [game.status])
 
-  // fetch daily status on mount + whenever a game ends, so dropdown markers stay fresh
   const refreshDailyStatus = useCallback(() => {
     void fetchDailyStatus().then(s => { if (s !== null) setDailyStatus(s) })
   }, [])
@@ -92,7 +124,6 @@ export const WordlePage: FC = () => {
     if (game.status === 'won' || game.status === 'lost') refreshDailyStatus()
   }, [game.status, refreshDailyStatus])
 
-  // announce row reveals, errors, and game-end for screen readers
   const lastAnnouncedRowRef = useRef<number>(0)
   useEffect(() => {
     lastAnnouncedRowRef.current = game.rows.length
@@ -123,14 +154,13 @@ export const WordlePage: FC = () => {
 
   useWordleKeyboard({
     lang,
-    enabled: game.status === 'playing' && !optionsOpen && !statsOpen,
+    enabled: game.status === 'playing' && !optionsOpen && !statsOpen && !pickerOpen,
     onLetter: game.typeLetter,
     onBackspace: game.backspace,
     onSubmit: () => { void game.submit() }
   })
 
-  // record stats only on a fresh playing→terminal transition within the session;
-  // never when a pre-finished game is loaded from the server (reload / config switch)
+  // stats record only on first-attempt daily/infinite games; replays are excluded.
   const recordedRef = useRef<string | null>(null)
   const prevForRecordRef = useRef<string>('loading')
 
@@ -142,6 +172,7 @@ export const WordlePage: FC = () => {
     if (game.status !== 'won' && game.status !== 'lost') return
     if (game.gameId === null) return
     if (game.rows.length === 0) return
+    if (game.replay) return
 
     const key = `${game.gameId}:${game.status}`
     if (recordedRef.current === key) return
@@ -151,15 +182,41 @@ export const WordlePage: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.status])
 
-  // "done today" hint for a given lang (current length) or length (current lang) in daily mode
+  // decorate lang/length dropdowns with the status of the currently selected daily
+  const activeIndex = game.dailyIndex ?? dailyStatus?.latestIndex ?? null
   const dailyHint = (l: Lang, n: Length): string | undefined => {
-    if (mode !== 'daily' || dailyStatus === null) return undefined
-    const entry = dailyStatus.played.find(p => p.lang === l && p.length === n)
+    if (mode !== 'daily' || dailyStatus === null || activeIndex === null) return undefined
+
+    const entry = dailyStatus.played.find(p => p.index === activeIndex && p.lang === l && p.length === n)
+
     if (entry === undefined) return undefined
     if (entry.status === 'won') return '✓'
     if (entry.status === 'lost') return '✕'
+
     return '…'
   }
+
+  const selectDaily = (index: number): void => {
+    setPickerOpen(false)
+    setReplay(false)
+
+    if (dailyStatus !== null && index === dailyStatus.latestIndex) {
+      navigate('/wordle')
+      return
+    }
+
+    navigate(`/wordle/daily/${index}`)
+  }
+
+  const onReplayPastDaily = (): void => {
+    setReplay(true)
+    setOverlayClosed(true)
+    void game.startNew()
+  }
+
+  const dailyLabel = game.dailyIndex !== null ? `daily #${game.dailyIndex}` : 'daily'
+  const shareDate = mode === 'daily' ? game.dailyDate ?? '' : ''
+  const viewingPastDaily = game.dailyIndex !== null && dailyStatus !== null && game.dailyIndex < dailyStatus.latestIndex
 
   return (
     <section id='wordle' class={`wordle-page${colorblindHints ? ' wdl-cb' : ''}`}>
@@ -171,9 +228,28 @@ export const WordlePage: FC = () => {
           <Dropdown
             ariaLabel='mode'
             value={mode}
-            options={(['daily', 'infinite'] as Mode[]).map(m => ({ value: m, label: MODE_LABELS[m] }))}
-            onChange={v => { if (v !== mode) setMode(v as Mode) }}
+            options={(['daily', 'infinite'] as Mode[]).map(m => ({
+              value: m,
+              label: m === 'daily' ? dailyLabel : MODE_LABELS[m]
+            }))}
+            onChange={v => {
+              const next = v as Mode
+              if (next === mode) return
+              setMode(next)
+              setReplay(false)
+              // leave the archived-daily route when switching to infinite
+              if (next === 'infinite' && urlIndex !== null) navigate('/wordle')
+            }}
           />
+
+          {mode === 'daily' && (
+            <button
+              class='cool-button wdl-picker-trigger'
+              type='button'
+              onClick={() => setPickerOpen(true)}
+              title='browse past dailies'
+            >past</button>
+          )}
 
           <Dropdown
             ariaLabel='language'
@@ -183,7 +259,7 @@ export const WordlePage: FC = () => {
               label: LANG_LABELS[l],
               hint: dailyHint(l, length)
             }))}
-            onChange={v => { if (v !== lang) setLang(v as Lang) }}
+            onChange={v => { if (v !== lang) { setLang(v as Lang); setReplay(false) } }}
           />
 
           <Dropdown
@@ -196,7 +272,7 @@ export const WordlePage: FC = () => {
             }))}
             onChange={v => {
               const n = Number(v) as Length
-              if (n !== length) setLength(n)
+              if (n !== length) { setLength(n); setReplay(false) }
             }}
           />
         </div>
@@ -238,11 +314,17 @@ export const WordlePage: FC = () => {
             lang={lang}
             length={length}
             rows={game.rows}
-            date={mode === 'daily' ? today() : ''}
+            date={shareDate}
+            dailyIndex={game.dailyIndex}
+            replay={game.replay}
             nextResetAt={game.nextResetAt}
-            onPlayAgain={() => { void game.startNew() }}
+            onPlayAgain={() => {
+              if (mode === 'daily') onReplayPastDaily()
+              else void game.startNew()
+            }}
             onStats={() => setStatsOpen(true)}
             onClose={() => setOverlayClosed(true)}
+            canReplayDaily={viewingPastDaily}
           />
         )}
       </div>
@@ -266,7 +348,9 @@ export const WordlePage: FC = () => {
               length={length}
               rows={game.rows}
               won={game.status === 'won'}
-              date={mode === 'daily' ? today() : ''}
+              date={shareDate}
+              dailyIndex={game.dailyIndex}
+              replay={game.replay}
             />
             <button class='cool-button' onClick={() => setHideLetters(v => !v)}>
               {hideLetters ? 'show letters' : 'hide letters'}
@@ -274,6 +358,17 @@ export const WordlePage: FC = () => {
           </>
         )}
       </div>
+
+      {pickerOpen && dailyStatus !== null && (
+        <DailyPicker
+          status={dailyStatus}
+          currentIndex={game.dailyIndex ?? dailyStatus.latestIndex}
+          currentLang={lang}
+          currentLength={length}
+          onSelect={selectDaily}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
 
       {statsOpen && (
         <StatsModal

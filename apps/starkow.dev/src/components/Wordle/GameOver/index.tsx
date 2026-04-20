@@ -12,10 +12,15 @@ interface Props {
   length: Length
   rows: Row[]
   date: string
+  dailyIndex: number | null
+  replay: boolean
   nextResetAt: string | null
   onPlayAgain: () => void
   onStats: () => void
   onClose: () => void
+  // true when the finished game is a past (archived) daily
+  // that can be replayed independently of today's daily.
+  canReplayDaily: boolean
 }
 
 const formatRemaining = (target: string): string => {
@@ -62,8 +67,12 @@ const useCountdown = (target: string | null): string | null => {
 const wiktionaryUrl = (lang: Lang, word: string): string =>
   `https://${lang}.wiktionary.org/wiki/${encodeURIComponent(word)}`
 
-export const GameOver: FC<Props> = ({ won, answer, mode, lang, length, rows, date, nextResetAt, onPlayAgain, onStats, onClose }) => {
+export const GameOver: FC<Props> = ({
+  won, answer, mode, lang, length, rows, date, dailyIndex, replay,
+  nextResetAt, onPlayAgain, onStats, onClose, canReplayDaily
+}) => {
   const remaining = useCountdown(mode === 'daily' ? nextResetAt : null)
+  const showPlayAgain = mode === 'infinite' || canReplayDaily
 
   return (
     <div class='wdl-game-over'>
@@ -81,9 +90,22 @@ export const GameOver: FC<Props> = ({ won, answer, mode, lang, length, rows, dat
         </a>
       </p>
       <div class='wdl-game-over-actions'>
-        <ShareButton mode={mode} lang={lang} length={length} rows={rows} won={won} date={date} />
+        <ShareButton
+          mode={mode}
+          lang={lang}
+          length={length}
+          rows={rows}
+          won={won}
+          date={date}
+          dailyIndex={dailyIndex}
+          replay={replay}
+        />
         <button class='cool-button' onClick={onStats}>stats</button>
-        {mode === 'infinite' && <button class='cool-button' onClick={onPlayAgain}>play again</button>}
+        {showPlayAgain && (
+          <button class='cool-button' onClick={onPlayAgain}>
+            {mode === 'infinite' ? 'play again' : 'replay'}
+          </button>
+        )}
       </div>
       {mode === 'daily' && remaining !== null && nextResetAt !== null && (
         <p class='text-small text-half-visible'>
