@@ -340,3 +340,32 @@ svg {
   opacity: 0.5;
   display: none;
 }
+
+.app-home-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.45em 0.75em;
+  font-size: 0.9em;
+  color: rgb(255 255 255 / 0.7);
+  background: #212121;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 120ms ease-out, color 120ms ease-out, background 120ms ease-out;
+}
+.app-home-link:hover {
+  border-color: #4f8a7c;
+  color: rgb(255 255 255 / 0.95);
+}
+.app-home-link svg { flex: 0 0 auto; }
+.app-home-link-label { line-height: 1; }
+
+@media (max-width: 520px) {
+  .app-home-link { padding: 0.45em 0.6em; }
+  .app-home-link-label { display: none; }
+}
