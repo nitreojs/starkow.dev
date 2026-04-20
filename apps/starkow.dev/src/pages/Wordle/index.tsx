@@ -151,9 +151,6 @@ export const WordlePage: FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.status])
 
-  // config switching locks only when a daily game has actual progress
-  const configLocked = game.status === 'playing' && game.rows.length > 0 && mode === 'daily'
-
   // "done today" hint for a given lang (current length) or length (current lang) in daily mode
   const dailyHint = (l: Lang, n: Length): string | undefined => {
     if (mode !== 'daily' || dailyStatus === null) return undefined
@@ -174,7 +171,6 @@ export const WordlePage: FC = () => {
           <Dropdown
             ariaLabel='mode'
             value={mode}
-            disabled={configLocked}
             options={(['daily', 'infinite'] as Mode[]).map(m => ({ value: m, label: MODE_LABELS[m] }))}
             onChange={v => { if (v !== mode) setMode(v as Mode) }}
           />
@@ -182,7 +178,6 @@ export const WordlePage: FC = () => {
           <Dropdown
             ariaLabel='language'
             value={lang}
-            disabled={configLocked}
             options={LANGS.map(l => ({
               value: l,
               label: LANG_LABELS[l],
@@ -194,7 +189,6 @@ export const WordlePage: FC = () => {
           <Dropdown
             ariaLabel='word length'
             value={String(length)}
-            disabled={configLocked}
             options={LENGTHS.map(n => ({
               value: String(n),
               label: `${n} letters`,
