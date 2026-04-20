@@ -11,11 +11,36 @@ const API_BASE = typeof window !== 'undefined' && window.location.hostname === '
   ? ''
   : 'https://starkow.dev'
 
-const getFingerprintHeader = (): Record<string, string> => {
+const FP_KEY = 'starkow:fp'
+
+const generateFingerprint = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return Array.from({ length: 16 }, () => Math.floor(Math.random() * 256))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+const ensureFingerprint = (): string | null => {
+  if (typeof window === 'undefined') return null
+
   try {
-    const fp = localStorage.getItem('starkow:fp')
-    return fp !== null ? { 'x-fingerprint': fp } : {}
-  } catch { return {} }
+    const existing = localStorage.getItem(FP_KEY)
+    if (existing !== null && existing !== '') return existing
+
+    const fresh = generateFingerprint()
+
+    try { localStorage.setItem(FP_KEY, fresh) } catch { /* storage disabled — still send header for this request */ }
+
+    return fresh
+  } catch { return null }
+}
+
+const getFingerprintHeader = (): Record<string, string> => {
+  const fp = ensureFingerprint()
+  return fp !== null ? { 'x-fingerprint': fp } : {}
 }
 
 export const createGame = async (mode: Mode, lang: Lang, length: Length): Promise<GameView> => {
