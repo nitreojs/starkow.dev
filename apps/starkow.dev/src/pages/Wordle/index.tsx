@@ -355,6 +355,16 @@ export const WordlePage: FC = () => {
             <button class='cool-button' onClick={() => setHideLetters(v => !v)}>
               {hideLetters ? 'show letters' : 'hide letters'}
             </button>
+            {mode === 'infinite' && (
+              <button class='cool-button' onClick={() => { void game.startNew() }}>
+                play again
+              </button>
+            )}
+            {viewingPastDaily && (
+              <button class='cool-button' onClick={onReplayPastDaily}>
+                replay
+              </button>
+            )}
           </>
         )}
       </div>
