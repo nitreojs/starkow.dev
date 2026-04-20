@@ -1,6 +1,11 @@
-import type { Lang, Length, Mode } from '@starkow.dev/wordle-engine'
+import type { GameStatus, Lang, Length, Mode } from '@starkow.dev/wordle-engine'
 
 import type { GameView, GuessRejection, GuessResponse } from './types'
+
+export interface DailyStatus {
+  date: string
+  played: { lang: Lang, length: Length, status: GameStatus }[]
+}
 
 const API_BASE = typeof window !== 'undefined' && window.location.hostname === 'localhost'
   ? ''
@@ -34,6 +39,20 @@ export const fetchGame = async (gameId: string): Promise<GameView | null> => {
   if (!res.ok) throw new Error(`fetch-game ${res.status}`)
 
   return res.json() as Promise<GameView>
+}
+
+export const fetchDailyStatus = async (): Promise<DailyStatus | null> => {
+  try {
+    const res = await fetch(`${API_BASE}/api/wordle/daily-status`, {
+      headers: { ...getFingerprintHeader() }
+    })
+
+    if (!res.ok) return null
+
+    return await (res.json() as Promise<DailyStatus>)
+  } catch {
+    return null
+  }
 }
 
 export const submitGuess = async (gameId: string, word: string): Promise<GuessResponse | GuessRejection> => {

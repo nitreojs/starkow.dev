@@ -3,6 +3,7 @@ import { FC, useEffect, useRef, useState } from 'preact/compat'
 export interface DropdownOption {
   value: string
   label: string
+  hint?: string
 }
 
 interface DropdownProps {
@@ -79,7 +80,10 @@ export const Dropdown: FC<DropdownProps> = ({ value, options, onChange, disabled
                 class={optClasses}
                 onClick={() => { onChange(o.value); setOpen(false) }}
               >
-                {o.label}
+                <span class='wdl-dropdown-option-label'>{o.label}</span>
+                {o.hint !== undefined && (
+                  <span class='wdl-dropdown-option-hint'>{o.hint}</span>
+                )}
               </button>
             )
           })}

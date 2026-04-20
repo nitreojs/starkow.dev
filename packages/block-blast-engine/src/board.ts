@@ -82,7 +82,7 @@ export class Board {
     return { rows, cols, cellsCleared: cellsToClear.size }
   }
 
-  isGameOver (tray: ReadonlyArray<Piece | null>): boolean {
+  isGameOver (tray: readonly (Piece | null)[]): boolean {
     let hasAnyPiece = false
     for (const piece of tray) {
       if (piece === null) continue

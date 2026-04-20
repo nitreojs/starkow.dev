@@ -20,7 +20,7 @@ export type ResumableSave = {
   score: number
   streak: number
   movesMade: number
-  moveHistory: Array<{ trayIndex: TrayIndex, r: number, c: number }>
+  moveHistory: { trayIndex: TrayIndex, r: number, c: number }[]
   engineVersion: string
 }
 

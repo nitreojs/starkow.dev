@@ -87,7 +87,7 @@ describe('PieceGenerator / solvability-aware', () => {
     //   x . . . . . . .
     //   x . . . . . . .
     const b = new Board(8)
-    const filled: Array<[number, number]> = [
+    const filled: [number, number][] = [
       [1, 1], [1, 2], [1, 3], [1, 4], [1, 5],
       [2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5],
       [3, 0], [3, 3], [3, 4], [3, 5],

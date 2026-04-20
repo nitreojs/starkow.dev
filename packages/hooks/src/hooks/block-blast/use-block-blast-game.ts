@@ -60,7 +60,7 @@ const countIsolatedEmpties = (board: Board): number => {
     for (let c = 0; c < size; c++) {
       if (cells[r * size + c] !== 0) continue
       let allBlocked = true
-      const dirs: Array<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+      const dirs: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]]
       for (const [dr, dc] of dirs) {
         const nr = r + dr
         const nc = c + dc

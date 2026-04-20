@@ -18,7 +18,7 @@ const buildText = ({ mode, lang, length, rows, won, date }: Props): string => {
     ? `starkow wordle · ${lang}-${length} · ${date} · ${won ? rows.length : 'x'}/6`
     : `starkow wordle · ${lang}-${length} · infinite · ${won ? rows.length : 'x'}/6`
   const grid = rows.map(r => r.mask.map(c => CELL[c]).join('')).join('\n')
-  return `${header}\n${grid}`
+  return `${header}\n${grid}\n\nplay at https://starkow.dev/wordle`
 }
 
 export const ShareButton: FC<Props> = props => {

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from 'preact/compat'
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'preact/compat'
 
 import {
   DEFAULT_LANG,
@@ -10,11 +10,13 @@ import {
   type Mode
 } from '@starkow.dev/wordle-engine'
 import {
+  fetchDailyStatus,
   getLastConfig,
   setLastConfig,
   useWordleGame,
   useWordleKeyboard,
-  useWordleStats
+  useWordleStats,
+  type DailyStatus
 } from '@starkow.dev/hooks'
 
 import {
@@ -44,6 +46,8 @@ export const WordlePage: FC = () => {
   const [optionsOpen, setOptionsOpen] = useState<boolean>(false)
   const [overlayClosed, setOverlayClosed] = useState<boolean>(true)
   const [hideLetters, setHideLetters] = useState<boolean>(false)
+  const [dailyStatus, setDailyStatus] = useState<DailyStatus | null>(null)
+  const [liveMessage, setLiveMessage] = useState<string>('')
   const [colorblindHints, setColorblindHints] = useState<boolean>(() => {
     try {
       const raw = localStorage.getItem('wordle:options')
@@ -76,6 +80,46 @@ export const WordlePage: FC = () => {
     }
     prevStatusRef.current = game.status
   }, [game.status])
+
+  // fetch daily status on mount + whenever a game ends, so dropdown markers stay fresh
+  const refreshDailyStatus = useCallback(() => {
+    void fetchDailyStatus().then(s => { if (s !== null) setDailyStatus(s) })
+  }, [])
+
+  useEffect(() => { refreshDailyStatus() }, [refreshDailyStatus])
+
+  useEffect(() => {
+    if (game.status === 'won' || game.status === 'lost') refreshDailyStatus()
+  }, [game.status, refreshDailyStatus])
+
+  // announce row reveals, errors, and game-end for screen readers
+  const lastAnnouncedRowRef = useRef<number>(0)
+  useEffect(() => {
+    lastAnnouncedRowRef.current = game.rows.length
+  }, [game.gameId])
+
+  useEffect(() => {
+    if (game.rows.length > lastAnnouncedRowRef.current) {
+      const last = game.rows[game.rows.length - 1]
+      if (last !== undefined) {
+        const parts = last.guess.split('').map((ch, i) => `${ch} ${last.mask[i] ?? 'gray'}`).join(', ')
+        const attemptsLeft = game.attempts - game.rows.length
+        const tail = game.status === 'won'
+          ? `; you won in ${game.rows.length} ${game.rows.length === 1 ? 'guess' : 'guesses'}`
+          : game.status === 'lost'
+            ? `; out of guesses, the answer was ${game.answer ?? ''}`
+            : `; ${attemptsLeft} ${attemptsLeft === 1 ? 'attempt' : 'attempts'} left`
+        setLiveMessage(`row ${game.rows.length}: ${parts}${tail}`)
+      }
+      lastAnnouncedRowRef.current = game.rows.length
+    }
+  }, [game.rows, game.attempts, game.status, game.answer])
+
+  useEffect(() => {
+    if (game.error === null) return
+    if (game.error.kind === 'not-in-dict') setLiveMessage('not in dictionary')
+    else if (game.error.kind === 'wrong-length') setLiveMessage(`word must be ${length} letters`)
+  }, [game.error, length])
 
   useWordleKeyboard({
     lang,
@@ -110,8 +154,19 @@ export const WordlePage: FC = () => {
   // config switching locks only when a daily game has actual progress
   const configLocked = game.status === 'playing' && game.rows.length > 0 && mode === 'daily'
 
+  // "done today" hint for a given lang (current length) or length (current lang) in daily mode
+  const dailyHint = (l: Lang, n: Length): string | undefined => {
+    if (mode !== 'daily' || dailyStatus === null) return undefined
+    const entry = dailyStatus.played.find(p => p.lang === l && p.length === n)
+    if (entry === undefined) return undefined
+    if (entry.status === 'won') return '✓'
+    if (entry.status === 'lost') return '✕'
+    return '…'
+  }
+
   return (
     <section id='wordle' class={`wordle-page${colorblindHints ? ' wdl-cb' : ''}`}>
+      <div class='wdl-live' aria-live='polite' aria-atomic='true'>{liveMessage}</div>
       <div class='wdl-header'>
         <h1>wordle <span class='wdl-beta-pill'>beta</span></h1>
 
@@ -128,7 +183,11 @@ export const WordlePage: FC = () => {
             ariaLabel='language'
             value={lang}
             disabled={configLocked}
-            options={LANGS.map(l => ({ value: l, label: LANG_LABELS[l] }))}
+            options={LANGS.map(l => ({
+              value: l,
+              label: LANG_LABELS[l],
+              hint: dailyHint(l, length)
+            }))}
             onChange={v => { if (v !== lang) setLang(v as Lang) }}
           />
 
@@ -136,7 +195,11 @@ export const WordlePage: FC = () => {
             ariaLabel='word length'
             value={String(length)}
             disabled={configLocked}
-            options={LENGTHS.map(n => ({ value: String(n), label: `${n} letters` }))}
+            options={LENGTHS.map(n => ({
+              value: String(n),
+              label: `${n} letters`,
+              hint: dailyHint(lang, n)
+            }))}
             onChange={v => {
               const n = Number(v) as Length
               if (n !== length) setLength(n)

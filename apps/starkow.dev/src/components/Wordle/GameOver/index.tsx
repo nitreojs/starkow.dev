@@ -33,6 +33,14 @@ const formatRemaining = (target: string): string => {
   return `${pad(h)}h ${pad(m)}m ${pad(s)}s`
 }
 
+const formatLocalTime = (target: string): string => {
+  try {
+    return new Date(target).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  } catch {
+    return ''
+  }
+}
+
 const useCountdown = (target: string | null): string | null => {
   const [value, setValue] = useState<string | null>(() => target !== null ? formatRemaining(target) : null)
 
@@ -51,6 +59,9 @@ const useCountdown = (target: string | null): string | null => {
   return value
 }
 
+const wiktionaryUrl = (lang: Lang, word: string): string =>
+  `https://${lang}.wiktionary.org/wiki/${encodeURIComponent(word)}`
+
 export const GameOver: FC<Props> = ({ won, answer, mode, lang, length, rows, date, nextResetAt, onPlayAgain, onStats, onClose }) => {
   const remaining = useCountdown(mode === 'daily' ? nextResetAt : null)
 
@@ -58,14 +69,27 @@ export const GameOver: FC<Props> = ({ won, answer, mode, lang, length, rows, dat
     <div class='wdl-game-over'>
       <button class='wdl-game-over-close' type='button' aria-label='close' onClick={onClose}>×</button>
       <p>{won ? 'you got it!' : 'better luck next time.'}</p>
-      <p class='text-large'>{answer.toUpperCase()}</p>
+      <p class='text-large'>
+        <a
+          class='wdl-answer-link'
+          href={wiktionaryUrl(lang, answer)}
+          target='_blank'
+          rel='noopener noreferrer'
+          title='look it up on wiktionary'
+        >
+          {answer.toUpperCase()}
+        </a>
+      </p>
       <div class='wdl-game-over-actions'>
         <ShareButton mode={mode} lang={lang} length={length} rows={rows} won={won} date={date} />
         <button class='cool-button' onClick={onStats}>stats</button>
         {mode === 'infinite' && <button class='cool-button' onClick={onPlayAgain}>play again</button>}
       </div>
-      {mode === 'daily' && remaining !== null && (
-        <p class='text-small text-half-visible'>next game in {remaining}</p>
+      {mode === 'daily' && remaining !== null && nextResetAt !== null && (
+        <p class='text-small text-half-visible'>
+          next game in {remaining}
+          <span class='wdl-countdown-local'> (at {formatLocalTime(nextResetAt)} your time)</span>
+        </p>
       )}
     </div>
   )

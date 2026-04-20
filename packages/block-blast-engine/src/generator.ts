@@ -27,11 +27,11 @@ export type GenerationContext = {
 
 const TOTAL_WEIGHT = PIECES.reduce((s, p) => s + p.weight, 0)
 
-const PERMS: ReadonlyArray<readonly [number, number, number]> = [
+const PERMS: readonly (readonly [number, number, number])[] = [
   [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]
 ]
 
-const ORTHO_DIRS: ReadonlyArray<readonly [number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+const ORTHO_DIRS: readonly (readonly [number, number])[] = [[-1, 0], [1, 0], [0, -1], [0, 1]]
 
 export class PieceGenerator {
   private rng: Rng

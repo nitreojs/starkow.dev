@@ -14,6 +14,16 @@
   -webkit-user-select: none;
 }
 
+/* screen-reader-only region for aria-live announcements */
+.wdl-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .wdl-beta-pill {
   display: inline-block;
   vertical-align: middle;
@@ -148,6 +158,14 @@
   background: rgb(100 255 216 / 0.08);
 }
 .wdl-dropdown-option:focus-visible { outline: none; background: #1c2a26; }
+.wdl-dropdown-option-label { flex: 1 1 auto; }
+.wdl-dropdown-option-hint {
+  flex: 0 0 auto;
+  margin-left: 0.75em;
+  font-size: 0.85em;
+  opacity: 0.55;
+  white-space: nowrap;
+}
 
 /* pinned top-right of the viewport, mirrors the app-level back link on the left */
 .wdl-hamburger {
@@ -355,6 +373,19 @@
   color: rgb(255 255 255 / 0.95);
   background: rgb(255 255 255 / 0.08);
 }
+
+.wdl-answer-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed rgb(255 255 255 / 0.25);
+  transition: border-color 120ms ease-out, color 120ms ease-out;
+}
+.wdl-answer-link:hover {
+  color: #64ffd8;
+  border-bottom-color: #64ffd8;
+}
+
+.wdl-countdown-local { opacity: 0.7; }
 
 @keyframes wdl-fade-in { from { opacity: 0; } to { opacity: 1; } }
 

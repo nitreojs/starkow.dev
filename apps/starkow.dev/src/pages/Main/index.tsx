@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'preact/compat'
-import { ButtonsBlockSection, DonationsSection, FooterSection, NotificationsSection, SkillsSection, SpotifySection, WallSection, WelcomeSection, WhatDoIDoSection } from '../../sections'
+import { ButtonsBlockSection, DonationsSection, FooterSection, MinigamesSection, NotificationsSection, SkillsSection, SpotifySection, WallSection, WelcomeSection, WhatDoIDoSection } from '../../sections'
 import type { Project, ProjectsStatus } from '../../sections'
 import { API_URL } from '../../shared'
 import * as Icons from '@starkow.dev/icons'
@@ -33,6 +33,7 @@ export const MainPage: FC = () => {
       <SpotifySection />
       <WallSection />
       <DonationsSection />
+      <MinigamesSection />
       <ButtonsBlockSection />
 
       <hr />
