@@ -5,12 +5,15 @@
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
+  /* inherit text color so mobile defaults (black on android, tap-blue on ios) don't override it */
+  color: inherit;
   background-color: #212121;
   cursor: pointer;
   display: flex;
   justify-content: start;
   align-items: center;
   transition: color 200ms ease-out, border-color 250ms;
+  -webkit-tap-highlight-color: transparent;
 }
 .cool-button:hover {
   border-color: #64ffd8;
