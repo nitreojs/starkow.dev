@@ -110,7 +110,7 @@ export const GameOver: FC<Props> = ({
       {mode === 'daily' && remaining !== null && nextResetAt !== null && (
         <p class='text-small text-half-visible'>
           next game in {remaining}
-          <span class='wdl-countdown-local'> (at {formatLocalTime(nextResetAt)} your time)</span>
+          <span class='wdl-countdown-local'>(at {formatLocalTime(nextResetAt)} your time)</span>
         </p>
       )}
     </div>
