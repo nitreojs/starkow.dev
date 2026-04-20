@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+**/dist
+**/sessions
+**/.env
+**/.env.*
+.git
+.docs
+.claude
+.vscode
+**/*.log
+**/*.swp
+**/.DS_Store
+apps/starkow.dev-backend/src/wordle/dictionaries/sources
