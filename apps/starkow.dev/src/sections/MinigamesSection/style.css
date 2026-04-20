@@ -1,0 +1,23 @@
+.minigames-block {
+  display: flex;
+  gap: 0.6em;
+  flex-wrap: wrap;
+
+  padding: 0.2em 0;
+}
+
+.minigames-block > * {
+  transition: transform 250ms ease;
+}
+
+.minigames-block > *:nth-child(odd) {
+  transform: rotate(-0.6deg) translateY(0);
+}
+
+.minigames-block > *:nth-child(even) {
+  transform: rotate(0.8deg) translateY(-2px);
+}
+
+.minigames-block > *:hover {
+  transform: rotate(0deg) translateY(0);
+}

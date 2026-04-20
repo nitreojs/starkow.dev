@@ -1,0 +1,483 @@
+.wordle-page {
+  /* border-box so padding-top doesn't stack on top of min-height and overflow the viewport */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  /* leave clearance for the fixed back/hamburger buttons anchored to the viewport */
+  padding-top: 1.5rem;
+  /* fill the viewport so the board can grow and the keyboard stays near the bottom;
+     dvh where supported avoids the mobile url-bar jump */
+  min-height: calc(100vh - 4rem);
+  min-height: calc(100dvh - 4rem);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* screen-reader-only region for aria-live announcements */
+.wdl-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.wdl-beta-pill {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.4em;
+  padding: 0.2em 0.6em;
+  font-size: 0.7em;
+  line-height: 1;
+  color: rgb(255 255 255 / 0.55);
+  background: rgb(255 255 255 / 0.05);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  border-radius: 0.4em;
+}
+
+/* header: title on the left, controls on the right, one line on desktop — wraps on narrow screens */
+.wdl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75em;
+  flex-wrap: wrap;
+}
+/* the global `section > h1` rules don't match here because the h1 is nested
+   inside .wdl-header; restore the size and the `# ` prefix locally */
+.wdl-header h1 {
+  flex: 0 0 auto;
+  font-size: 2em;
+  line-height: 1.1;
+}
+.wdl-header h1::before {
+  content: "# ";
+  opacity: 0.5;
+}
+.wdl-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+/* custom dropdown */
+.wdl-dropdown {
+  position: relative;
+  display: inline-block;
+  min-width: 0;
+}
+
+.wdl-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.4em 0.7em;
+  background: #212121;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.95em;
+  line-height: 1.1;
+  cursor: pointer;
+  transition: border-color 120ms ease-out, background 120ms ease-out;
+}
+.wdl-dropdown-trigger:hover:not(:disabled),
+.wdl-dropdown-trigger:focus-visible { border-color: #4f8a7c; outline: none; }
+.wdl-dropdown-trigger:disabled { opacity: 0.4; cursor: not-allowed; }
+.wdl-dropdown.is-open .wdl-dropdown-trigger { border-color: #4f8a7c; background: #1c2a26; }
+
+.wdl-dropdown-label { white-space: nowrap; }
+
+.wdl-dropdown-arrow {
+  opacity: 0.55;
+  flex: 0 0 auto;
+  transition: transform 160ms ease-out;
+}
+.wdl-dropdown.is-open .wdl-dropdown-arrow { transform: rotate(180deg); }
+
+.wdl-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: #0f0f0f;
+  border: 1px solid rgb(255 255 255 / 0.07);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
+  animation: wdl-dropdown-in 120ms ease-out;
+}
+
+@keyframes wdl-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wdl-dropdown-menu { animation: none; }
+  .wdl-dropdown-arrow { transition: none; }
+}
+
+.wdl-dropdown-option {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 0.45em 0.7em;
+  font-family: inherit;
+  font-size: 0.95em;
+  color: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 100ms ease-out, color 100ms ease-out;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+/* reserve space for a tick so selected / unselected rows line up identically */
+.wdl-dropdown-option::before {
+  content: '';
+  display: inline-block;
+  width: 0.9em;
+  text-align: center;
+  color: #64ffd8;
+  flex: 0 0 auto;
+}
+.wdl-dropdown-option.is-selected::before { content: '✓'; }
+.wdl-dropdown-option:hover { background: #1c2a26; }
+.wdl-dropdown-option.is-selected {
+  color: #64ffd8;
+  background: rgb(100 255 216 / 0.08);
+}
+.wdl-dropdown-option:focus-visible { outline: none; background: #1c2a26; }
+.wdl-dropdown-option-label { flex: 1 1 auto; }
+.wdl-dropdown-option-hint {
+  flex: 0 0 auto;
+  margin-left: 0.75em;
+  font-size: 0.85em;
+  opacity: 0.55;
+  white-space: nowrap;
+}
+
+/* pinned top-right of the viewport, mirrors the app-level back link on the left */
+.wdl-hamburger {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2em;
+  height: 2.2em;
+  padding: 0;
+  background: #212121;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: rgb(255 255 255 / 0.7);
+  cursor: pointer;
+  transition: border-color 120ms ease-out, color 120ms ease-out, background 120ms ease-out;
+}
+.wdl-hamburger:hover { border-color: #4f8a7c; color: rgb(255 255 255 / 0.95); }
+
+.wdl-stage {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  animation: wdl-fade-in 140ms ease-out;
+}
+
+.wdl-board {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 6px;
+  background: #0f0f0f;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.wdl-row { display: flex; gap: 6px; }
+
+/* two keyframes with identical motion; alternating between them forces the
+   animation to replay when the user submits multiple invalid guesses in a row */
+@keyframes wdl-shake-a {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes wdl-shake-b {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.wdl-row-shake-a { animation: wdl-shake-a 300ms ease-out; }
+.wdl-row-shake-b { animation: wdl-shake-b 300ms ease-out; }
+
+.wdl-tile {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  font-weight: 600;
+  background: #212121;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  border-radius: 4px;
+  transform-style: preserve-3d;
+}
+
+@media (max-width: 420px) {
+  .wdl-tile { width: 44px; height: 44px; font-size: 1.25em; }
+}
+
+.wdl-tile-active { box-shadow: inset 0 0 0 1px rgb(79 138 124 / 0.65); }
+.wdl-tile-green  { background-color: #5a8a3d; box-shadow: none; }
+.wdl-tile-yellow { background-color: #d9b63c; box-shadow: none; }
+.wdl-tile-gray   { background-color: #3a3a3a; box-shadow: none; }
+
+/* colorblind hints: opt-in stripes on yellow tiles */
+.wdl-cb .wdl-tile-yellow {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 6px,
+    rgba(0, 0, 0, 0.22) 6px 10px
+  );
+}
+
+/* flip reveal: background stays neutral for the first half, swaps at 50% */
+@keyframes wdl-flip {
+  0%   { transform: rotateX(0deg);  background-color: #212121; }
+  49%  { transform: rotateX(88deg); background-color: #212121; }
+  50%  { transform: rotateX(90deg); background-color: var(--wdl-color, #3a3a3a); }
+  100% { transform: rotateX(0deg);  background-color: var(--wdl-color, #3a3a3a); }
+}
+
+.wdl-tile-flip { animation: wdl-flip 500ms ease-in-out both; }
+
+/* pop on letter entry; applied to active-row tiles with a letter but no mask */
+@keyframes wdl-pop {
+  0%   { transform: scale(0.72); }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.wdl-tile-pop { animation: wdl-pop 140ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wdl-tile-flip   { animation: none; }
+  .wdl-tile-pop    { animation: none; }
+  .wdl-row-shake-a,
+  .wdl-row-shake-b { animation: none; }
+}
+
+.wdl-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: #0f0f0f;
+  border-radius: 8px;
+  transition: opacity 160ms ease-out, filter 160ms ease-out;
+}
+.wdl-keyboard-row { display: flex; gap: 4px; justify-content: center; }
+
+/* visually + functionally disabled when the game isn't in progress */
+.wdl-keyboard-disabled {
+  opacity: 0.35;
+  filter: saturate(0.4);
+  pointer-events: none;
+}
+
+.wdl-key {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.6em 0.2em;
+  font-size: 1em;
+  background: #212121;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 120ms ease-out, border-color 120ms ease-out;
+}
+.wdl-key:hover { border-color: #4f8a7c; }
+.wdl-key-control { flex: 1.5 1 0; font-size: 0.85em; }
+.wdl-key-green  { background: #5a8a3d; }
+.wdl-key-yellow { background-color: #d9b63c; }
+.wdl-key-gray   { background: #3a3a3a; opacity: 0.7; }
+
+/* colorblind hints: opt-in stripes on yellow keys */
+.wdl-cb .wdl-key-yellow {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    rgba(0, 0, 0, 0.22) 5px 8px
+  );
+}
+
+.wdl-game-over {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75em;
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(3px);
+  border-radius: 8px;
+  z-index: 5;
+  animation: wdl-fade-in 200ms ease-out;
+}
+.wdl-game-over-actions { display: flex; gap: 0.5em; flex-wrap: wrap; justify-content: center; }
+
+.wdl-game-over-close {
+  position: absolute;
+  top: 0.4em;
+  right: 0.5em;
+  width: 1.6em;
+  height: 1.6em;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  line-height: 1;
+  color: rgb(255 255 255 / 0.6);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 120ms ease-out, background 120ms ease-out;
+}
+.wdl-game-over-close:hover {
+  color: rgb(255 255 255 / 0.95);
+  background: rgb(255 255 255 / 0.08);
+}
+
+.wdl-answer-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed rgb(255 255 255 / 0.25);
+  transition: border-color 120ms ease-out, color 120ms ease-out;
+}
+.wdl-answer-link:hover {
+  color: #64ffd8;
+  border-bottom-color: #64ffd8;
+}
+
+.wdl-countdown-local { opacity: 0.7; }
+
+@keyframes wdl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.wdl-footer { display: flex; gap: 0.5em; justify-content: center; }
+
+.wdl-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+  /* above the fixed back link (z-index 50) and hamburger (z-index 50) so the
+     modal's own close button is always reachable, especially on mobile */
+  z-index: 100;
+}
+.wdl-modal {
+  background: #0f0f0f;
+  padding: 1.5em;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.wdl-stats-row { display: flex; justify-content: space-between; text-align: center; }
+.wdl-stats-dist { display: flex; flex-direction: column; gap: 4px; }
+.wdl-stats-bar { display: flex; gap: 0.5em; align-items: center; font-size: 0.9em; }
+.wdl-stats-bar-track { flex: 1; background: #212121; height: 1em; border-radius: 2px; overflow: hidden; }
+.wdl-stats-bar-fill { height: 100%; background: #d9b63c; }
+.wdl-stats-bar.active .wdl-stats-bar-fill { background: #5a8a3d; }
+
+/* options modal: centered on desktop, full-screen on phones */
+.wdl-modal-options { min-width: 320px; max-width: 440px; }
+.wdl-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+.wdl-modal-header h2 { margin: 0; font-size: 1.4em; }
+.wdl-modal-close {
+  width: 1.8em;
+  height: 1.8em;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3em;
+  line-height: 1;
+  color: rgb(255 255 255 / 0.6);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 120ms ease-out, background 120ms ease-out;
+}
+.wdl-modal-close:hover {
+  color: rgb(255 255 255 / 0.95);
+  background: rgb(255 255 255 / 0.08);
+}
+.wdl-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7em;
+  cursor: pointer;
+  padding: 0.3em 0;
+  line-height: 1.3;
+}
+.wdl-option input[type='checkbox'] {
+  margin-top: 0.25em;
+  cursor: pointer;
+  accent-color: #4f8a7c;
+}
+
+.wdl-option-danger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3em;
+  padding-top: 0.5em;
+  margin-top: 0.3em;
+  border-top: 1px solid rgb(255 255 255 / 0.06);
+}
+
+/* phone: options overlay covers the screen; backdrop already covers viewport */
+@media (max-width: 520px) {
+  .wdl-modal-options {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-width: none;
+    border-radius: 0;
+    justify-content: flex-start;
+  }
+  .wdl-modal-backdrop { align-items: stretch; justify-content: stretch; background: #0f0f0f; }
+}

@@ -1,0 +1,181 @@
+.minigame-button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 0.55em 0.8em;
+  min-width: 10em;
+
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: inherit;
+
+  background-color: #212121;
+  background-image: var(--minigame-gradient);
+
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: left;
+
+  transition:
+    color 200ms ease-out,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+.minigame-button:hover {
+  color: var(--minigame-accent);
+  border-color: var(--minigame-accent);
+  box-shadow: 0 0 0 1px var(--minigame-accent-soft) inset;
+}
+
+.minigame-button:focus,
+.minigame-button:focus-visible {
+  outline: none;
+  border-color: var(--minigame-accent);
+}
+
+.minigame-button__text-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  line-height: 1.15;
+}
+
+.minigame-button__title {
+  font-weight: 600;
+}
+
+.minigame-button__description {
+  font-size: 0.72em;
+  opacity: 0.6;
+  font-weight: 400;
+  white-space: pre-line;
+}
+
+.minigame-button__decor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.18;
+  transition: opacity 250ms ease, transform 400ms ease;
+  z-index: 0;
+}
+
+.minigame-button__decor--left {
+  left: -10%;
+  justify-content: flex-start;
+}
+
+.minigame-button__decor--right {
+  right: -15%;
+  justify-content: flex-end;
+}
+
+.minigame-button[data-theme='blockblast'] .minigame-button__decor--left {
+  left: -30%;
+}
+
+.minigame-button[data-theme='blockblast'] .minigame-button__decor--right {
+  right: -35%;
+}
+
+.minigame-button__decor svg {
+  width: auto;
+  height: 150%;
+  max-height: 170%;
+}
+
+.minigame-button[data-theme='wordle'] .minigame-button__decor svg {
+  height: 85%;
+  max-height: 90%;
+}
+
+.minigame-button__decor--left svg {
+  transform: rotate(8deg);
+}
+
+.minigame-button__decor--right svg {
+  transform: rotate(-8deg);
+}
+
+.minigame-button:hover .minigame-button__decor {
+  opacity: 0.32;
+}
+
+.minigame-button:hover .minigame-button__decor--left {
+  transform: translateX(4px);
+}
+
+.minigame-button:hover .minigame-button__decor--right {
+  transform: translateX(-4px);
+}
+
+/* blockblast theme — cool blue/purple */
+.minigame-button[data-theme='blockblast'] {
+  --minigame-gradient: linear-gradient(
+    135deg,
+    rgba(88, 101, 242, 0.22) 0%,
+    rgba(168, 85, 247, 0.18) 60%,
+    rgba(34, 211, 238, 0.12) 100%
+  );
+  --minigame-accent: #a5b4fc;
+  --minigame-accent-soft: rgba(165, 180, 252, 0.4);
+}
+
+.minigame-button[data-theme='blockblast'] .minigame-button__decor svg rect {
+  fill: #a5b4fc;
+}
+
+.minigame-button[data-theme='blockblast'] .minigame-button__decor--left svg rect {
+  fill: #f0abfc;
+}
+
+/* wordle theme — correct-green + present-yellow */
+.minigame-button[data-theme='wordle'] {
+  --minigame-gradient: linear-gradient(
+    135deg,
+    rgba(106, 170, 100, 0.22) 0%,
+    rgba(201, 180, 88, 0.18) 65%,
+    rgba(120, 124, 126, 0.10) 100%
+  );
+  --minigame-accent: #c9b458;
+  --minigame-accent-soft: rgba(201, 180, 88, 0.4);
+}
+
+.minigame-button[data-theme='wordle'] .minigame-button__decor svg rect {
+  fill: #6aaa64;
+}
+
+.minigame-button[data-theme='wordle'] .minigame-button__decor svg text {
+  fill: #121213;
+  text-transform: uppercase;
+}
+
+.wordle-decor-word,
+.blockblast-decor-piece {
+  animation: minigame-decor-fade 450ms ease;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes minigame-decor-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
