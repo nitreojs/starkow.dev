@@ -13,14 +13,24 @@ export const StatsModal: FC<Props> = ({ stats, highlightRow = null, onClose }) =
 
   return (
     <div class='wdl-modal-backdrop' onClick={onClose}>
-      <div class='wdl-modal' onClick={e => e.stopPropagation()}>
-        <h2>stats</h2>
+      <div class='wdl-modal wdl-modal-stats' onClick={e => e.stopPropagation()}>
+        <div class='wdl-modal-header'>
+          <h2>stats</h2>
+          <button
+            class='wdl-modal-close'
+            type='button'
+            aria-label='close'
+            onClick={onClose}
+          >×</button>
+        </div>
+
         <div class='wdl-stats-row'>
           <span><b>{stats.played}</b><br /><span class='text-small text-half-visible'>played</span></span>
           <span><b>{stats.played === 0 ? 0 : Math.round((stats.won / stats.played) * 100)}%</b><br /><span class='text-small text-half-visible'>win rate</span></span>
           <span><b>{stats.currentStreak}</b><br /><span class='text-small text-half-visible'>streak</span></span>
           <span><b>{stats.bestStreak}</b><br /><span class='text-small text-half-visible'>best</span></span>
         </div>
+
         <div class='wdl-stats-dist'>
           {stats.distribution.map((n, i) => (
             <div key={i} class={`wdl-stats-bar${highlightRow === i + 1 ? ' active' : ''}`}>
@@ -32,7 +42,6 @@ export const StatsModal: FC<Props> = ({ stats, highlightRow = null, onClose }) =
             </div>
           ))}
         </div>
-        <button class='cool-button' onClick={onClose}>close</button>
       </div>
     </div>
   )
