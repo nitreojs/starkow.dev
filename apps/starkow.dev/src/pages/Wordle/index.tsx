@@ -14,6 +14,7 @@ import {
   fetchDailyStatus,
   getLastConfig,
   setLastConfig,
+  useTitleSuffix,
   useWordleGame,
   useWordleKeyboard,
   useWordleStats,
@@ -46,7 +47,7 @@ const parseIndex = (raw: string | undefined): number | null => {
 }
 
 export const WordlePage: FC = () => {
-  document.title = 'starkow★dev • wordle'
+  useTitleSuffix('wordle')
 
   const [, navigate] = useLocation()
   const [, dailyRouteParams] = useRoute<{ index?: string }>('/wordle/daily/:index')

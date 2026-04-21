@@ -1,9 +1,12 @@
-import { CoolButton } from '../../components'
-import * as Icons from '@starkow.dev/icons'
 import { Link } from 'wouter-preact'
+import * as Icons from '@starkow.dev/icons'
+
+import { useTitleSuffix } from '@starkow.dev/hooks'
+
+import { CoolButton } from '../../components'
 
 export const NotFoundPage = () => {
-  document.title = 'starkow★dev • page not found'
+  useTitleSuffix('page not found')
 
   const path = decodeURIComponent(window.location.pathname.slice(1))
 

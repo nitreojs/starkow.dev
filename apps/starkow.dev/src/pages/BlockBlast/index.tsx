@@ -11,6 +11,7 @@ import {
   useBlockBlastAchievements,
   useBlockBlastDrag,
   useBlockBlastGame,
+  useTitleSuffix,
   writeSave,
   type ResumableSave,
   type TrayIndex
@@ -54,7 +55,7 @@ const computeTrayCellSize = (boardCellSize: number): number => {
 }
 
 export const BlockBlastPage: FC = () => {
-  document.title = 'starkow★dev • blockblast'
+  useTitleSuffix('blockblast')
 
   const [mode, setMode] = useState<ModeId>('classic')
   const [seed, setSeed] = useState<number>(randomSeed)
