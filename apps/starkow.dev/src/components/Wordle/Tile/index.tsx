@@ -10,6 +10,7 @@ interface TileProps {
   active?: boolean
   popping?: boolean
   hideLetter?: boolean
+  placeholder?: string | null
 }
 
 const cellClass = (c: Cell | null | undefined): string => {
@@ -27,13 +28,18 @@ const colorVar = (c: Cell | null | undefined): string | undefined => {
   return undefined
 }
 
-export const Tile: FC<TileProps> = ({ letter, state, index = 0, revealing = false, active = false, popping = false, hideLetter = false }) => {
+export const Tile: FC<TileProps> = ({ letter, state, index = 0, revealing = false, active = false, popping = false, hideLetter = false, placeholder = null }) => {
   const style: JSX.CSSProperties = {}
 
-  if (revealing) style.animationDelay = `${index * 120}ms`
+  if (revealing) {
+    style.animationDelay = `${index * 120}ms`
+  }
 
   const color = colorVar(state ?? null)
-  if (color !== undefined) (style as Record<string, string>)['--wdl-color'] = color
+
+  if (color !== undefined) {
+    (style as Record<string, string>)['--wdl-color'] = color
+  }
 
   // during reveal the flip keyframe owns the background; the static colour class
   // would otherwise paint the final colour before the flip even starts.
@@ -45,11 +51,15 @@ export const Tile: FC<TileProps> = ({ letter, state, index = 0, revealing = fals
     active && (letter ?? '') !== '' ? 'wdl-tile-active' : ''
   ].filter(Boolean).join(' ')
 
-  const shown = hideLetter ? '' : (letter ?? '').toUpperCase()
+  const typed = hideLetter ? '' : (letter ?? '').toUpperCase()
+  const showPlaceholder = typed === '' && placeholder !== null && placeholder !== ''
+  const shown = showPlaceholder ? placeholder!.toUpperCase() : typed
+
+  const faceClasses = ['wdl-tile-face', showPlaceholder ? 'wdl-tile-face-placeholder' : ''].filter(Boolean).join(' ')
 
   return (
     <div class={classes} style={style}>
-      <span class='wdl-tile-face'>{shown}</span>
+      <span class={faceClasses}>{shown}</span>
     </div>
   )
 }

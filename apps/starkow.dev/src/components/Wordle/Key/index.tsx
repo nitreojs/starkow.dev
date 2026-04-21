@@ -20,7 +20,22 @@ const cls = (c: Cell | null | undefined): string => {
 }
 
 export const Key: FC<KeyProps> = ({ kind, label, state, wide = false, onPress }) => {
-  const classes = ['wdl-key', cls(state), wide ? 'wdl-key-wide' : '', kind !== 'letter' ? 'wdl-key-control' : ''].filter(Boolean).join(' ')
+  const classes = [
+    'wdl-key',
+    cls(state),
+    wide ? 'wdl-key-wide' : '',
+    kind !== 'letter' ? 'wdl-key-control' : '',
+    kind === 'enter' ? 'wdl-key-enter' : ''
+  ].filter(Boolean).join(' ')
+
+  const body = kind === 'enter'
+    ? (
+      <>
+        <span class='wdl-key-enter-full'>{label}</span>
+        <span class='wdl-key-enter-compact' aria-hidden='true'>↵</span>
+      </>
+    )
+    : label
 
   return (
     <button
@@ -28,7 +43,7 @@ export const Key: FC<KeyProps> = ({ kind, label, state, wide = false, onPress })
       type='button'
       onPointerDown={e => { e.preventDefault(); onPress() }}
     >
-      {label}
+      {body}
     </button>
   )
 }

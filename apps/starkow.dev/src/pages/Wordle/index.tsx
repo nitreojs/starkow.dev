@@ -74,6 +74,22 @@ export const WordlePage: FC = () => {
       return parsed.colorblindHints === true
     } catch { return false }
   })
+  const [swapEnter, setSwapEnter] = useState<boolean>(() => {
+    try {
+      const raw = localStorage.getItem('wordle:options')
+      if (raw === null) return false
+      const parsed = JSON.parse(raw) as { swapEnter?: boolean }
+      return parsed.swapEnter === true
+    } catch { return false }
+  })
+  const [placeholders, setPlaceholders] = useState<boolean>(() => {
+    try {
+      const raw = localStorage.getItem('wordle:options')
+      if (raw === null) return false
+      const parsed = JSON.parse(raw) as { placeholders?: boolean }
+      return parsed.placeholders === true
+    } catch { return false }
+  })
 
   // if the user lands on /wordle/daily/:n, force daily mode and clear any replay
   useEffect(() => {
@@ -92,8 +108,8 @@ export const WordlePage: FC = () => {
   useEffect(() => { setLastConfig({ mode, lang, length }) }, [mode, lang, length])
 
   useEffect(() => {
-    try { localStorage.setItem('wordle:options', JSON.stringify({ colorblindHints })) } catch { /* ignore */ }
-  }, [colorblindHints])
+    try { localStorage.setItem('wordle:options', JSON.stringify({ colorblindHints, swapEnter, placeholders })) } catch { /* ignore */ }
+  }, [colorblindHints, swapEnter, placeholders])
 
   // changing lang/length on a past daily is fine — the hook will swap
   // to that daily's answer for the new lang/length combo.
@@ -305,6 +321,7 @@ export const WordlePage: FC = () => {
           status={game.status}
           hideLetters={hideLetters}
           gameId={game.gameId}
+          showPlaceholders={placeholders}
         />
 
         {(game.status === 'won' || game.status === 'lost') && game.answer !== null && !overlayClosed && (
@@ -337,6 +354,7 @@ export const WordlePage: FC = () => {
         onBackspace={game.backspace}
         onSubmit={() => { void game.submit() }}
         disabled={game.status !== 'playing'}
+        swapEnter={swapEnter}
       />
 
       <div class='wdl-footer'>
@@ -411,6 +429,32 @@ export const WordlePage: FC = () => {
                 colorblind hints
                 <br />
                 <span class='text-small text-half-visible'>adds diagonal stripes to yellow tiles and keys</span>
+              </span>
+            </label>
+
+            <label class='wdl-option'>
+              <input
+                type='checkbox'
+                checked={swapEnter}
+                onChange={e => setSwapEnter((e.target as HTMLInputElement).checked)}
+              />
+              <span>
+                swap enter and backspace
+                <br />
+                <span class='text-small text-half-visible'>moves enter to the right, backspace to the left</span>
+              </span>
+            </label>
+
+            <label class='wdl-option'>
+              <input
+                type='checkbox'
+                checked={placeholders}
+                onChange={e => setPlaceholders((e.target as HTMLInputElement).checked)}
+              />
+              <span>
+                placeholders
+                <br />
+                <span class='text-small text-half-visible'>shows known green letters in the row you're typing</span>
               </span>
             </label>
 

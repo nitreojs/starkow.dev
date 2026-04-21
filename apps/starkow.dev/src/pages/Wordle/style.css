@@ -252,6 +252,7 @@
 .wdl-tile-green  { background-color: #5a8a3d; box-shadow: none; }
 .wdl-tile-yellow { background-color: #d9b63c; box-shadow: none; }
 .wdl-tile-gray   { background-color: #3a3a3a; box-shadow: none; }
+.wdl-tile-face-placeholder { opacity: 0.28; }
 
 /* colorblind hints: opt-in stripes on yellow tiles */
 .wdl-cb .wdl-tile-yellow {
@@ -320,7 +321,24 @@
   transition: background 120ms ease-out, border-color 120ms ease-out;
 }
 .wdl-key:hover { border-color: #4f8a7c; }
-.wdl-key-control { flex: 1.5 1 0; font-size: 0.85em; }
+.wdl-key-control { flex: 1.5 1 0; font-size: 0.8em; }
+
+/* enter key: show the word "enter" when the button is wide enough, otherwise
+   fall back to the ↵ glyph. the button itself is the size container so the
+   swap is purely layout-driven. threshold is tuned to the current 0.8em font;
+   retune together if font-size changes. */
+.wdl-key-enter { container-type: inline-size; }
+.wdl-key-enter-full,
+.wdl-key-enter-compact {
+  display: inline-block;
+  line-height: 1;
+}
+.wdl-key-enter-compact { display: none; }
+
+@container (max-width: 44px) {
+  .wdl-key-enter-full { display: none; }
+  .wdl-key-enter-compact { display: inline-block; font-size: 1.25em; }
+}
 .wdl-key-green  { background: #5a8a3d; }
 .wdl-key-yellow { background-color: #d9b63c; }
 .wdl-key-gray   { background: #3a3a3a; opacity: 0.7; }
@@ -578,3 +596,23 @@
 .wdl-picker-badge-lost { background: #4a2525; color: #e8cdcd; }
 .wdl-picker-badge-playing { background: #4a4225; color: #e8e0cd; }
 .wdl-picker-badge-unplayed { opacity: 0.7; }
+
+/* on mobile: put the footer above the keyboard, and let the keyboard break out
+   of the app's padding for more usable width + taller keys for easier tapping */
+@media (max-width: 520px) {
+  .wdl-footer   { order: 1; }
+  .wdl-keyboard {
+    order: 2;
+    margin-inline: -2rem;
+    padding: 10px 6px;
+    border-radius: 0;
+    gap: 7px;
+  }
+  .wdl-keyboard-row { gap: 5px; }
+  .wdl-key {
+    padding: 0.95em 0.2em;
+    font-size: 1.1em;
+    border-radius: 7px;
+  }
+  .wdl-key-control { font-size: 0.78em; }
+}

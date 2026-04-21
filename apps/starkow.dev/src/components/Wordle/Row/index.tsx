@@ -12,13 +12,15 @@ interface RowProps {
   revealing?: boolean
   active?: boolean
   hideLetters?: boolean
+  knownGreens?: (string | null)[]
 }
 
-export const Row: FC<RowProps> = ({ length, letters = '', mask, errorAt = null, revealing = false, active = false, hideLetters = false }) => {
+export const Row: FC<RowProps> = ({ length, letters = '', mask, errorAt = null, revealing = false, active = false, hideLetters = false, knownGreens }) => {
   const cells = Array.from({ length }, (_, i) => ({
     letter: letters[i] ?? '',
     state: (mask?.[i] ?? null) as Cell | null,
-    index: i
+    index: i,
+    placeholder: knownGreens?.[i] ?? null
   }))
 
   // alternating animation names force the keyframe to replay on consecutive errors
@@ -46,6 +48,7 @@ export const Row: FC<RowProps> = ({ length, letters = '', mask, errorAt = null, 
             active={active}
             popping={popping}
             hideLetter={hideLetters}
+            placeholder={c.placeholder}
           />
         )
       })}

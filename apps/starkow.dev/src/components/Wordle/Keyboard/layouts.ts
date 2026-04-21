@@ -14,7 +14,7 @@ const EN: KeyDef[][] = [
   ['q','w','e','r','t','y','u','i','o','p'].map(letter),
   ['a','s','d','f','g','h','j','k','l'].map(letter),
   [
-    { kind: 'enter', label: '↵' },
+    { kind: 'enter', label: 'enter' },
     ...['z','x','c','v','b','n','m'].map(letter),
     { kind: 'back', label: '⌫' }
   ]
@@ -24,7 +24,7 @@ const RU: KeyDef[][] = [
   ['й','ц','у','к','е','н','г','ш','щ','з','х','ъ'].map(letter),
   ['ф','ы','в','а','п','р','о','л','д','ж','э'].map(letter),
   [
-    { kind: 'enter', label: '↵' },
+    { kind: 'enter', label: 'enter' },
     ...['я','ч','с','м','и','т','ь','б','ю'].map(letter),
     { kind: 'back', label: '⌫' }
   ]

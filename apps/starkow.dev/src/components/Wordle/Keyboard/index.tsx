@@ -13,10 +13,24 @@ interface KeyboardProps {
   onBackspace: () => void
   onSubmit: () => void
   disabled?: boolean
+  swapEnter?: boolean
 }
 
-export const Keyboard: FC<KeyboardProps> = ({ lang, keyState, onLetter, onBackspace, onSubmit, disabled = false }) => {
-  const rows = getLayout(lang)
+export const Keyboard: FC<KeyboardProps> = ({ lang, keyState, onLetter, onBackspace, onSubmit, disabled = false, swapEnter = false }) => {
+  const base = getLayout(lang)
+
+  const rows = swapEnter
+    ? base.map(row => {
+      const first = row[0]
+      const last = row[row.length - 1]
+
+      if (first?.kind === 'enter' && last?.kind === 'back') {
+        return [last, ...row.slice(1, -1), first]
+      }
+
+      return row
+    })
+    : base
 
   return (
     <div class={`wdl-keyboard${disabled ? ' wdl-keyboard-disabled' : ''}`} aria-disabled={disabled}>
