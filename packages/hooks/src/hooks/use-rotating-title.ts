@@ -50,6 +50,7 @@ export const useRotatingTitle = () => {
       const result = TITLE_ANIMATORS[animatorIndex](title, frame)
 
       if (result === null) {
+        document.title = title
         animatorIndex = pickNextAnimator(animatorIndex)
         frame = 0
         const gap = 2000 + Math.floor(Math.random() * 3001)
