@@ -48,11 +48,11 @@ export const WelcomeSection: FC = () => {
           /> */}
 
         {isBirthday && (
-          <p>
-            <b>it's my birthday today!</b>
-          </p>
+          <b>it's my birthday today!</b>
         )}
+      </p>
 
+      <p>
         i do various stuff eventually, but mostly it's programming or something about programming {" "}
         <span class='text-half-visible'><i>(duh!)</i></span>
       </p>
