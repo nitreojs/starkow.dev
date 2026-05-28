@@ -5,7 +5,7 @@ import { CyclingGreeting } from './CyclingGreeting'
 import './style.css'
 // import { Spoiler } from '../../components'
 
-function calculateAgeSince (birthday: Date) {
+function calculateAgeSince(birthday: Date) {
   const now = new Date()
   const cloned = new Date(birthday)
   const diff = now.getFullYear() - birthday.getFullYear()
@@ -23,20 +23,36 @@ function calculateAgeSince (birthday: Date) {
 
 const BIRTHDAY = new Date('2004-05-30')
 
+function isBirthdayTodayMSK() {
+  const msk = new Date(Date.now() + 3 * 60 * 60 * 1000)
+
+  return msk.getUTCMonth() === BIRTHDAY.getUTCMonth() && msk.getUTCDate() === BIRTHDAY.getUTCDate()
+}
+
 export const WelcomeSection: FC = () => {
   const age = calculateAgeSince(BIRTHDAY)
+  const isBirthday = isBirthdayTodayMSK()
   // const dws = calculateDaysSince(BIRTHDAY)
 
   return (
     <section id='welcome'>
       <h1>welcome!</h1>
       <p>
-        <b><CyclingGreeting />!</b> my name's <b>alex<span class='text-half-visible'>ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <span class='with-note' data-note={`born ${BIRTHDAY.toISOString().slice(0, 10)}`} tabindex={0}><b>{age}</b> years old</span>.
+        <b><CyclingGreeting />!</b>
+      </p>
+      <p>
+        my name's <b>alex<span class='text-half-visible'>ey</span> starkóv</b>, my nickname is <b>starków</b> and i'm <span class='with-note' data-note={`born ${BIRTHDAY.toISOString().slice(0, 10)}`} tabindex={0}>{isBirthday && '🎂 '}<b>{age}</b> years old{isBirthday && ' 🎂'}</span>.
+
         {/* <Spoiler
           text={`which means i am a virgin for ${dws} days straight`}
           /> */}
-      </p>
-      <p>
+
+        {isBirthday && (
+          <p>
+            <b>it's my birthday today!</b>
+          </p>
+        )}
+
         i do various stuff eventually, but mostly it's programming or something about programming {" "}
         <span class='text-half-visible'><i>(duh!)</i></span>
       </p>
