@@ -56,7 +56,7 @@ export const WelcomeSection: FC = () => {
           /> */}
 
         {isBirthday && (
-          <b>it's my birthday today!</b>
+          <>{' '}<b>it's my birthday today!</b></>
         )}
       </p>
 
