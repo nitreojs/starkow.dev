@@ -5,12 +5,20 @@ import { CyclingGreeting } from './CyclingGreeting'
 import './style.css'
 // import { Spoiler } from '../../components'
 
-function calculateAgeSince(birthday: Date) {
-  const now = new Date()
-  const cloned = new Date(birthday)
-  const diff = now.getFullYear() - birthday.getFullYear()
+function mskNow() {
+  return new Date(Date.now() + 3 * 60 * 60 * 1000)
+}
 
-  return now.setFullYear(1970) < cloned.setFullYear(1970) ? diff - 1 : diff
+function calculateAgeSince(birthday: Date) {
+  const now = mskNow()
+  const monthDelta = now.getUTCMonth() - birthday.getUTCMonth()
+  let age = now.getUTCFullYear() - birthday.getUTCFullYear()
+
+  if (monthDelta < 0 || (monthDelta === 0 && now.getUTCDate() < birthday.getUTCDate())) {
+    age--
+  }
+
+  return age
 }
 
 // function calculateDaysSince (date: Date) {
@@ -24,7 +32,7 @@ function calculateAgeSince(birthday: Date) {
 const BIRTHDAY = new Date('2004-05-30')
 
 function isBirthdayTodayMSK() {
-  const msk = new Date(Date.now() + 3 * 60 * 60 * 1000)
+  const msk = mskNow()
 
   return msk.getUTCMonth() === BIRTHDAY.getUTCMonth() && msk.getUTCDate() === BIRTHDAY.getUTCDate()
 }
