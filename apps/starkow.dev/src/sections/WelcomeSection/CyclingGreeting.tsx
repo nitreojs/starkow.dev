@@ -14,7 +14,8 @@ const greetings = [
   'ciao',
   'salut',
   'yo',
-  'hey'
+  'hey',
+  'console.log(\'hello world\')'
 ]
 
 const INTERVAL_MS = 2600
