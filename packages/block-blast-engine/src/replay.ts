@@ -1,9 +1,6 @@
-import { Board } from './board'
-import { PieceGenerator } from './generator'
+import { applyMove, newGame } from './game'
 import { MODES } from './modes'
-import { applyPlacement } from './scoring'
-import type { ModeId, Move, Piece } from './types'
-
+import type { ModeId, Move } from './types'
 import { ENGINE_VERSION } from './version'
 
 export type ValidateInput = {
@@ -18,14 +15,15 @@ export type ValidateOk = {
   score: number
   linesCleared: number
   placements: number
+  maxCombo: number
+  boardClears: number
+  over: boolean
 }
 
 export type ValidateError = {
   valid: false
   reason:
-    | 'illegal-placement'
-    | 'piece-already-used'
-    | 'over-move-limit'
+    | 'illegal-move'
     | 'unsupported-engine'
     | 'unknown-mode'
 }
@@ -39,60 +37,25 @@ export const validateRun = (input: ValidateInput): ValidateResult => {
     return { valid: false, reason: 'unsupported-engine' }
   }
 
-  const mode = MODES[input.mode]
-  if (mode === undefined) {
+  if (MODES[input.mode] === undefined) {
     return { valid: false, reason: 'unknown-mode' }
   }
 
-  if (mode.maxMoves !== null && input.moves.length > mode.maxMoves) {
-    return { valid: false, reason: 'over-move-limit' }
-  }
-
-  const board = new Board(mode.boardSize)
-  const gen = new PieceGenerator(input.seed, mode.generator)
-
-  let tray: (Piece | null)[] = [...gen.nextTray(board)]
-  let consumed = 0
-
-  let score = 0
-  let streak = 0
-  let totalLines = 0
+  let state = newGame(input.mode, input.seed)
 
   for (const move of input.moves) {
-    if (consumed === 3) {
-      tray = [...gen.nextTray(board)]
-      consumed = 0
-    }
-
-    if (move.trayIndex < 0 || move.trayIndex > 2 || move.r < 0 || move.c < 0) {
-      return { valid: false, reason: 'illegal-placement' }
-    }
-
-    const piece = tray[move.trayIndex]
-    if (piece === null || piece === undefined) {
-      return { valid: false, reason: 'piece-already-used' }
-    }
-
-    if (!board.canPlace(piece, move.r, move.c)) {
-      return { valid: false, reason: 'illegal-placement' }
-    }
-
-    board.place(piece, move.r, move.c)
-    const clear = board.clearFullLines()
-    const step = applyPlacement({
-      cellsPlaced: piece.cells.length,
-      linesCleared: clear.rows.length + clear.cols.length,
-      cellsCleared: clear.cellsCleared,
-      prevStreak: streak
-    })
-
-    score += step.pointsGained
-    streak = step.newStreak
-    totalLines += clear.rows.length + clear.cols.length
-
-    tray[move.trayIndex] = null
-    consumed++
+    const result = applyMove(state, move)
+    if (result === null) return { valid: false, reason: 'illegal-move' }
+    state = result.state
   }
 
-  return { valid: true, score, linesCleared: totalLines, placements: input.moves.length }
+  return {
+    valid: true,
+    score: state.score,
+    linesCleared: state.linesCleared,
+    placements: state.placements,
+    maxCombo: state.maxCombo,
+    boardClears: state.boardClears,
+    over: state.over
+  }
 }

@@ -17,18 +17,25 @@ export type DragStart = {
   cellSize: number
 }
 
+export type HoldTarget = {
+  getRect: () => DOMRect | null
+  onHold: (trayIndex: TrayIndex) => void
+}
+
 export const useBlockBlastDrag = (
   board: Board,
   cellSize: number,
   getBoardRect: () => DOMRect | null,
   onDrop: (trayIndex: TrayIndex, r: number, c: number) => void,
-  tray: readonly (Piece | null)[]
+  tray: readonly (Piece | null)[],
+  hold: HoldTarget | null
 ) => {
   const [draggingIndex, setDraggingIndex] = useState<TrayIndex | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<TrayIndex | null>(null)
   const [pointerPos, setPointerPos] = useState<{ x: number, y: number } | null>(null)
   const [ghost, setGhost] = useState<Ghost>(null)
   const [pointerType, setPointerType] = useState<'mouse' | 'pen' | 'touch'>('mouse')
+  const [holdHover, setHoldHover] = useState<boolean>(false)
 
   const stateRef = useRef<{ drag: DragStart | null, rafId: number | null }>({ drag: null, rafId: null })
   const ghostRef = useRef<Ghost>(null)
@@ -56,9 +63,22 @@ export const useBlockBlastDrag = (
     return { r, c, valid, withinGrid }
   }, [board, cellSize, getBoardRect])
 
+  const hitsHold = useCallback((x: number, y: number): boolean => {
+    const rect = hold?.getRect() ?? null
+    if (rect === null) return false
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+  }, [hold])
+
   const updateGhost = useCallback((clientX: number, clientY: number) => {
     const drag = stateRef.current.drag
     if (drag === null) return
+
+    const overHold = hitsHold(clientX, clientY)
+    setHoldHover(overHold)
+    if (overHold) {
+      setGhost(null)
+      return
+    }
 
     const lift = drag.pointerType === 'touch' ? TOUCH_LIFT_CELLS : 0
     const g = resolvePlacement(drag.piece, clientX, clientY, lift)
@@ -74,7 +94,7 @@ export const useBlockBlastDrag = (
       }
       return prev === null ? prev : null
     })
-  }, [resolvePlacement])
+  }, [resolvePlacement, hitsHold])
 
   const start = useCallback((piece: Piece, trayIndex: TrayIndex, e: PointerEvent) => {
     const rect = getBoardRect()
@@ -137,13 +157,16 @@ export const useBlockBlastDrag = (
       setDraggingIndex(null)
       setPointerPos(null)
       setGhost(null)
+      setHoldHover(false)
     }
 
-    const onUp = () => {
+    const onUp = (ev: PointerEvent) => {
       if (dragging) {
         const g = ghostRef.current
         const drag = stateRef.current.drag
-        if (g !== null && g.valid && drag !== null) {
+        if (drag !== null && hold !== null && hitsHold(ev.clientX, ev.clientY)) {
+          hold.onHold(drag.trayIndex)
+        } else if (g !== null && g.valid && drag !== null) {
           onDrop(drag.trayIndex, g.r, g.c)
         }
         endDrag()
@@ -164,7 +187,7 @@ export const useBlockBlastDrag = (
     window.addEventListener('pointerup', onUp)
     window.addEventListener('pointercancel', onCancel)
     window.addEventListener('blur', onCancel)
-  }, [cellSize, getBoardRect, onDrop, updateGhost])
+  }, [cellSize, getBoardRect, onDrop, updateGhost, hold, hitsHold])
 
   // hover preview for a selected piece — mouse/pen only; touch has no hover
   const boardHover = useCallback((e: PointerEvent) => {
@@ -220,6 +243,7 @@ export const useBlockBlastDrag = (
     boardHover,
     boardLeave,
     boardTap,
-    clearSelection
+    clearSelection,
+    holdHover
   }
 }

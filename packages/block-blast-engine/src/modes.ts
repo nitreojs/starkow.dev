@@ -5,23 +5,37 @@ export const MODES: Record<ModeId, ModeConfig> = {
     id: 'classic',
     boardSize: 8,
     maxMoves: null,
-    generator: 'solvability-aware',
-    resumable: true
+    resumable: true,
+    hold: false
   },
   'limited-moves': {
     id: 'limited-moves',
     boardSize: 8,
     maxMoves: 50,
-    generator: 'seeded-bag',
-    resumable: false
+    resumable: false,
+    hold: false
   },
   'big-board': {
     id: 'big-board',
     boardSize: 10,
     maxMoves: null,
-    generator: 'solvability-aware',
-    resumable: true
+    resumable: true,
+    hold: false
+  },
+  hold: {
+    id: 'hold',
+    boardSize: 8,
+    maxMoves: null,
+    resumable: true,
+    hold: true
+  },
+  daily: {
+    id: 'daily',
+    boardSize: 8,
+    maxMoves: null,
+    resumable: true,
+    hold: false
   }
 }
 
-export const ENGINE_MAJOR = 2
+export const ENGINE_MAJOR = 3

@@ -1,4 +1,4 @@
-import type { ModeId, Piece } from '@starkow.dev/block-blast-engine'
+import type { GameSnapshot, Move, Piece } from '@starkow.dev/block-blast-engine'
 
 export type TrayIndex = 0 | 1 | 2
 
@@ -10,18 +10,12 @@ export type Ghost = {
 } | null
 
 export type ResumableSave = {
-  mode: ModeId
-  seed: number
-  rngState: { s: number }
-  boardCells: number[]
-  boardSize: number
-  cellPieceIds: (string | null)[]
-  tray: (string | null)[]
-  score: number
-  streak: number
-  movesMade: number
-  moveHistory: { trayIndex: TrayIndex, r: number, c: number }[]
   engineVersion: string
+  seed: number
+  date: string | null
+  snapshot: GameSnapshot
+  cellPieceIds: (string | null)[]
+  moveHistory: Move[]
 }
 
 export type AchievementId =
@@ -38,6 +32,17 @@ export type AchievementId =
   | 'streak-5'
   | 'streak-10'
   | 'limited-clear-bar'
+  | 'daily-first'
+  | 'daily-streak-3'
+  | 'daily-streak-7'
+  | 'daily-top-10'
+  | 'board-clear'
+  | 'board-clear-3'
+  | 'quad-clear'
+  | 'combo-30'
+  | 'hold-5k'
+  | 'clean-run'
+  | 'terminal'
 
 export type AchievementDef = {
   id: AchievementId
@@ -46,3 +51,48 @@ export type AchievementDef = {
 }
 
 export type PieceForUi = Piece
+
+export type DailyStart = {
+  date: string
+  seed: number
+  engineVersion: string
+  ranked: boolean
+  attemptId: string | null
+}
+
+export type LeaderboardEntry = {
+  id: string
+  rank: number
+  nickname: string
+  score: number
+  linesCleared: number
+  maxCombo: number
+  boardClears: number
+  placements: number
+  createdAt: number
+  hidden?: boolean
+}
+
+export type DailyLeaderboard = {
+  date: string
+  total: number
+  entries: LeaderboardEntry[]
+  you: LeaderboardEntry | null
+}
+
+export type DailySubmitError =
+  | 'invalid-nickname'
+  | 'invalid-run'
+  | 'invalid-moves'
+  | 'not-found'
+  | 'already-submitted'
+  | 'unavailable'
+
+export type DailySubmitOk = {
+  ok: true
+  entry: LeaderboardEntry
+  rank: number
+  total: number
+}
+
+export type DailySubmitResult = DailySubmitOk | { ok: false, error: DailySubmitError }

@@ -1,13 +1,9 @@
 import { FC, useEffect, useState } from 'preact/compat'
 import { PIECES } from '@starkow.dev/block-blast-engine'
 
-const excludedIds = new Set([
-  '1x2', '2x1',
-  'diag-2-fwd', 'diag-2-bwd',
-  'diag-3-fwd', 'diag-3-bwd'
-])
+const excludedIds: Record<string, true> = { '1x1': true, '1x2': true, '2x1': true }
 
-const decorPieces = PIECES.filter(p => !excludedIds.has(p.id))
+const decorPieces = PIECES.filter(p => excludedIds[p.id] !== true)
 
 const pickRandomPiece = (exclude?: string) => {
   const pool = exclude === undefined ? decorPieces : decorPieces.filter(p => p.id !== exclude)

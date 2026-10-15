@@ -1,24 +1,40 @@
+export const COMBO_MISSES_ALLOWED = 2
+export const BOARD_CLEAR_BONUS = 300
+
 export type PlacementInput = {
   readonly cellsPlaced: number
   readonly linesCleared: number
-  readonly cellsCleared: number
-  readonly prevStreak: number
+  readonly boardCleared: boolean
+  readonly combo: number
+  readonly comboMisses: number
 }
 
 export type PlacementResult = {
   readonly pointsGained: number
-  readonly newStreak: number
+  readonly combo: number
+  readonly comboMisses: number
 }
 
 export const applyPlacement = (input: PlacementInput): PlacementResult => {
-  const newStreak = input.linesCleared > 0 ? input.prevStreak + 1 : 0
+  const lines = input.linesCleared
 
-  const lineBonus = input.linesCleared > 0
-    ? 10 * input.cellsCleared * input.linesCleared * (1 + newStreak)
-    : 0
+  if (lines === 0) {
+    const comboMisses = input.comboMisses + 1
+    const broken = comboMisses > COMBO_MISSES_ALLOWED
+
+    return {
+      pointsGained: input.cellsPlaced,
+      combo: broken ? 0 : input.combo,
+      comboMisses: broken ? 0 : comboMisses
+    }
+  }
+
+  const combo = input.combo + 1
+  const linePoints = lines === 1 ? 10 * combo : 10 * combo * lines * (lines - 1)
 
   return {
-    pointsGained: input.cellsPlaced + lineBonus,
-    newStreak
+    pointsGained: input.cellsPlaced + linePoints + (input.boardCleared ? BOARD_CLEAR_BONUS : 0),
+    combo,
+    comboMisses: 0
   }
 }

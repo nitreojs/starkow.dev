@@ -8,12 +8,6 @@ describe('pieces', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('every piece has at least one cell', () => {
-    for (const p of PIECES) {
-      expect(p.cells.length).toBeGreaterThan(0)
-    }
-  })
-
   it('piece cells fit within declared width/height', () => {
     for (const p of PIECES) {
       for (const [r, c] of p.cells) {
@@ -22,6 +16,22 @@ describe('pieces', () => {
         expect(r).toBeLessThan(p.height)
         expect(c).toBeLessThan(p.width)
       }
+    }
+  })
+
+  it('every piece is orthogonally connected', () => {
+    for (const p of PIECES) {
+      const reached = [p.cells[0]!]
+
+      for (let i = 0; i < reached.length; i++) {
+        const [r, c] = reached[i]!
+        for (const cell of p.cells) {
+          const adjacent = Math.abs(cell[0] - r) + Math.abs(cell[1] - c) === 1
+          if (adjacent && !reached.includes(cell)) reached.push(cell)
+        }
+      }
+
+      expect(reached.length, p.id).toBe(p.cells.length)
     }
   })
 
@@ -60,36 +70,5 @@ describe('pieces', () => {
     expect(() => defineCatalogue([
       { id: 'empty', shape: ['...'] }
     ])).toThrow()
-  })
-
-  it('catalogue contains expected shapes', () => {
-    const ids = PIECES.map(p => p.id)
-
-    expect(ids).toContain('1x2')
-    expect(ids).toContain('2x2')
-    expect(ids).toContain('3x3')
-    expect(ids).toContain('1x5')
-    expect(ids).toContain('5x1')
-  })
-
-  it('catalogue does not include single or plus', () => {
-    const ids = PIECES.map(p => p.id)
-    expect(ids).not.toContain('single')
-    expect(ids).not.toContain('plus')
-  })
-
-  it('every piece has a positive weight', () => {
-    for (const p of PIECES) {
-      expect(p.weight).toBeGreaterThan(0)
-    }
-  })
-
-  it('rectangle pieces are weighted heavier than diagonals', () => {
-    const square = PIECES.find(p => p.id === '2x2')!
-    const wideRect = PIECES.find(p => p.id === '2x3')!
-    const diag = PIECES.find(p => p.id === 'diag-2-fwd')!
-    const longDiag = PIECES.find(p => p.id === 'diag-3-fwd')!
-    expect(square.weight).toBeGreaterThan(diag.weight * 5)
-    expect(wideRect.weight).toBeGreaterThan(longDiag.weight * 5)
   })
 })

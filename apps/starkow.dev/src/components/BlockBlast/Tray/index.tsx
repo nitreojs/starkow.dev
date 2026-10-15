@@ -15,10 +15,10 @@ interface BlockBlastTrayProps {
 }
 
 // max piece dimension across the catalogue (5x1 / 1x5)
-const SLOT_CELLS = 5
+export const TRAY_SLOT_CELLS = 5
 
 export const BlockBlastTray: FC<BlockBlastTrayProps> = memo(({ tray, trayCellSize, draggingIndex, selectedIndex, onPointerDown }) => {
-  const slotPx = Math.ceil(SLOT_CELLS * trayCellSize)
+  const slotPx = Math.ceil(TRAY_SLOT_CELLS * trayCellSize)
 
   return (
     <div class='bb-tray' role='toolbar' aria-label='available pieces' aria-describedby='bb-keyboard-hint'>

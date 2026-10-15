@@ -1,13 +1,11 @@
 import type { Cell, Piece } from './types'
 
-type CatalogueEntry = { id: string, shape: readonly string[], weight?: number }
-
-const DEFAULT_WEIGHT = 1
+type CatalogueEntry = { id: string, shape: readonly string[] }
 
 export const defineCatalogue = (entries: readonly CatalogueEntry[]): readonly Piece[] => {
   const pieces: Piece[] = []
 
-  for (const { id, shape, weight } of entries) {
+  for (const { id, shape } of entries) {
     if (shape.length === 0) {
       throw new Error(`piece '${id}' has no rows`)
     }
@@ -34,62 +32,52 @@ export const defineCatalogue = (entries: readonly CatalogueEntry[]): readonly Pi
       throw new Error(`piece '${id}' has no filled cells`)
     }
 
-    pieces.push({ id, cells, width, height: shape.length, weight: weight ?? DEFAULT_WEIGHT })
+    pieces.push({ id, cells, width, height: shape.length })
   }
 
   return pieces
 }
 
 export const PIECES: readonly Piece[] = defineCatalogue([
-  { id: '1x2', shape: ['XX'],                     weight: 3 },
-  { id: '1x3', shape: ['XXX'],                    weight: 4 },
-  { id: '1x4', shape: ['XXXX'],                   weight: 2 },
-  { id: '1x5', shape: ['XXXXX'],                  weight: 1.5 },
+  { id: '1x1', shape: ['X'] },
 
-  { id: '2x1', shape: ['X', 'X'],                 weight: 3 },
-  { id: '3x1', shape: ['X', 'X', 'X'],            weight: 4 },
-  { id: '4x1', shape: ['X', 'X', 'X', 'X'],       weight: 2 },
-  { id: '5x1', shape: ['X', 'X', 'X', 'X', 'X'],  weight: 1.5 },
+  { id: '1x2', shape: ['XX'] },
+  { id: '1x3', shape: ['XXX'] },
+  { id: '1x4', shape: ['XXXX'] },
+  { id: '1x5', shape: ['XXXXX'] },
 
-  { id: '2x2', shape: ['XX', 'XX'],               weight: 6 },
-  { id: '3x3', shape: ['XXX', 'XXX', 'XXX'],      weight: 4 },
+  { id: '2x1', shape: ['X', 'X'] },
+  { id: '3x1', shape: ['X', 'X', 'X'] },
+  { id: '4x1', shape: ['X', 'X', 'X', 'X'] },
+  { id: '5x1', shape: ['X', 'X', 'X', 'X', 'X'] },
 
-  { id: '2x3', shape: ['XXX', 'XXX'],             weight: 4 },
-  { id: '3x2', shape: ['XX', 'XX', 'XX'],         weight: 4 },
+  { id: '2x2', shape: ['XX', 'XX'] },
+  { id: '3x3', shape: ['XXX', 'XXX', 'XXX'] },
 
-  // 3-cell small L corners (rare — usually leave awkward holes)
-  { id: 'L-small-ne', shape: ['XX', 'X.'],        weight: 0.4 },
-  { id: 'L-small-nw', shape: ['XX', '.X'],        weight: 0.4 },
-  { id: 'L-small-se', shape: ['X.', 'XX'],        weight: 0.4 },
-  { id: 'L-small-sw', shape: ['.X', 'XX'],        weight: 0.4 },
+  { id: 'L-small-ne', shape: ['XX', 'X.'] },
+  { id: 'L-small-nw', shape: ['XX', '.X'] },
+  { id: 'L-small-se', shape: ['X.', 'XX'] },
+  { id: 'L-small-sw', shape: ['.X', 'XX'] },
 
-  // 4-cell big L
-  { id: 'L-big-ne', shape: ['XX', 'X.', 'X.'],    weight: 2 },
-  { id: 'L-big-nw', shape: ['XX', '.X', '.X'],    weight: 2 },
-  { id: 'L-big-se', shape: ['X.', 'X.', 'XX'],    weight: 2 },
-  { id: 'L-big-sw', shape: ['.X', '.X', 'XX'],    weight: 2 },
+  { id: 'L-big-ne', shape: ['XX', 'X.', 'X.'] },
+  { id: 'L-big-sw', shape: ['.X', '.X', 'XX'] },
+  { id: 'J-big-nw', shape: ['XXX', '..X'] },
+  { id: 'J-big-se', shape: ['X..', 'XXX'] },
 
-  // 4-cell big J
-  { id: 'J-big-ne', shape: ['XXX', 'X..'],        weight: 2 },
-  { id: 'J-big-nw', shape: ['XXX', '..X'],        weight: 2 },
-  { id: 'J-big-se', shape: ['X..', 'XXX'],        weight: 2 },
-  { id: 'J-big-sw', shape: ['..X', 'XXX'],        weight: 2 },
+  { id: 'corner5-tl', shape: ['XXX', 'X..', 'X..'] },
+  { id: 'corner5-tr', shape: ['XXX', '..X', '..X'] },
+  { id: 'corner5-bl', shape: ['X..', 'X..', 'XXX'] },
+  { id: 'corner5-br', shape: ['..X', '..X', 'XXX'] },
 
-  { id: 'T-n', shape: ['XXX', '.X.'],             weight: 1 },
-  { id: 'T-e', shape: ['.X', 'XX', '.X'],         weight: 1 },
-  { id: 'T-s', shape: ['.X.', 'XXX'],             weight: 1 },
-  { id: 'T-w', shape: ['X.', 'XX', 'X.'],         weight: 1 },
+  { id: 'T-n', shape: ['XXX', '.X.'] },
+  { id: 'T-e', shape: ['.X', 'XX', '.X'] },
+  { id: 'T-s', shape: ['.X.', 'XXX'] },
+  { id: 'T-w', shape: ['X.', 'XX', 'X.'] },
 
-  { id: 'S-h', shape: ['.XX', 'XX.'],             weight: 0.7 },
-  { id: 'S-v', shape: ['X.', 'XX', '.X'],         weight: 0.7 },
-  { id: 'Z-h', shape: ['XX.', '.XX'],             weight: 0.7 },
-  { id: 'Z-v', shape: ['.X', 'XX', 'X.'],         weight: 0.7 },
-
-  // pure diagonals (very rare — leave isolated cells everywhere)
-  { id: 'diag-2-fwd', shape: ['.X', 'X.'],        weight: 0.2 },
-  { id: 'diag-2-bwd', shape: ['X.', '.X'],        weight: 0.2 },
-  { id: 'diag-3-fwd', shape: ['..X', '.X.', 'X..'], weight: 0.15 },
-  { id: 'diag-3-bwd', shape: ['X..', '.X.', '..X'], weight: 0.15 }
+  { id: 'S-h', shape: ['.XX', 'XX.'] },
+  { id: 'S-v', shape: ['X.', 'XX', '.X'] },
+  { id: 'Z-h', shape: ['XX.', '.XX'] },
+  { id: 'Z-v', shape: ['.X', 'XX', 'X.'] }
 ])
 
 const PIECE_BY_ID = new Map(PIECES.map(p => [p.id, p]))

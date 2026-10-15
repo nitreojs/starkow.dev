@@ -10,10 +10,12 @@ interface BlockBlastModeTabsProps {
 const LABELS: Record<ModeId, string> = {
   classic: 'classic',
   'limited-moves': 'limited moves',
-  'big-board': 'big board'
+  'big-board': 'big board',
+  hold: 'hold',
+  daily: 'daily'
 }
 
-const MODE_LIST: ModeId[] = ['classic', 'limited-moves', 'big-board']
+const MODE_LIST: ModeId[] = ['classic', 'limited-moves', 'big-board', 'hold', 'daily']
 
 export const BlockBlastModeTabs: FC<BlockBlastModeTabsProps> = ({ current, onChange }) => (
   <div class='bb-mode-tabs' role='tablist'>

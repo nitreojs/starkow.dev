@@ -5,29 +5,35 @@ export type Piece = {
   readonly cells: readonly Cell[]
   readonly width: number
   readonly height: number
-  // selection weight in the generator's roulette draw — higher = more common
-  readonly weight: number
 }
 
 export type BoardSize = 8 | 10
 
-export type ModeId = 'classic' | 'limited-moves' | 'big-board'
-
-export type GeneratorStrategy = 'seeded-bag' | 'solvability-aware'
+export type ModeId = 'classic' | 'limited-moves' | 'big-board' | 'hold' | 'daily'
 
 export type ModeConfig = {
   readonly id: ModeId
   readonly boardSize: BoardSize
   readonly maxMoves: number | null
-  readonly generator: GeneratorStrategy
   readonly resumable: boolean
+  readonly hold: boolean
 }
 
-export type Move = {
-  readonly trayIndex: 0 | 1 | 2
+export type TrayIndex = 0 | 1 | 2
+
+export type PlaceMove = {
+  readonly kind: 'place'
+  readonly trayIndex: TrayIndex
   readonly r: number
   readonly c: number
 }
+
+export type HoldMove = {
+  readonly kind: 'hold'
+  readonly trayIndex: TrayIndex
+}
+
+export type Move = PlaceMove | HoldMove
 
 export type ClearResult = {
   readonly rows: readonly number[]

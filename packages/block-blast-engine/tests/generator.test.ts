@@ -2,141 +2,156 @@ import { describe, expect, it } from 'vitest'
 
 import { Board } from '../src/board'
 import { PieceGenerator } from '../src/generator'
-import { PIECES } from '../src/pieces'
+import { createRng } from '../src/rng'
+import type { Piece } from '../src/types'
+import { poolForScore } from '../src/weights'
 
-describe('PieceGenerator / seeded-bag', () => {
-  it('produces trays of exactly 3 pieces', () => {
-    const gen = new PieceGenerator(123, 'seeded-bag')
-    const b = new Board(8)
-    const tray = gen.nextTray(b)
-    expect(tray).toHaveLength(3)
-    for (const p of tray) expect(p).toBeTruthy()
+const placements = (cells: Uint8Array, size: number, piece: Piece): [number, number][] => {
+  const found: [number, number][] = []
+  for (let r = 0; r + piece.height <= size; r++) {
+    for (let c = 0; c + piece.width <= size; c++) {
+      if (piece.cells.every(([dr, dc]) => cells[(r + dr) * size + c + dc] === 0)) found.push([r, c])
+    }
+  }
+  return found
+}
+
+const placeWithClears = (cells: Uint8Array, size: number, piece: Piece, r: number, c: number): Uint8Array => {
+  const board = new Board(size as 8 | 10)
+  board.cells.set(cells)
+  board.place(piece, r, c)
+  board.clearFullLines()
+  return board.cells
+}
+
+const solvable = (cells: Uint8Array, size: number, pieces: readonly Piece[]): boolean =>
+  pieces.length === 0 || pieces.some((piece, i) => {
+    const rest = pieces.filter((_, j) => j !== i)
+    return placements(cells, size, piece).some(([r, c]) => solvable(placeWithClears(cells, size, piece, r, c), size, rest))
   })
 
-  it('is deterministic for the same seed', () => {
-    const gen1 = new PieceGenerator(42, 'seeded-bag')
-    const gen2 = new PieceGenerator(42, 'seeded-bag')
-    const b1 = new Board(8)
-    const b2 = new Board(8)
+const randomPlayBoards = (seed: number, trays: number): { board: Board, score: number, tray: readonly Piece[] }[] => {
+  const rng = createRng(seed)
+  const gen = new PieceGenerator(seed)
+  const board = new Board(8)
+  const seen: { board: Board, score: number, tray: readonly Piece[] }[] = []
+  let score = 0
+
+  for (let t = 0; t < trays; t++) {
+    const tray = gen.nextTray(board, score)
+    seen.push({ board: Board.fromSnapshot(board.snapshot()), score, tray })
+
+    for (const piece of tray) {
+      const options = placements(board.cells, 8, piece)
+      if (options.length === 0) return seen
+      const [r, c] = options[Math.floor(rng.next() * options.length)]!
+      board.place(piece, r, c)
+      const clear = board.clearFullLines()
+      score += piece.cells.length + 10 * (clear.rows.length + clear.cols.length)
+    }
+  }
+
+  return seen
+}
+
+describe('PieceGenerator', () => {
+  it('is deterministic for the same seed and board sequence', () => {
+    const a = new PieceGenerator(42)
+    const b = new PieceGenerator(42)
+    const board = new Board(8)
 
     for (let i = 0; i < 5; i++) {
-      const t1 = gen1.nextTray(b1)
-      const t2 = gen2.nextTray(b2)
-      expect(t1.map(p => p!.id)).toEqual(t2.map(p => p!.id))
+      expect(a.nextTray(board, i * 400).map(p => p.id)).toEqual(b.nextTray(board, i * 400).map(p => p.id))
     }
   })
 
-  it('hydrates and resumes from serialized state', () => {
-    const a = new PieceGenerator(7, 'seeded-bag')
-    const b = new Board(8)
-    a.nextTray(b); a.nextTray(b)
+  it('resumes identically after serialize → hydrate', () => {
+    const a = new PieceGenerator(7)
+    const board = new Board(8)
+    a.nextTray(board, 0)
+    a.nextTray(board, 0)
 
-    const state = a.serialize()
-    const c = PieceGenerator.hydrate(state, 'seeded-bag')
+    const resumed = PieceGenerator.hydrate(a.serialize())
 
-    const fromA = a.nextTray(b).map(p => p!.id)
-    const fromC = c.nextTray(b).map(p => p!.id)
-    expect(fromA).toEqual(fromC)
+    expect(resumed.nextTray(board, 1200).map(p => p.id)).toEqual(a.nextTray(board, 1200).map(p => p.id))
   })
 
-  it('weighted distribution favours common rectangles over diagonals', () => {
-    const gen = new PieceGenerator(123, 'seeded-bag')
-    const b = new Board(8)
-    const counts = new Map<string, number>()
-    for (let i = 0; i < 400; i++) {
-      for (const p of gen.nextTray(b)) {
-        counts.set(p!.id, (counts.get(p!.id) ?? 0) + 1)
+  it('every dealt tray can be placed in full whenever the board has room for three singles', () => {
+    let checked = 0
+
+    for (let seed = 1; seed <= 40; seed++) {
+      for (const { board, tray } of randomPlayBoards(seed * 101, 30)) {
+        const empty = board.cells.filter(v => v === 0).length
+        if (empty < 3) continue
+        expect(solvable(board.cells, 8, tray), `seed ${seed}`).toBe(true)
+        checked++
       }
     }
-    const square2x2 = counts.get('2x2') ?? 0
-    const diag = counts.get('diag-3-fwd') ?? 0
-    expect(square2x2).toBeGreaterThan(diag * 8)
+
+    expect(checked).toBeGreaterThan(200)
   })
 
-  it('eventually draws every piece id given enough trays', () => {
-    const gen = new PieceGenerator(1, 'seeded-bag')
-    const b = new Board(8)
-    const seen = new Set<string>()
-    // weighted draws eventually cover the whole catalogue with high probability
-    for (let i = 0; i < 1000; i++) {
-      for (const p of gen.nextTray(b)) {
-        if (p !== null) seen.add(p.id)
+  it('rarely deals a piece whose every placement seals off an empty cell', () => {
+    const sealedCells = (cells: Uint8Array): number => {
+      let sealed = 0
+      for (let i = 0; i < 64; i++) {
+        if (cells[i] !== 0) continue
+        const r = Math.floor(i / 8)
+        const c = i % 8
+        const open = [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]
+          .some(([nr, nc]) => nr! >= 0 && nc! >= 0 && nr! < 8 && nc! < 8 && cells[nr! * 8 + nc!] === 0)
+        if (!open) sealed++
+      }
+      return sealed
+    }
+
+    let dealt = 0
+    let awkward = 0
+
+    for (let seed = 1; seed <= 40; seed++) {
+      for (const { board, tray } of randomPlayBoards(seed * 37, 30)) {
+        const before = sealedCells(board.cells)
+        for (const piece of tray) {
+          dealt++
+          const cleanSpot = placements(board.cells, 8, piece).some(([r, c]) => sealedCells(placeWithClears(board.cells, 8, piece, r, c)) <= before)
+          if (!cleanSpot) awkward++
+        }
       }
     }
-    expect(seen.size).toBe(PIECES.length)
-  })
-})
 
-describe('PieceGenerator / solvability-aware', () => {
-  it('produces trays where every piece individually fits on empty board', () => {
-    const gen = new PieceGenerator(55, 'solvability-aware')
-    const b = new Board(8)
-    const tray = gen.nextTray(b)
-
-    for (const p of tray) expect(b.hasAnyPlacement(p!)).toBe(true)
+    expect(dealt).toBeGreaterThan(600)
+    expect(awkward / dealt, `${awkward} of ${dealt}`).toBeLessThan(0.035)
   })
 
-  it('prefers trays that enable multi-line clears on a 2-line-pending board', () => {
-    // setup a board where a 2x2 piece at (4,1) clears 2 lines simultaneously
-    //   . . . . . . . .
-    //   . x x x x x . .
-    //   x x x x x x . .
-    //   x . . x x x . .
-    //   x . . x x x x x   <-- needs (4,1) (4,2)
-    //   x . . x x x x x   <-- needs (5,1) (5,2)
-    //   x . . . . . . .
-    //   x . . . . . . .
-    const b = new Board(8)
-    const filled: [number, number][] = [
-      [1, 1], [1, 2], [1, 3], [1, 4], [1, 5],
-      [2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5],
-      [3, 0], [3, 3], [3, 4], [3, 5],
-      [4, 0], [4, 3], [4, 4], [4, 5], [4, 6], [4, 7],
-      [5, 0], [5, 3], [5, 4], [5, 5], [5, 6], [5, 7],
-      [6, 0],
-      [7, 0]
-    ]
-    for (const [r, c] of filled) b.setCell(r, c, 1)
+  it('usually deals a piece that finishes a nearly complete row', () => {
+    const board = new Board(8)
+    for (let c = 0; c < 7; c++) board.setCell(0, c, 1)
 
-    // try multiple seeds — the algorithm should prefer trays containing 2x2 / 1x2 / 2x1 over Z/S/diag combos
-    let traysWithRectangleHelper = 0
-    const TRIALS = 20
-    for (let seed = 0; seed < TRIALS; seed++) {
-      const gen = new PieceGenerator(seed, 'solvability-aware')
-      const tray = gen.nextTray(b)
-      const ids = tray.map(p => p!.id)
-      const helpful = ids.some(id => id === '2x2' || id === '1x2' || id === '2x1' || id === '1x3' || id === '3x1' || id === '2x3' || id === '3x2')
-      if (helpful) traysWithRectangleHelper++
+    let finishing = 0
+    const runs = 300
+
+    for (let seed = 1; seed <= runs; seed++) {
+      const tray = new PieceGenerator(seed).nextTray(board, 0)
+      const finishes = tray.some(piece => placements(board.cells, 8, piece).some(([r, c]) => {
+        const after = placeWithClears(board.cells, 8, piece, r, c)
+        return after[0 * 8 + 0] === 0
+      }))
+      if (finishes) finishing++
     }
-    expect(traysWithRectangleHelper).toBeGreaterThanOrEqual(TRIALS * 0.85)
+
+    expect(finishing / runs).toBeGreaterThan(0.85)
   })
 
-  it('falls back gracefully when board is nearly full (1x2 gap)', () => {
-    const b = new Board(8)
-    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) b.setCell(r, c, 1)
-    // leave a 1x2 horizontal gap so at least a 1x2 piece fits
-    b.setCell(0, 0, 0)
-    b.setCell(0, 1, 0)
+  it('deals only pieces from the current score bracket on an open board', () => {
+    const board = new Board(8)
 
-    const gen = new PieceGenerator(9, 'solvability-aware')
-    const tray = gen.nextTray(b)
+    for (const score of [0, 1000, 4000, 9000]) {
+      const allowed = poolForScore(score).pieces.map(p => p.id)
+      const gen = new PieceGenerator(score + 1)
 
-    let anyPlaceable = false
-    for (const p of tray) {
-      if (b.hasAnyPlacement(p!)) { anyPlaceable = true; break }
-    }
-    expect(anyPlaceable).toBe(true)
-  })
-
-  it('is deterministic given same seed + same board sequence', () => {
-    const g1 = new PieceGenerator(77, 'solvability-aware')
-    const g2 = new PieceGenerator(77, 'solvability-aware')
-    const b1 = new Board(8)
-    const b2 = new Board(8)
-    for (let i = 0; i < 3; i++) {
-      const t1 = g1.nextTray(b1)
-      const t2 = g2.nextTray(b2)
-      expect(t1.map(p => p!.id)).toEqual(t2.map(p => p!.id))
+      for (let i = 0; i < 100; i++) {
+        for (const piece of gen.nextTray(board, score)) expect(allowed, `${piece.id} @ ${score}`).toContain(piece.id)
+      }
     }
   })
 })

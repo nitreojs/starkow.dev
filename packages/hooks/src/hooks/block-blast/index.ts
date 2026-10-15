@@ -1,5 +1,7 @@
 export * from './types'
 export * from './persistence'
+export * from './api'
 export * from './use-block-blast-game'
 export * from './use-block-blast-drag'
 export * from './use-block-blast-achievements'
+export * from './use-block-blast-daily'
