@@ -17,8 +17,7 @@ interface SocialLink {
 const socials: SocialLink[] = [
   { name: 'github',     url: 'https://fwd.starkow.dev/github',     Icon: Icons.IconGitHub,     note: 'code lives here' },
   { name: 'telegram',   url: 'https://fwd.starkow.dev/telegram',   Icon: Icons.IconTelegram,   note: 'fastest way to reach me' },
-  { name: 'steam',      url: 'https://fwd.starkow.dev/steam',      Icon: Icons.IconSteam,      note: 'games and such' },
-  { name: 'soundcloud', url: 'https://fwd.starkow.dev/soundcloud', Icon: Icons.IconSoundcloud, note: 'what i listen to' }
+  { name: 'steam',      url: 'https://fwd.starkow.dev/steam',      Icon: Icons.IconSteam,      note: 'games and such' }
 ]
 
 const formatBuildDate = (iso: string): string => {
@@ -81,7 +80,7 @@ export const FooterSection: FC = () => {
         {' '}
         <Skill name='es3n1n.eu' href='https://es3n1n.eu' note='esenin hiiiii :3' />
         {' '}
-        <Skill name='tei.su' href='https://tei.su' note='ummmmmmmmmm idk alina is cool tho' />
+        <Skill name='tei.pet' href='https://tei.pet' note='ummmmmmmmmm idk alina is cool tho' />
       </p>
 
       <p>

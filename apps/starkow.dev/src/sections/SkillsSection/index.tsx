@@ -5,8 +5,7 @@ import {
   IconNodeJs,
   IconPostgreSQL,
   IconRedis,
-  IconPHP,
-  IconKotlin
+  IconPHP
 } from '@starkow.dev/icons'
 
 import { Skill } from '../../components'
@@ -38,8 +37,6 @@ export const SkillsSection: FC = () => (
     <p class='info-line'>
       <span class='info-label'>currently learning:</span> {' '}
       <Skill name='mtproto' note='actually pretty interesting' />
-      <span class='skill-sep'>•</span>
-      <Skill name='kotlin' Icon={IconKotlin} note='i LOVE their syntactic sugar' />
       <span class='skill-sep'>•</span>
       <Skill name='how to talk to people' note='¯\_(ツ)_/¯' />
     </p>
