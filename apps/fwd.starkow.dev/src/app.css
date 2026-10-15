@@ -31,16 +31,15 @@
   display: grid;
 
   grid-template-columns: repeat(4, minmax(100px, 1fr));
-  grid-template-rows: repeat(6, minmax(100px, 1fr));
+  grid-template-rows: repeat(5, minmax(100px, 1fr));
   grid-gap: 2em;
 
   grid-template-areas:
     'telegram   telegram    spotify     spotify'
     'telegram   telegram    github      github'
     'shitpost   shitpost    github      github'
-    'vk         soundcloud  music       music'
-    'lastfm     photos      photos      photos'
-    'sources    sources     pinterested back'
+    'shitpost   shitpost    sources     sources'
+    'vk         lastfm      back        back'
   ;
 }
 
@@ -73,17 +72,8 @@
 .item-spotify {
   grid-area: spotify;
 }
-.item-soundcloud {
-  grid-area: soundcloud;
-}
 .item-lastfm {
   grid-area: lastfm;
-}
-.item-photos {
-  grid-area: photos;
-}
-.item-music {
-  grid-area: music;
 }
 .item-sources {
   grid-area: sources;
@@ -172,18 +162,6 @@
   font-size: 0.8em;
 }
 
-#noise {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.5;
-  display: none;
-}
-
 @media (max-width: 640px) {
   #app {
     padding: 1rem;
@@ -195,7 +173,7 @@
 
   .grid {
     grid-template-columns: repeat(4, minmax(60px, 1fr));
-    grid-template-rows: repeat(6, minmax(60px, 1fr));
+    grid-template-rows: repeat(5, minmax(60px, 1fr));
     grid-gap: 1em;
   }
 
