@@ -4,6 +4,15 @@ import clsx from 'clsx'
 import { useRotatingTitle } from '@starkow.dev/hooks'
 import * as Icons from '@starkow.dev/icons'
 
+import backTile from './tiles/back.webp'
+import githubTile from './tiles/github.webp'
+import lastfmTile from './tiles/lastfm.webp'
+import shitpostTile from './tiles/shitpost.webp'
+import sourcesTile from './tiles/sources.webp'
+import spotifyTile from './tiles/spotify.webp'
+import telegramTile from './tiles/telegram.webp'
+import vkTile from './tiles/vk.webp'
+
 import './app.css'
 
 interface ItemProps {
@@ -42,14 +51,14 @@ export function App() {
     <>
       <div class='container'>
         <div class='grid'>
-          <Item id='telegram' text='telegram' description='main telegram channel' url='https://fwd.starkow.dev/channel' photoUrl='/tiles/telegram.webp' icon={<Icons.IconTelegram />} />
-          <Item id='spotify' text='spotify' description='i listen' url='https://fwd.starkow.dev/spotify' photoUrl='/tiles/spotify.webp' icon={<Icons.IconSpotify />} />
-          <Item id='github' text='github' description='i code' url='https://fwd.starkow.dev/github' photoUrl='/tiles/github.webp' icon={<Icons.IconGitHub />} />
-          <Item id='shitpost' text='shitpost' description='i shitpost' url='https://fwd.starkow.dev/shitpost' photoUrl='/tiles/shitpost.webp' icon={<Icons.IconTelegram />} />
-          <Item id='vk' url='https://fwd.starkow.dev/vk' photoUrl='/tiles/vk.webp' icon={<Icons.IconVk />} isIconCentered />
-          <Item id='lastfm' url='https://fwd.starkow.dev/lastfm' photoUrl='/tiles/lastfm.webp' icon={<Icons.IconLastFm />} isIconCentered />
-          <Item id='sources' text='sources' description='sources of this site' url='https://fwd.starkow.dev/github/starkow.dev' photoUrl='/tiles/sources.webp' icon={<Icons.IconGitHub />} />
-          <Item id='back' url='https://starkow.dev' photoUrl='/tiles/back.webp' icon={<Icons.IconHome />} isIconCentered shouldOpenInNewTab={false} />
+          <Item id='telegram' text='telegram' description='main telegram channel' url='https://fwd.starkow.dev/channel' photoUrl={telegramTile} icon={<Icons.IconTelegram />} />
+          <Item id='spotify' text='spotify' description='i listen' url='https://fwd.starkow.dev/spotify' photoUrl={spotifyTile} icon={<Icons.IconSpotify />} />
+          <Item id='github' text='github' description='i code' url='https://fwd.starkow.dev/github' photoUrl={githubTile} icon={<Icons.IconGitHub />} />
+          <Item id='shitpost' text='shitpost' description='i shitpost' url='https://fwd.starkow.dev/shitpost' photoUrl={shitpostTile} icon={<Icons.IconTelegram />} />
+          <Item id='vk' url='https://fwd.starkow.dev/vk' photoUrl={vkTile} icon={<Icons.IconVk />} isIconCentered />
+          <Item id='lastfm' url='https://fwd.starkow.dev/lastfm' photoUrl={lastfmTile} icon={<Icons.IconLastFm />} isIconCentered />
+          <Item id='sources' text='sources' description='sources of this site' url='https://fwd.starkow.dev/github/starkow.dev' photoUrl={sourcesTile} icon={<Icons.IconGitHub />} />
+          <Item id='back' url='https://starkow.dev' photoUrl={backTile} icon={<Icons.IconHome />} isIconCentered shouldOpenInNewTab={false} />
         </div>
 
         <div class='container-title'>
