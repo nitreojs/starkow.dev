@@ -1,7 +1,9 @@
 import { FC, useEffect, useRef, useState } from 'preact/compat'
+import { useAtom, useSetAtom } from 'jotai'
 import clsx from 'clsx'
 
 import { API_URL } from '../../shared'
+import { ambientEnabled$atom, nowPlaying$atom } from '../../state'
 
 import type { Lyric, TrackData } from './types'
 import { TrackImage, TrackInfo, TrackLyrics, TrackNoise, RecentlyPlayed } from './components'
@@ -31,9 +33,13 @@ const SpotifyContent: FC = () => {
   const [progressSeconds, setProgressSeconds] = useState(0)
   const [lyricIndex, setLyricIndex] = useState(0)
 
+  const setNowPlaying = useSetAtom(nowPlaying$atom)
+  const [ambientEnabled, setAmbientEnabled] = useAtom(ambientEnabled$atom)
+
   const handleTrackMessage = (data: TrackData) => {
     setLoading(false)
     setTrackData(data)
+    setNowPlaying(data)
 
     progressRef.current = data.progress
 
@@ -55,6 +61,7 @@ const SpotifyContent: FC = () => {
 
     return () => {
       sse.close()
+      setNowPlaying(null)
     }
   }, [])
 
@@ -149,9 +156,21 @@ const SpotifyContent: FC = () => {
         {renderInnerContent()}
       </div>
 
-      <p class='text-small text-half-visible'>
-        this data is approximate and may be delayed by a few seconds.
-      </p>
+      <div class='spotify-footnote'>
+        <p class='text-small text-half-visible'>
+          this data is approximate and may be delayed by a few seconds.
+        </p>
+
+        <button
+          type='button'
+          class='spotify-ambient-toggle text-small'
+          title='tints the page with the album cover'
+          aria-pressed={ambientEnabled}
+          onClick={() => setAmbientEnabled(!ambientEnabled)}
+        >
+          [ambient: {ambientEnabled ? 'on' : 'off'}]
+        </button>
+      </div>
 
       {!loading && trackData === null && recentTracks.length > 0 && (
         <RecentlyPlayed tracks={recentTracks} />

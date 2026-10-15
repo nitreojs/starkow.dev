@@ -5,4 +5,32 @@
   mask-image: linear-gradient(black, transparent);
 } */
 
+.spotify-footnote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25em 1em;
+}
 
+.spotify-ambient-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.spotify-ambient-toggle:hover,
+.spotify-ambient-toggle:focus-visible {
+  opacity: 0.9;
+  outline: none;
+}
+
+.spotify-ambient-toggle:focus {
+  outline: none;
+}

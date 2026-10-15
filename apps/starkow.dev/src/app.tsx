@@ -5,8 +5,8 @@ import { isbot } from 'isbot'
 import { useRotatingTitle } from '@starkow.dev/hooks'
 
 import { HamsterPage, MainPage, NotFoundPage } from './pages'
+import { Backdrop } from './components'
 import { getTimeBucket, hydrateAdminKeyFromUrl } from './shared'
-// import { NoiseCanvas } from './components'
 
 import './app.css'
 
@@ -48,8 +48,7 @@ export function App() {
 
   return (
     <>
-      {/* <NoiseCanvas /> */}
-
+      <Backdrop />
       <BackToHome />
 
       <Switch>
